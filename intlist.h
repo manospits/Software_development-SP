@@ -9,15 +9,15 @@ phead cr_list();
 pnode cr_node(int data);
 
 //DESTRUCTION
-void ds_list(phead list_to_destroy);
-void ds_node(pnode node_to_destroy);
+rcode ds_list(phead list_to_destroy);
+rcode ds_node(pnode node_to_destroy);
 
 //MODIFY
-void insert(phead listh, int data);              //inserts node in front
-void insert_sorted(phead listh,int data);        //inserts node sorted
-void insert_back(phead listh,int data);          //inserts node in back
-void delete(phead listh,int data);               //deletes node with data = data
-int  pop_back(phead listh);                      //deletes last node in list
+rcode insert(phead listh, int data);              //inserts node in front
+rcode insert_sorted(phead listh,int data);        //inserts node sorted
+rcode insert_back(phead listh,int data);          //inserts node in back
+rcode delete(phead listh,int data);               //deletes node with data = data
+rcode  pop_back(phead listh);                      //deletes last node in list
 
 //ACCESS
 int in(const phead listh,int data);          //checks if there is an element in the listh

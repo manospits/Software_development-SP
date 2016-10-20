@@ -1,7 +1,10 @@
+#include "error.h"
 #include "intlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+extern int error_val;
 
 typedef struct node {
     int data;
@@ -17,6 +20,10 @@ typedef struct head{
 phead cr_list(){
     phead tmphead;
     tmphead=malloc(sizeof(struct head));
+    if(tmphead==NULL){
+        error_val=(LIST_CR_MALLOC);
+        return NULL;
+    }
     tmphead->size=0;
     tmphead->front=NULL;
     tmphead->end=NULL;
@@ -26,18 +33,28 @@ phead cr_list(){
 pnode cr_node(int data){
     node* tmpnode;
     tmpnode=malloc(sizeof(struct node));
+    if(tmpnode==NULL){
+        error_val=(LISTNODE_CR_MALLOC);
+        return NULL;
+    }
     tmpnode->data=data;
     tmpnode->next=NULL;
     return tmpnode;
 }
 
-void ds_node(pnode node_to_destroy){
+rcode ds_node(pnode node_to_destroy){
+    if(node_to_destroy==NULL){
+        error_val=NULL_NODE;
+        return NULL_NODE;
+    }
     free(node_to_destroy);
+    return OK_SUCCESS;
 }
 
-void ds_list(phead ltodestroy){
+rcode ds_list(phead ltodestroy){
     if(ltodestroy==NULL){
-        return;
+        error_val=NULL_LIST;
+        return NULL_LIST;
     }
     pnode todel;
     pnode next=ltodestroy->front;
@@ -47,9 +64,14 @@ void ds_list(phead ltodestroy){
         ds_node(todel);
     }
     free (ltodestroy);
+    return OK_SUCCESS;
 }
 
-void insert(phead listh,int data){
+rcode insert(phead listh,int data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
     pnode nptr=cr_node(data);
     if(listh->size==0){
         listh->front=nptr;
@@ -61,9 +83,14 @@ void insert(phead listh,int data){
         listh->front=nptr;
         listh->size++;
     }
+    return OK_SUCCESS;
 }
 
-void insert_sorted(phead listh,int data){
+rcode insert_sorted(phead listh,int data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
     pnode nptr=cr_node(data);
     pnode prev,node,temp2;
     node=prev=listh->front;
@@ -97,9 +124,14 @@ void insert_sorted(phead listh,int data){
         }
     }
     listh->size++;
+    return OK_SUCCESS;
 }
 
-void insert_back(phead listh,int data){
+rcode insert_back(phead listh,int data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
     pnode nptr=cr_node(data);
     if(listh->size==0){
         listh->front=nptr;
@@ -111,10 +143,15 @@ void insert_back(phead listh,int data){
         listh->end=nptr;
         listh->size++;
     }
+    return OK_SUCCESS;
 }
 
-void delete(phead listh,int data){
+rcode delete(phead listh,int data){
     /*puts("delete call");*/
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
     if(listh->size==1 && data==listh->front->data){
         ds_node(listh->front);
         listh->front=NULL;
@@ -152,11 +189,16 @@ void delete(phead listh,int data){
             }
         }
     }
+    return OK_SUCCESS;
 }
 
-int pop_back(phead listh){
+rcode pop_back(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
     if(listh->size < 1){
-        return 1;
+        return OK_SUCCESS;
     }
     if(listh->size==1){
         ds_node(listh->front);
@@ -177,10 +219,14 @@ int pop_back(phead listh){
         ds_node(todel);
         listh->size--;
     }
-    return 0;
+    return OK_SUCCESS;
 }
 
 int in(phead listh,int data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return -1;
+    }
     pnode tmp=listh->front;
     while(tmp!=NULL){
         if(data==tmp->data){
@@ -192,6 +238,10 @@ int in(phead listh,int data){
 }
 
 int ins(phead listh,int data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return -1;
+    }
     pnode tmp=listh->front;
     while(tmp!=NULL && tmp->data<=data){
         if(data==tmp->data){
@@ -203,11 +253,16 @@ int ins(phead listh,int data){
 }
 
 int get_size(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return -1;
+    }
     return listh->size;
 }
 
 int peek(const phead listh){
     if(listh==NULL){
+        error_val=NULL_LIST;
         return -1;
     }
     else{
@@ -217,6 +272,7 @@ int peek(const phead listh){
 
 int peekback(const phead listh){
     if(listh==NULL){
+        error_val=NULL_LIST;
         return -1;
     }
     else{
@@ -226,6 +282,7 @@ int peekback(const phead listh){
 
 int get_data(pnode nd){
     if(nd==NULL){
+        error_val=NULL_NODE;
         return -1;
     }
     else{
@@ -235,6 +292,7 @@ int get_data(pnode nd){
 
 pnode get_list(const phead listh){
     if(listh==NULL){
+        error_val=NULL_LIST;
         return NULL;
     }
     else{
