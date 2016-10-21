@@ -41,5 +41,28 @@ void print_error(){
             perror("Error: hash table called in function with NULL value\n");
             error_val=OK_SUCCESS;
             break;
+        case BUFFER_CR_MALLOC:
+            perror("Error allocating struct Buffer\n");
+            error_val=OK_SUCCESS;
+            break;
+        case BUFFER_CR_SPACE_MALLOC:
+            perror("Error allocating memory space in struct Buffer\n");
+            error_val=OK_SUCCESS;
+            break;
+        case BUFFER_DOUBLE_SIZE:
+            perror("Error reallocating space and doubling size\n");
+            error_val=OK_SUCCESS;
+            break;
+        case BUFFER_PTR_OUT_BOUNDS:
+            perror("Error given ptr value exceeds the permitted values\n");
+            error_val=OK_SUCCESS;
+            break;
+        case NULL_BUFFER:
+            perror("Error Buffer pointer is NULL\n");
+            error_val=OK_SUCCESS;
+        case NULL_BUFFER_SPACE:
+            perror("Error Buffer allocated space pointer points to NULL location\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }
