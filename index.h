@@ -7,7 +7,7 @@
 
 typedef struct NodeIndex* Index_ptr;
 
-Index_ptr createNodeIndex(int type);
+Index_ptr createNodeIndex();
     //Creates a struct NodeIndex and returns a pointer
     //to that structure in case of error NULL is returned
     //type:

@@ -2,6 +2,7 @@
 #include "index.h"
 #include "buffer.h"
 #include <stdlib.h>
+#include <stdio.h>
 #ifndef INDEX_INIT_SIZE
 #define INDEX_INIT_SIZE 2
 #endif
@@ -18,22 +19,17 @@ typedef struct NodeIndex{
     Inode *index;
     pBuffer buffer;
     int size;
-    int type;
 }NodeIndex;
 
 
-Index_ptr createNodeIndex(int type){
+Index_ptr createNodeIndex(){
     Index_ptr tmp;
     int i;
-    if(type <0 || type>2){
-        error_val=INDEX_CR_WRONG_PARMS;
-        return NULL;
-    }
     if((tmp=malloc(sizeof(NodeIndex)))==NULL){
         error_val=INDEX_STRUCT_MALLOC_FAIL;
         return NULL;
     }
-    if((tmp->index=malloc(sizeof(Inode)))==NULL){
+    if((tmp->index=malloc(sizeof(Inode)*INDEX_INIT_SIZE))==NULL){
         error_val=INDEX_STRUCT_MALLOC_INNER_FAIL;
         free(tmp);
         return NULL;
@@ -44,7 +40,6 @@ Index_ptr createNodeIndex(int type){
         error_val=INDEX_BUFFER_CR_FAIL;
         return NULL;
     }
-    tmp->type=type;
     for(i=0;i<INDEX_INIT_SIZE;i++){
         tmp->index[i].List_start=-1;
         tmp->index[i].list_node_for_next_neigbor=-1;
@@ -69,7 +64,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
     else{
         int prev_size=hindex->size;
         int next_size,i;
-        next_size=prev_size*2*((int)(((float)nodeId/2.0*(float)prev_size)+0.5));
+        next_size=prev_size*2*((int)(((float)nodeId/(2.0*(float)prev_size))+0.5));
         if((hindex->index=realloc(hindex->index,next_size*sizeof(Inode)))==NULL){
             error_val=INDEX_REALLOC_FAIL;
             return INDEX_REALLOC_FAIL;
@@ -80,6 +75,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
             hindex->index[i].node_pos=-1;
         }
         hindex->size=next_size;
+        printf("%d\n",next_size);
     }
     return OK_SUCCESS;
 }
@@ -213,6 +209,7 @@ rcode destroyNodeIndex(Index_ptr hindex){
         return INDEX_NULL_HEAD;
     }
     free(hindex->index);
+    destroyBuffer(hindex->buffer);
     free(hindex);
     return OK_SUCCESS;
 }
