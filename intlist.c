@@ -3,11 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 extern int error_val;
 
 typedef struct node {
-    int data;
+    uint32_t data;
     struct node* next;
 } node;
 
@@ -30,7 +31,7 @@ phead cr_list(){
     return tmphead;
 }
 
-pnode cr_node(int data){
+pnode cr_node(uint32_t data){
     node* tmpnode;
     tmpnode=malloc(sizeof(struct node));
     if(tmpnode==NULL){
@@ -67,7 +68,7 @@ rcode ds_list(phead ltodestroy){
     return OK_SUCCESS;
 }
 
-rcode insert(phead listh,int data){
+rcode insert(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -86,7 +87,7 @@ rcode insert(phead listh,int data){
     return OK_SUCCESS;
 }
 
-rcode insert_sorted(phead listh,int data){
+rcode insert_sorted(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -127,7 +128,7 @@ rcode insert_sorted(phead listh,int data){
     return OK_SUCCESS;
 }
 
-rcode insert_back(phead listh,int data){
+rcode insert_back(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -146,7 +147,7 @@ rcode insert_back(phead listh,int data){
     return OK_SUCCESS;
 }
 
-rcode delete(phead listh,int data){
+rcode delete(phead listh,uint32_t data){
     /*puts("delete call");*/
     if(listh==NULL){
         error_val=NULL_LIST;
@@ -222,7 +223,7 @@ rcode pop_back(phead listh){
     return OK_SUCCESS;
 }
 
-int in(phead listh,int data){
+int in(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return -1;
@@ -237,7 +238,7 @@ int in(phead listh,int data){
     return 0;
 }
 
-int ins(phead listh,int data){
+int ins(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return -1;

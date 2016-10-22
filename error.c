@@ -60,6 +60,7 @@ void print_error(){
         case NULL_BUFFER:
             perror("Error Buffer pointer is NULL\n");
             error_val=OK_SUCCESS;
+            break;
         case NULL_BUFFER_SPACE:
             perror("Error Buffer allocated space pointer points to NULL location\n");
             error_val=OK_SUCCESS;

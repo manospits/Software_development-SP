@@ -40,7 +40,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     return tmp;
 }
 
-rcode h_insert(phash a,int data){
+rcode h_insert(phash a,uint32_t data){
     int pos=a->h((void*) &data);
     rcode stat;
     if(a->type==0)
@@ -52,7 +52,7 @@ rcode h_insert(phash a,int data){
     return stat;
 }
 
-int in_hash(phash a,int data){
+int in_hash(phash a,uint32_t data){
     if(a==NULL){
         error_val=NULL_HASH;
         return -1;
@@ -65,7 +65,7 @@ int in_hash(phash a,int data){
     return stat;
 }
 
-int h_delete(phash a,int data){
+int h_delete(phash a,uint32_t data){
     if(a==NULL){
         error_val=NULL_HASH;
         return -1;

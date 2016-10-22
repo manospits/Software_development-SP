@@ -3,16 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#define N 10 //array size in nodes
 #define INIT_SIZE 10
 
 extern  int error_val;
 
-typedef struct list_node{
-    uint32_t neighbor[N];       //the ids of the neighbor nodes
-    uint32_t edgeProperty[N];   //property for each edge
-    ptr  nextListNode;          //
-}lnode;
 
 typedef struct Buffer{
     char *buffer;
@@ -40,6 +34,10 @@ pBuffer createBuffer(){
 }
 
 ptr allocNewNode(pBuffer buf){
+    if(buf==NULL){
+        error_val=NULL_BUFFER;
+        return NULL_BUFFER;
+    }
     lnode tmp;
     int i;
     ptr pos;
@@ -52,7 +50,7 @@ ptr allocNewNode(pBuffer buf){
         buf->buffer=realloc(buf->buffer,(buf->size*2)*sizeof(lnode));
         if(buf->buffer==NULL){
             error_val=BUFFER_DOUBLE_SIZE;
-            return -1;
+            return BUFFER_DOUBLE_SIZE;
         }
         buf->size*=2;
     }
@@ -64,11 +62,15 @@ ptr allocNewNode(pBuffer buf){
 }
 
 plnode getListNode(pBuffer buf,ptr pos){
+    if(buf==NULL){
+        error_val=NULL_BUFFER;
+        return NULL;
+    }
     if(pos<0 || pos >=buf->size *sizeof(lnode)){
         error_val=BUFFER_PTR_OUT_BOUNDS;
         return NULL;
     }
-    return (plnode) buf->buffer+pos;
+    return (plnode) (buf->buffer+pos);
 }
 
 rcode destroyBuffer(pBuffer buf){
