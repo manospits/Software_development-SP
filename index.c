@@ -89,7 +89,7 @@ ptr getListHead(Index_ptr hindex,uint32_t nodeId){
         error_val=INDEX_INSERT_NEGATIVE_NODEID;
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
-    if(nodeId<hindex->size){
+    if(nodeId>hindex->size){
         error_val=INDEX_NODE_ID_OUT_BOUNDS;
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
@@ -107,7 +107,7 @@ int edge_exists(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         error_val=INDEX_INSERT_NEGATIVE_NODEID;
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
-    if(nodeId<hindex->size){
+    if(nodeId>hindex->size){
         error_val=INDEX_NODE_ID_OUT_BOUNDS;
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
@@ -146,7 +146,7 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         error_val=INDEX_INSERT_NEGATIVE_NODEID;
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
-    if(nodeId<hindex->size){
+    if(nodeId>hindex->size){
         error_val=INDEX_NODE_ID_OUT_BOUNDS;
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
