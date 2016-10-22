@@ -65,5 +65,41 @@ void print_error(){
             perror("Error Buffer allocated space pointer points to NULL location\n");
             error_val=OK_SUCCESS;
             break;
+        case INDEX_STRUCT_MALLOC_FAIL:
+            perror("Error allocating space for index struct failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_INSERT_NEGATIVE_NODEID :
+            perror("Error negative id has been passed in index insert\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_REALLOC_FAIL:
+            perror("Error reallocating memory in index failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_NODE_ID_OUT_BOUNDS:
+            perror("Error node id doesn't exist in index (negative or has value than index size)\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_BUFFER_CR_FAIL:
+            perror("Error index create function could not create buffer structure\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_ADD_EDGE_ALLOC_NEW_NODE:
+            perror("Error index could not allocate memory for a new node\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_NEIGHBOR_EXISTS:
+            perror("Error can't add edge to an existing neighbor\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_GET_LIST_NODE_FAIL:
+            perror("Error index could not access list node\n");
+            error_val=OK_SUCCESS;
+            break;
+        case INDEX_EDGE_CHECK_FAIL:
+            perror("Error index could not check if edge exists\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }
