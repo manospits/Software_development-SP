@@ -226,7 +226,7 @@ rcode pop_back(phead listh){
 int in(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
-        return -1;
+        return NULL_LIST;
     }
     pnode tmp=listh->front;
     while(tmp!=NULL){
@@ -241,7 +241,7 @@ int in(phead listh,uint32_t data){
 int ins(phead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
-        return -1;
+        return NULL_LIST;
     }
     pnode tmp=listh->front;
     while(tmp!=NULL && tmp->data<=data){
@@ -256,7 +256,7 @@ int ins(phead listh,uint32_t data){
 int get_size(phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
-        return -1;
+        return NULL_LIST;
     }
     return listh->size;
 }
@@ -264,7 +264,7 @@ int get_size(phead listh){
 int peek(const phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
-        return -1;
+        return NULL_LIST;
     }
     else{
         return listh->front->data;
@@ -274,7 +274,7 @@ int peek(const phead listh){
 int peekback(const phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
-        return -1;
+        return NULL_LIST;
     }
     else{
         return listh->end->data;
@@ -284,7 +284,7 @@ int peekback(const phead listh){
 int get_data(pnode nd){
     if(nd==NULL){
         error_val=NULL_NODE;
-        return -1;
+        return NULL_LIST;
     }
     else{
         return nd->data;
