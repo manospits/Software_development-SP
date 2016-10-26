@@ -77,7 +77,6 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
             hindex->index[i].node_pos=-1;
         }
         hindex->size=next_size;
-        printf("%d\n",next_size);
     }
     return OK_SUCCESS;
 }
