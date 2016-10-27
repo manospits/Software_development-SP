@@ -18,6 +18,9 @@ typedef struct head{
     pnode end;
 }head;
 
+pnode cr_node(uint32_t data);
+rcode ds_node(pnode node_to_destroy);
+
 phead cr_list(){
     phead tmphead;
     tmphead=malloc(sizeof(struct head));

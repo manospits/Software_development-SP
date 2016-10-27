@@ -8,11 +8,9 @@ typedef struct head * phead;
 
 //CREATION
 phead cr_list();
-pnode cr_node(uint32_t data);
 
 //DESTRUCTION
 rcode ds_list(phead list_to_destroy);
-rcode ds_node(pnode node_to_destroy);
 
 //MODIFY
 rcode insert(phead listh, uint32_t data);              //inserts node in front

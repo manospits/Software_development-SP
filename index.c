@@ -49,7 +49,7 @@ Index_ptr createNodeIndex(){
     return tmp;
 }
 
-rcode insertNode(Index_ptr hindex,uint32_t nodeId){
+rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
         error_val=INDEX_NULL_HEAD;
         return INDEX_NULL_HEAD;
@@ -81,7 +81,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
     return OK_SUCCESS;
 }
 
-ptr getListHead(Index_ptr hindex,uint32_t nodeId){
+ptr getListHead(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
         error_val=INDEX_NULL_HEAD;
         return INDEX_NULL_HEAD;
@@ -97,7 +97,7 @@ ptr getListHead(Index_ptr hindex,uint32_t nodeId){
     return hindex->index[nodeId].List_start;
 }
 
-int edge_exists(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
+int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
     int i;
     if(hindex==NULL){
@@ -136,7 +136,7 @@ int edge_exists(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     return 0;
 }
 
-rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
+rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
     int stat;
     if(hindex==NULL){
@@ -204,7 +204,7 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     return OK_SUCCESS;
 }
 
-rcode destroyNodeIndex(Index_ptr hindex){
+rcode destroyNodeIndex(const Index_ptr hindex){
     if(hindex==NULL){
         error_val=INDEX_NULL_HEAD;
         return INDEX_NULL_HEAD;
@@ -215,3 +215,10 @@ rcode destroyNodeIndex(Index_ptr hindex){
     return OK_SUCCESS;
 }
 
+pBuffer return_buffer(const Index_ptr hindex){
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return NULL;
+    }
+    return hindex->buffer;
+}

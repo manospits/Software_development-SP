@@ -13,6 +13,8 @@ typedef struct hash_info {
     int type;
 }hash_info;
 
+phnode create_phnode(void* el);   //creates a hash_node
+
 phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     if((type != 1 && type!=0)||hash_table_size<=0){
         error_val=HASH_WRONG_PARMS;

@@ -19,12 +19,17 @@ START_TEST(test_serial)
     for(i=0;i<1000;i++){
         fail_unless(insertNode(index,i)==OK_SUCCESS);
         for(j=0;j<100;j++){
-            fail_unless(add_edge(index,i,i+j)==OK_SUCCESS);
+            if(j%2==0)
+                fail_unless(add_edge(index,i,i+j)==OK_SUCCESS);
         }
     }
     for(i=0;i<1000;i++)
-        for(j=0;j<100;j++)
-            fail_unless(edge_exists(index,i,i+j)==1);
+        for(j=0;j<100;j++){
+            if(j%2==0)
+                fail_unless(edge_exists(index,i,i+j)==1);
+            else
+                fail_unless(edge_exists(index,i,i+j)==0);
+        }
     fail_unless(destroyNodeIndex(index)==OK_SUCCESS);
     puts("test with 1000 serial inserts and 100 neighbors finished ");
 }
@@ -32,7 +37,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 21
+#line 26
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -40,14 +45,19 @@ START_TEST(test_step10)
         for(i=start;i<1000;i+=10){
             fail_unless(insertNode(index,i)==OK_SUCCESS);
             for(j=0;j<100;j++){
-                fail_unless(add_edge(index,i,i+j)==OK_SUCCESS);
+                if(j%2==0)
+                    fail_unless(add_edge(index,i,i+j)==OK_SUCCESS);
             }
         }
     }
     for(start=0;start<10;start++){
         for(i=start;i<1000;i+=10)
-            for(j=0;j<100;j++)
-                fail_unless(edge_exists(index,i,i+j)==1);
+            for(j=0;j<100;j++){
+                if(j%2==0)
+                    fail_unless(edge_exists(index,i,i+j)==1);
+                else
+                    fail_unless(edge_exists(index,i,i+j)==0);
+            }
     }
     fail_unless(destroyNodeIndex(index)==OK_SUCCESS);
     puts("test with 1000 inserts step 10 and 100 neighbors finished ");
@@ -60,7 +70,7 @@ int main(void)
     TCase *tc1_1 = tcase_create("Core");
     SRunner *sr = srunner_create(s1);
     int nf;
-    tcase_set_timeout(tc1_1,180);
+
     suite_add_tcase(s1, tc1_1);
     tcase_add_test(tc1_1, test_serial);
     tcase_add_test(tc1_1, test_step10);
