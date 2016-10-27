@@ -12,7 +12,7 @@ int extern error_val;
 typedef struct Inode{
     ptr List_start;
     ptr list_node_for_next_neigbor;
-    int node_pos;
+    int node_index_for_next_neighbor;
 }Inode;
 
 typedef struct NodeIndex{
@@ -43,7 +43,7 @@ Index_ptr createNodeIndex(){
     for(i=0;i<INDEX_INIT_SIZE;i++){
         tmp->index[i].List_start=-1;
         tmp->index[i].list_node_for_next_neigbor=-1;
-        tmp->index[i].node_pos=-1;
+        tmp->index[i].node_index_for_next_neighbor=-1;
     }
     tmp->size=INDEX_INIT_SIZE;
     return tmp;
@@ -65,7 +65,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
         int prev_size=hindex->size;
         int next_size=hindex->size,i;
         while(next_size<=nodeId){
-            next_size*=2;
+            next_size=next_size<<1;
         }
         if((hindex->index=realloc(hindex->index,next_size*sizeof(Inode)))==NULL){
             error_val=INDEX_REALLOC_FAIL;
@@ -74,7 +74,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
         for(i=prev_size;i<next_size;i++){
             hindex->index[i].List_start=-1;
             hindex->index[i].list_node_for_next_neigbor=-1;
-            hindex->index[i].node_pos=-1;
+            hindex->index[i].node_index_for_next_neighbor=-1;
         }
         hindex->size=next_size;
     }
@@ -161,7 +161,7 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         }
         hindex->index[nodeId].List_start=tmpptr;
         hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
-        hindex->index[nodeId].node_pos=0;
+        hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
     stat=edge_exists(hindex,nodeId,neighbor);
     if(stat<0){
@@ -173,7 +173,7 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         error_val=INDEX_NEIGHBOR_EXISTS;
         return INDEX_NEIGHBOR_EXISTS;
     }
-    if(hindex->index[nodeId].node_pos==N){
+    if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
             print_error();
@@ -191,7 +191,7 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         //changing index ptr to last node
         hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
         //changing position in inner array in list node to 0
-        hindex->index[nodeId].node_pos=0;
+        hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
     tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
     if(tmplnode==NULL){
@@ -199,8 +199,8 @@ rcode add_edge(Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         error_val=INDEX_GET_LIST_NODE_FAIL;
         return INDEX_GET_LIST_NODE_FAIL;
     }
-    tmplnode->neighbor[hindex->index[nodeId].node_pos]=neighbor;
-    hindex->index[nodeId].node_pos++;
+    tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
+    hindex->index[nodeId].node_index_for_next_neighbor++;
     return OK_SUCCESS;
 }
 

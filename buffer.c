@@ -38,14 +38,9 @@ ptr allocNewNode(pBuffer buf){
         error_val=NULL_BUFFER;
         return NULL_BUFFER;
     }
-    lnode tmp;
+    plnode tmp;
     int i;
     ptr pos;
-    for(i=0;i<N;i++){
-        tmp.neighbor[i]=-1;
-        tmp.edgeProperty[i]=-1;
-    }
-    tmp.nextListNode=-1;
     if(buf->nextfreepos >= buf->size*sizeof(lnode)){//THERE ISN'T SPACE FOR THE NEW NODE
         buf->buffer=realloc(buf->buffer,(buf->size*2)*sizeof(lnode));
         if(buf->buffer==NULL){
@@ -54,7 +49,12 @@ ptr allocNewNode(pBuffer buf){
         }
         buf->size*=2;
     }
-    memcpy(buf->buffer+buf->nextfreepos,&tmp,sizeof(lnode));
+    tmp=(plnode)(buf->buffer+buf->nextfreepos);
+    for(i=0;i<N;i++){
+        tmp->neighbor[i]=-1;
+        tmp->edgeProperty[i]=-1;
+    }
+    tmp->nextListNode=-1;
     pos=buf->nextfreepos;
     buf->nextfreepos+=sizeof(lnode);
     buf->nodes++;

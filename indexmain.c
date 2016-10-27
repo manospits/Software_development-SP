@@ -9,20 +9,20 @@ int main(void){
     if(index==NULL){
         print_error();
     }
-    for(i=0;i<10000;i++){
+    for(i=0;i<10000;i+=100){
         insertNode(index,i);
         for(j=0;j<1000;j++){
             add_edge(index,i,i+j);
         }
 
     }
-    for(i=0;i<10000;i++){
+    for(i=0;i<10000;i+=100){
         for(j=0;j<1000;j++)
             if(edge_exists(index,i,i+j)==1){
                 printf("node %d edge %d\n",i,i+j);
             }
             else{
-                puts("hmmm");
+                /*puts("hmmm");*/
             }
     }
 

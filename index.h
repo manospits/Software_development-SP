@@ -11,9 +11,6 @@ Index_ptr createNodeIndex();
     //Creates a struct NodeIndex and returns a pointer
     //to that structure in case of error NULL is returned
     //type:
-    //    0 without hash table
-    //    1 with hash table
-    //    2 with sorted hash table
 
 rcode insertNode(Index_ptr,uint32_t nodeId);
     //Inserts new node in index (it actually checks
