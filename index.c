@@ -65,7 +65,7 @@ rcode insertNode(Index_ptr hindex,uint32_t nodeId){
         int prev_size=hindex->size;
         int next_size=hindex->size,i;
         while(next_size<=nodeId){
-            next_size=next_size<<1;
+            next_size<<=1;
         }
         if((hindex->index=realloc(hindex->index,next_size*sizeof(Inode)))==NULL){
             error_val=INDEX_REALLOC_FAIL;

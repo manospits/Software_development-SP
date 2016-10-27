@@ -47,7 +47,7 @@ ptr allocNewNode(pBuffer buf){
             error_val=BUFFER_DOUBLE_SIZE;
             return BUFFER_DOUBLE_SIZE;
         }
-        buf->size*=2;
+        buf->size<<=1;
     }
     tmp=(plnode)(buf->buffer+buf->nextfreepos);
     for(i=0;i<N;i++){
