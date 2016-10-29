@@ -44,12 +44,18 @@ rcode gCreateGraph(pGraph *g)
 
 rcode gAddNode(pGraph g, graphNode from, graphNode to)
 {
+	rcode return_value;
 	if (g == NULL)
 	{
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
 		return GRAPH_NULL_POINTER_PROVIDED;
 	}
-
+	return_value = add_edge(g->outIndex, from, to);
+	if (return_value && return_value != INDEX_NEIGHBOR_EXISTS)
+		return return_value;
+	return_value = add_edge(g->inIndex, to, from);
+	if (return_value && return_value != INDEX_NEIGHBOR_EXISTS)
+		return return_value;
 	error_val = OK_SUCCESS;
 	return OK_SUCCESS;
 }
