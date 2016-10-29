@@ -5,8 +5,6 @@
 #include <string.h>
 #include <stdint.h>
 
-extern int error_val;
-
 typedef struct node {
     uint32_t data;
     struct node* next;

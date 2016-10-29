@@ -5,9 +5,6 @@
 #include <string.h>
 #define INIT_SIZE 10
 
-extern  int error_val;
-
-
 typedef struct Buffer{
     char *buffer;
     int nodes;

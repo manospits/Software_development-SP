@@ -17,7 +17,7 @@ rcode gAddNode(pGraph, graphNode from, graphNode to);
 rcode gFindShortestPath(pGraph, graphNode from, graphNode to/*, &solution*/);
 	// Searches the graph 'pGraph' to find the shortest path from node 'from' to node 'to'
 
-rcode gDestroyGraph(pGraph);
+rcode gDestroyGraph(pGraph *);
 	// Frees all structs created by the graph, and then deletes him
 
 #endif // _GRAPH_H_

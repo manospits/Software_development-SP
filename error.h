@@ -4,6 +4,8 @@
 typedef int rcode;
 void print_error();
 
+extern int error_val;
+
 //ERROR CODES EXPLANATION
 #define OK_SUCCESS 0
 #define LIST_CR_MALLOC -1

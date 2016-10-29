@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int error_val;
-
 typedef struct hash_info {
     phead* bins;                //array of lists
     int size;                   //hash_table size

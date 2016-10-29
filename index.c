@@ -7,8 +7,6 @@
 #define INDEX_INIT_SIZE 2
 #endif
 
-int extern error_val;
-
 typedef struct Inode{
     ptr List_start;
     ptr list_node_for_next_neigbor;
