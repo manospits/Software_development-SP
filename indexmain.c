@@ -27,4 +27,5 @@ int main(void){
     }
 
     destroyNodeIndex(index);
+    return 0;
 }
