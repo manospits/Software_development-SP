@@ -113,9 +113,5 @@ void print_error(){
             perror("Error: malloc for a graph index failed\n");
             error_val=OK_SUCCESS;
             break;
-        case GRAPH_CREATION_BUFFER_MALLOC_FAIL:
-            perror("Error: malloc for a graph buffer failed\n");
-            error_val=OK_SUCCESS;
-            break;
     }
 }
