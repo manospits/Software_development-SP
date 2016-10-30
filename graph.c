@@ -11,35 +11,30 @@ typedef struct graph
 	Index_ptr outIndex;
 }graph;
 
-rcode gCreateGraph(pGraph *g)
+pGraph gCreateGraph()
 {
-	if (g == NULL || *g == NULL)
-	{
-		error_val = GRAPH_NULL_POINTER_PROVIDED;
-		return GRAPH_NULL_POINTER_PROVIDED;
-	}
-	if ((*g = malloc(sizeof(graph))) == NULL)
+	pGraph g;
+	if ((g = malloc(sizeof(graph))) == NULL)
 	{
 		error_val = GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
 		return GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
 	}
-	if (((*g)->inIndex = createNodeIndex()) == NULL)
+	if ((g->inIndex = createNodeIndex()) == NULL)
 	{
-		free(*g);
-		*g = NULL;
+		free(g);
+		g = NULL;
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
 		return GRAPH_CREATION_INDEX_MALLOC_FAIL;
 	}
-	if (((*g)->outIndex = createNodeIndex()) == NULL);
+	if ((g->outIndex = createNodeIndex()) == NULL);
 	{
-		destroyNodeIndex((*g)->inIndex);
-		free(*g);
-		*g = NULL;
+		destroyNodeIndex(g->inIndex);
+		free(g);
+		g = NULL;
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
 		return GRAPH_CREATION_INDEX_MALLOC_FAIL;
 	}
-	error_val = OK_SUCCESS;
-	return OK_SUCCESS;
+	return g;
 }
 
 rcode gAddNode(pGraph g, graphNode from, graphNode to)

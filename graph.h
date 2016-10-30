@@ -7,9 +7,9 @@
 typedef struct graph* pGraph;
 typedef uint32_t graphNode;
 
-rcode gCreateGraph(pGraph *);
+pGraph gCreateGraph();
 	// Creates a graph
-	// Returns 0 on success, or an appropriate error code if any error occurs
+	// Returns a pointer to the created graph on success, or NULL and sets error_val to an appropriate error code if any error occurs
 
 rcode gAddNode(pGraph, graphNode from, graphNode to);
 	// Adds the node 'from'--->'to' to the graph 'pGraph'
