@@ -1,6 +1,6 @@
 #include "error.h"
 #include "hash.h"
-#include "intlist.h"
+#include "struct_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -41,13 +41,13 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     return tmp;
 }
 
-rcode h_insert(phash a,uint32_t data){
+rcode h_insert(phash a,uint32_t data,uint32_t prev){
     int pos=a->h((void*) &data);
     rcode stat;
     if(a->type==0)
-        stat=insert(a->bins[pos],data);
+        stat=insert(a->bins[pos],data,prev);
     else if(a->type==1){
-        stat=insert_sorted(a->bins[pos],data);
+        stat=insert_sorted(a->bins[pos],data,prev);
     }
     error_val=stat;
     return stat;
@@ -92,3 +92,13 @@ rcode ds_hash(phash a){
     return OK_SUCCESS;
 }
 
+int ret_prev(phash a,uint32_t data){
+    if(a==NULL){
+        error_val=NULL_HASH;
+        return -1;
+    }
+    int pos=a->h((void*) &data),stat;
+    stat=get_prev(a->bins[pos],data);
+    error_val=stat;
+    return stat;
+}
