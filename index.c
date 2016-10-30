@@ -44,6 +44,7 @@ Index_ptr createNodeIndex(){
         tmp->index[i].node_index_for_next_neighbor=-1;
     }
     tmp->size=INDEX_INIT_SIZE;
+    error_val=OK_SUCCESS;
     return tmp;
 }
 
@@ -57,6 +58,7 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId<hindex->size){
+        error_val=OK_SUCCESS;
         return OK_SUCCESS;
     }
     else{
@@ -76,6 +78,7 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
         }
         hindex->size=next_size;
     }
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -92,6 +95,7 @@ ptr getListHead(const Index_ptr hindex,uint32_t nodeId){
         error_val=INDEX_NODE_ID_OUT_BOUNDS;
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
+    error_val=OK_SUCCESS;
     return hindex->index[nodeId].List_start;
 }
 
@@ -123,6 +127,7 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         }
         for(i=0;i<N;i++){
             if(tmplnode->neighbor[i]==neighbor){
+                error_val=OK_SUCCESS;
                 return 1;
             }
             else if (tmplnode->neighbor[i]==-1) {
@@ -131,6 +136,7 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         }
         nextlptr=tmplnode->nextListNode;
     }while(nextlptr!=-1);
+    error_val=OK_SUCCESS;
     return 0;
 }
 
@@ -199,6 +205,7 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     }
     tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
     hindex->index[nodeId].node_index_for_next_neighbor++;
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -210,6 +217,7 @@ rcode destroyNodeIndex(const Index_ptr hindex){
     free(hindex->index);
     destroyBuffer(hindex->buffer);
     free(hindex);
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -218,5 +226,6 @@ pBuffer return_buffer(const Index_ptr hindex){
         error_val=INDEX_NULL_HEAD;
         return NULL;
     }
+    error_val=OK_SUCCESS;
     return hindex->buffer;
 }

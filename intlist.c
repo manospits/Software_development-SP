@@ -29,6 +29,7 @@ phead cr_list(){
     tmphead->size=0;
     tmphead->front=NULL;
     tmphead->end=NULL;
+    error_val=OK_SUCCESS;
     return tmphead;
 }
 
@@ -41,6 +42,7 @@ pnode cr_node(uint32_t data){
     }
     tmpnode->data=data;
     tmpnode->next=NULL;
+    error_val=OK_SUCCESS;
     return tmpnode;
 }
 
@@ -50,6 +52,7 @@ rcode ds_node(pnode node_to_destroy){
         return NULL_NODE;
     }
     free(node_to_destroy);
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -66,6 +69,7 @@ rcode ds_list(phead ltodestroy){
         ds_node(todel);
     }
     free (ltodestroy);
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -85,6 +89,7 @@ rcode insert(phead listh,uint32_t data){
         listh->front=nptr;
         listh->size++;
     }
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -126,6 +131,7 @@ rcode insert_sorted(phead listh,uint32_t data){
         }
     }
     listh->size++;
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -145,6 +151,7 @@ rcode insert_back(phead listh,uint32_t data){
         listh->end=nptr;
         listh->size++;
     }
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -191,6 +198,7 @@ rcode delete(phead listh,uint32_t data){
             }
         }
     }
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -200,7 +208,8 @@ rcode pop_back(phead listh){
         return NULL_LIST;
     }
     if(listh->size < 1){
-        return OK_SUCCESS;
+        error_val=EMPTY_LIST;
+        return EMPTY_LIST;
     }
     if(listh->size==1){
         ds_node(listh->front);
@@ -221,6 +230,7 @@ rcode pop_back(phead listh){
         ds_node(todel);
         listh->size--;
     }
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
@@ -232,10 +242,12 @@ int in(phead listh,uint32_t data){
     pnode tmp=listh->front;
     while(tmp!=NULL){
         if(data==tmp->data){
+            error_val=OK_SUCCESS;
             return 1;
         }
         tmp=tmp->next;
     }
+    error_val=OK_SUCCESS;
     return 0;
 }
 
@@ -247,10 +259,12 @@ int ins(phead listh,uint32_t data){
     pnode tmp=listh->front;
     while(tmp!=NULL && tmp->data<=data){
         if(data==tmp->data){
+            error_val=OK_SUCCESS;
             return 1;
         }
         tmp=tmp->next;
     }
+    error_val=OK_SUCCESS;
     return 0;
 }
 
@@ -259,6 +273,7 @@ int get_size(phead listh){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
+    error_val=OK_SUCCESS;
     return listh->size;
 }
 
@@ -268,6 +283,7 @@ int peek(const phead listh){
         return NULL_LIST;
     }
     else{
+        error_val=OK_SUCCESS;
         return listh->front->data;
     }
 }
@@ -278,6 +294,7 @@ int peekback(const phead listh){
         return NULL_LIST;
     }
     else{
+        error_val=OK_SUCCESS;
         return listh->end->data;
     }
 }
@@ -288,6 +305,7 @@ int get_data(pnode nd){
         return NULL_LIST;
     }
     else{
+        error_val=OK_SUCCESS;
         return nd->data;
     }
 }
@@ -298,6 +316,7 @@ pnode get_list(const phead listh){
         return NULL;
     }
     else{
+        error_val=OK_SUCCESS;
         return listh->front;
     }
 }
@@ -307,6 +326,7 @@ pnode next_node(const pnode nd){
         return NULL;
     }
     else{
+        error_val=OK_SUCCESS;
         return nd->next;
     }
 }

@@ -37,6 +37,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     for(i=0;i<hash_table_size;i++){
         tmp->bins[i]=cr_list();
     }
+    error_val=OK_SUCCESS;
     return tmp;
 }
 
@@ -62,6 +63,7 @@ int in_hash(phash a,uint32_t data){
         stat= in(a->bins[pos],data);
     else if(a->type==1)
         stat= ins(a->bins[pos],data);
+    error_val=stat;
     return stat;
 }
 
@@ -72,13 +74,14 @@ int h_delete(phash a,uint32_t data){
     }
     int pos=a->h((void*)&data);
     delete(a->bins[pos],data);
-    return 0;
+    error_val=OK_SUCCESS;
+    return OK_SUCCESS;
 }
 
-void ds_hash(phash a){
+rcode ds_hash(phash a){
     if(a==NULL){
         error_val=NULL_HASH;
-        return;
+        return NULL_HASH;
     }
     int i;
     for(i=0;i<a->size;i++){
@@ -86,5 +89,6 @@ void ds_hash(phash a){
     }
     free(a->bins);
     free(a);
+    return OK_SUCCESS;
 }
 

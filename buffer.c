@@ -27,6 +27,7 @@ pBuffer createBuffer(){
     tmp->nodes=0;
     tmp->nextfreepos=0;
     tmp->size=INIT_SIZE;
+    error_val=OK_SUCCESS;
     return tmp;
 }
 
@@ -55,6 +56,7 @@ ptr allocNewNode(pBuffer buf){
     pos=buf->nextfreepos;
     buf->nextfreepos+=sizeof(lnode);
     buf->nodes++;
+    error_val=OK_SUCCESS;
     return pos;
 }
 
@@ -67,6 +69,7 @@ plnode getListNode(pBuffer buf,ptr pos){
         error_val=BUFFER_PTR_OUT_BOUNDS;
         return NULL;
     }
+    error_val=OK_SUCCESS;
     return (plnode) (buf->buffer+pos);
 }
 
@@ -79,6 +82,7 @@ rcode destroyBuffer(pBuffer buf){
     }
     free(buf->buffer);
     free(buf);
+    error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
