@@ -202,6 +202,31 @@ rcode delete(phead listh,uint32_t data){
     return OK_SUCCESS;
 }
 
+rcode pop_front(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    if(listh->size < 1){
+        error_val=EMPTY_LIST;
+        return EMPTY_LIST;
+    }
+    if(listh->size==1){
+        ds_node(listh->front);
+        listh->front=NULL;
+        listh->end=NULL;
+        listh->size=0;
+    }
+    else{
+        pnode todel=listh->front;
+        listh->front=listh->front->next;
+        ds_node(todel);
+        listh->size--;
+    }
+    error_val=OK_SUCCESS;
+    return OK_SUCCESS;
+}
+
 rcode pop_back(phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;

@@ -17,8 +17,8 @@ rcode insert(phead listh, uint32_t data);              //inserts node in front
 rcode insert_sorted(phead listh,uint32_t data);        //inserts node sorted
 rcode insert_back(phead listh,uint32_t data);          //inserts node in back
 rcode delete(phead listh,uint32_t data);               //deletes node with data = data
-rcode  pop_back(phead listh);                      //deletes last node in list
-
+rcode  pop_back(phead listh);                          //deletes last node in list
+rcode  pop_front(phead listh);                         //deletes first node in list
 //ACCESS
 int in(const phead listh,uint32_t data);          //checks if there is an element in the listh
 int ins(const phead listh,uint32_t data);         //checks if there is an element in the sorted listh
