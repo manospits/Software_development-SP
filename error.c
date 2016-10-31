@@ -113,5 +113,9 @@ void print_error(){
             perror("Error: malloc for a graph index failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAPH_SEARCH_INIT_STRUCTS_FAIL:
+            perror("Error: initializing structs for graph search failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

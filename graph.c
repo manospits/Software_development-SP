@@ -5,6 +5,8 @@
 #include "hash.h"
 #include "intlist.h"
 
+#define HASHTABLE_SIZE 50
+
 typedef struct graph
 {
 	Index_ptr inIndex;
@@ -109,11 +111,30 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to)
 	return OK_SUCCESS;
 }
 
+int calculate_hashtable_size(pGraph g)
+{	// returns the maximum of {10, number_of_g's_nodes/2}
+
+}
+
+int hash_function(void *data)
+{
+	return (*(uint32_t *)data) % HASHTABLE_SIZE;
+}
+
 int bfs(pGraph g, graphNode from, graphNode to)
 {
 	phash visited;
 	phead open_list;
-
+	if ((visited = create_hashtable(HASHTABLE_SIZE, &hash_function, 1)) == NULL)
+	{
+		// error_val not set here, so print_error() will prin the error from create_hashtable()
+		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+	}
+	if ((open_list = cr_list()) == NULL)
+	{
+		// error_val not set here, so print_error() will prin the error from create_hashtable()
+		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+	}
 }
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
