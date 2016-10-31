@@ -16,7 +16,7 @@ rcode gAddNode(pGraph, graphNode from, graphNode to);
 
 int gFindShortestPath(pGraph, graphNode from, graphNode to);
 	// Searches the graph 'pGraph' to find the shortest path from node 'from' to node 'to'
-	// returns the length of the path found, or an appropriate error code (negative number) in case of error
+	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 
 rcode gDestroyGraph(pGraph *);
 	// Frees all structs created by the graph, and then deletes him
