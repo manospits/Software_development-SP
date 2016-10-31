@@ -17,22 +17,20 @@ pGraph gCreateGraph()
 	if ((g = malloc(sizeof(graph))) == NULL)
 	{
 		error_val = GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
-		return GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
+		return NULL;
 	}
 	if ((g->inIndex = createNodeIndex()) == NULL)
 	{
 		free(g);
-		g = NULL;
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
-		return GRAPH_CREATION_INDEX_MALLOC_FAIL;
+		return NULL;
 	}
-	if ((g->outIndex = createNodeIndex()) == NULL);
+	if ((g->outIndex = createNodeIndex()) == NULL)
 	{
 		destroyNodeIndex(g->inIndex);
 		free(g);
-		g = NULL;
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
-		return GRAPH_CREATION_INDEX_MALLOC_FAIL;
+		return NULL;
 	}
 	return g;
 }
