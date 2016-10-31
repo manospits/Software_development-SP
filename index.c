@@ -142,7 +142,6 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
 
 rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
-    int stat;
     if(hindex==NULL){
         error_val=INDEX_NULL_HEAD;
         return INDEX_NULL_HEAD;
@@ -166,16 +165,6 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         hindex->index[nodeId].List_start=tmpptr;
         hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
         hindex->index[nodeId].node_index_for_next_neighbor=0;
-    }
-    stat=edge_exists(hindex,nodeId,neighbor);
-    if(stat<0){
-        print_error();
-        error_val=INDEX_EDGE_CHECK_FAIL;
-        return INDEX_EDGE_CHECK_FAIL;
-    }
-    if(stat>0){
-        error_val=INDEX_NEIGHBOR_EXISTS;
-        return INDEX_NEIGHBOR_EXISTS;
     }
     if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;
