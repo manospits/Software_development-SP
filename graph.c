@@ -37,18 +37,39 @@ pGraph gCreateGraph()
 
 rcode gAddNode(pGraph g, graphNode from, graphNode to)
 {
-	rcode return_value;
 	if (g == NULL)
 	{
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
 		return GRAPH_NULL_POINTER_PROVIDED;
 	}
-	return_value = add_edge(g->outIndex, from, to);
-	if (return_value && return_value != INDEX_NEIGHBOR_EXISTS)
+	if (from == to)
+	{
+		error_val = OK_SUCCESS;
+		return OK_SUCCESS;
+	}
+	graphNode max = from;
+	if (to > max) max = to;
+	rcode return_value;
+	// check if nodes exist (insert nodes checks, and adds them if they don't exist)
+	// (insert the max of the two nodes, so in case it doesn't exist indexes are updated to include him)
+	return_value = insertNode(g->outIndex, max);
+	if (return_value) return return_value;
+	return_value = insertNode(g->inIndex, max);
+	if (return_value) return return_value;
+	// check if edge exists (no need to check both indexes; if it exists in one, it exists in the other one as well)
+	return_value = edge_exists(g->outIndex, from, to);
+	if (return_value < 0)
+	{	// error
 		return return_value;
-	return_value = add_edge(g->inIndex, to, from);
-	if (return_value && return_value != INDEX_NEIGHBOR_EXISTS)
-		return return_value;
+	}
+	else if (!return_value)
+	{	// edge does not exist
+		return_value = add_edge(g->outIndex, from, to);
+		if (return_value) return return_value;
+		return_value = add_edge(g->inIndex, to, from);
+		if (return_value) return return_value;
+	}
+	// if return_value == 1 the edge already exists, so there is nothing to be done
 	error_val = OK_SUCCESS;
 	return OK_SUCCESS;
 }
