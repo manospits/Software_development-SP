@@ -41,13 +41,13 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     return tmp;
 }
 
-rcode h_insert(phash a,uint32_t data,uint32_t prev){
+rcode h_insert(phash a,uint32_t data,uint32_t tag){
     int pos=a->h((void*) &data);
     rcode stat;
     if(a->type==0)
-        stat=insert(a->bins[pos],data,prev);
+        stat=insert(a->bins[pos],data,tag);
     else if(a->type==1){
-        stat=insert_sorted(a->bins[pos],data,prev);
+        stat=insert_sorted(a->bins[pos],data,tag);
     }
     error_val=stat;
     return stat;
@@ -92,13 +92,13 @@ rcode ds_hash(phash a){
     return OK_SUCCESS;
 }
 
-int ret_prev(phash a,uint32_t data){
+int ret_tag(phash a,uint32_t data){
     if(a==NULL){
         error_val=NULL_HASH;
         return -1;
     }
     int pos=a->h((void*) &data),stat;
-    stat=get_prev(a->bins[pos],data);
+    stat=get_tag(a->bins[pos],data);
     error_val=stat;
     return stat;
 }

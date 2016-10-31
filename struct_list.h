@@ -13,9 +13,9 @@ phead cr_list();
 rcode ds_list(phead list_to_destroy);
 
 //MODIFY
-rcode insert(phead listh, uint32_t data,uint32_t prev);              //inserts node in front
-rcode insert_sorted(phead listh,uint32_t data,uint32_t previous);        //inserts node sorted
-rcode insert_back(phead listh,uint32_t data,uint32_t prev);          //inserts node in back
+rcode insert(phead listh, uint32_t data,uint32_t tag);              //inserts node in front
+rcode insert_sorted(phead listh,uint32_t data,uint32_t tag);        //inserts node sorted
+rcode insert_back(phead listh,uint32_t data,uint32_t tag);          //inserts node in back
 rcode delete(phead listh,uint32_t data);                             //deletes node with data = data
 rcode pop_back(phead listh);                                         //deletes last node in list
 
@@ -24,7 +24,7 @@ int in(const phead listh,uint32_t data);          //checks if there is an elemen
 int ins(const phead listh,uint32_t data);         //checks if there is an element in the sorted listh
 int get_size(const phead listh);                  //get number of elements
 int get_data(const pnode nd);                     //returns data
-int get_prev(const phead listh,uint32_t data);    //returns prev
+int get_tag(const phead listh,uint32_t data);    //returns tag value of node
 int peek(const phead listh);                 //returns list's first int
 int peekback(const phead listh);             //returns list's last int
 
