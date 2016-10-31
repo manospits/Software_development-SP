@@ -35,6 +35,21 @@ pGraph gCreateGraph()
 	return g;
 }
 
+rcode gDestroyGraph(pGraph *g)
+{
+	if (g == NULL)
+	{
+		error_val = GRAPH_NULL_POINTER_PROVIDED;
+		return GRAPH_NULL_POINTER_PROVIDED;
+	}
+	destroyNodeIndex((*g)->outIndex);
+	destroyNodeIndex((*g)->inIndex);
+	free(*g);
+	*g = NULL;
+	error_val = OK_SUCCESS;
+	return OK_SUCCESS;
+}
+
 rcode gAddNode(pGraph g, graphNode from, graphNode to)
 {
 	if (g == NULL)
@@ -74,29 +89,34 @@ rcode gAddNode(pGraph g, graphNode from, graphNode to)
 	return OK_SUCCESS;
 }
 
-rcode gFindShortestPath(pGraph g, graphNode from, graphNode to/*, &solution*/)
+int bfs(pGraph g, graphNode from, graphNode to);
+int bidirectional_bfs(pGraph g, graphNode from, graphNode to);
+
+int gFindShortestPath(pGraph g, graphNode from, graphNode to)
 {
 	if (g == NULL)
 	{
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
 		return GRAPH_NULL_POINTER_PROVIDED;
 	}
-
+	if (from == to)
+	{
+		error_val = OK_SUCCESS;
+		return OK_SUCCESS;
+	}
+	return bfs(g, from, to);
 	error_val = OK_SUCCESS;
 	return OK_SUCCESS;
 }
 
-rcode gDestroyGraph(pGraph *g)
+int bfs(pGraph g, graphNode from, graphNode to)
 {
-	if (g == NULL)
-	{
-		error_val = GRAPH_NULL_POINTER_PROVIDED;
-		return GRAPH_NULL_POINTER_PROVIDED;
-	}
-	destroyNodeIndex((*g)->outIndex);
-	destroyNodeIndex((*g)->inIndex);
-	free(*g);
-	*g = NULL;
-	error_val = OK_SUCCESS;
-	return OK_SUCCESS;
+	phash visited;
+	phead open_list;
+
+}
+
+int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
+{
+
 }
