@@ -31,4 +31,6 @@ rcode destroyNodeIndex(const Index_ptr);
 pBuffer return_buffer(const Index_ptr);
     //returns pointer to Buffer structure
 
+int get_index_size(const Index_ptr);
+    //returns index size
 #endif

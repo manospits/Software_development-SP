@@ -218,3 +218,12 @@ pBuffer return_buffer(const Index_ptr hindex){
     error_val=OK_SUCCESS;
     return hindex->buffer;
 }
+
+int get_index_size(const Index_ptr hindex){
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return INDEX_NULL_HEAD;
+    }
+    error_val=OK_SUCCESS;
+    return hindex->size;
+}
