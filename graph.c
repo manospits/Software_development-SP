@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
 #include "buffer.h"
@@ -54,7 +55,7 @@ rcode gDestroyGraph(pGraph *g)
 	return OK_SUCCESS;
 }
 
-rcode gAddNode(pGraph g, graphNode from, graphNode to)
+rcode gAddEdge(pGraph g, graphNode from, graphNode to)
 {
 	if (g == NULL)
 	{
@@ -169,7 +170,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			ds_hash(visited);
 			ds_list(open_list);
 			error_val = OK_SUCCESS;
-			return path_length;
+			return path_length-1;
 		}
 		// check if current node is already visited
 		return_value = in_hash(visited, temp_node);
@@ -454,4 +455,98 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 		return path_length[0] + path_length[1] - 1;
 	else
 		return GRAPH_SEARCH_PATH_NOT_FOUND;
+}
+
+void gPrintGraph(pGraph g)
+{
+	pBuffer temp_buffer;
+	ptr buffer_ptr_to_listnode;
+	plnode listnode;
+	int i, j, size = get_index_size(g->outIndex);
+	if (size < 0)
+	{
+		print_error();
+		return;
+	}
+	printf("Printing graph...\n");
+	for (i = 0 ; i < size ; ++i)
+	{
+		printf("Node %d\n\tOutcoming:", i);
+		if ((buffer_ptr_to_listnode = getListHead(g->outIndex, i)) < 0 && buffer_ptr_to_listnode != -1)
+		{
+			puts("\n");
+			print_error();
+			return;
+		}
+		if (buffer_ptr_to_listnode != -1)
+		{
+			if ((temp_buffer = return_buffer(g->outIndex)) == NULL)
+			{
+				puts("\n");
+				print_error();
+				return;
+			}
+			if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+			{
+				puts("\n");
+				print_error();
+				return;
+			}
+			j = 0;
+			while (listnode->neighbor[j] != -1)
+			{
+				printf(" %d", listnode->neighbor[j]);
+				j++;
+				if (j == N)
+				{
+					if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+					{
+						puts("\n");
+						print_error();
+						return;
+					}
+					j = 0;
+				}
+			}
+		}
+		printf("\n\tIncoming:");
+		if ((buffer_ptr_to_listnode = getListHead(g->inIndex, i)) < 0 && buffer_ptr_to_listnode != -1)
+		{
+			puts("\n");
+			print_error();
+			return;
+		}
+		if (buffer_ptr_to_listnode != -1)
+		{
+			if ((temp_buffer = return_buffer(g->inIndex)) == NULL)
+			{
+				puts("\n");
+				print_error();
+				return;
+			}
+			if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+			{
+				puts("\n");
+				print_error();
+				return;
+			}
+			j = 0;
+			while (listnode->neighbor[j] != -1)
+			{
+				printf(" %d", listnode->neighbor[j]);
+				j++;
+				if (j == N)
+				{
+					if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+					{
+						puts("\n");
+						print_error();
+						return;
+					}
+					j = 0;
+				}
+			}
+		}
+		puts("");
+	}
 }

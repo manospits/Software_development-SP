@@ -14,7 +14,10 @@ pGraph gCreateGraph();
 	// Creates a graph
 	// Returns a pointer to the created graph on success, or NULL and sets error_val to an appropriate error code if any error occurs
 
-rcode gAddNode(pGraph, graphNode from, graphNode to);
+rcode gDestroyGraph(pGraph *);
+	// Frees all structs created by the graph, and then deletes him
+
+rcode gAddEdge(pGraph, graphNode from, graphNode to);
 	// Adds the node 'from'--->'to' to the graph 'pGraph'
 
 int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
@@ -22,7 +25,10 @@ int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 	// 'type' is the type of search, defined above
 
-rcode gDestroyGraph(pGraph *);
-	// Frees all structs created by the graph, and then deletes him
+void gPrintGraph(pGraph);
+	/*	prints the graph in format:
+		Node <node number>
+			 Outcoming: <node1> <node2> ... <node N>
+			 Incoming: <node1> <node2> ... <node N>	*/
 
 #endif // _GRAPH_H_
