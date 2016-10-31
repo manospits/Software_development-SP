@@ -8,7 +8,7 @@ int main(void){
     phead list;
     while(choice!=0){
         printf("1 insert\n2 insert sorted\n3 insert back\n4 delete\n5 pop back\n");
-        printf("6 in\n7 ins\n8 size\n9 peek\n10 peek back\n11 create\n12 destroy\n13 print\n");
+        printf("6 in\n7 ins\n8 size\n9 peek\n10 peek back\n11 create\n12 destroy\n13 print\n14 pop front\n");
         scanf("%d",&choice);
         switch(choice){
             case 1:
@@ -29,6 +29,9 @@ int main(void){
                 break;
             case 5:
                 pop_back(list);
+                break;
+            case 14:
+                pop_front(list);
                 break;
             case 6:
                 scanf("%d",&num);

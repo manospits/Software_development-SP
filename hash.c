@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 typedef struct hash_info {
-    phead* bins;                //array of lists
+    stphead* bins;                //array of lists
     int size;                   //hash_table size
     int (*h)(void *);
     int type;
@@ -27,7 +27,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     }
     tmp->size=hash_table_size;
     tmp->h=h;
-    tmp->bins=malloc(sizeof(phead)*hash_table_size);
+    tmp->bins=malloc(sizeof(stphead)*hash_table_size);
     if(tmp->bins==NULL){
         error_val=HASH_BINS_CR_MALLOC;
         free (tmp);
@@ -35,7 +35,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
     }
     tmp->type=type;
     for(i=0;i<hash_table_size;i++){
-        tmp->bins[i]=cr_list();
+        tmp->bins[i]=st_cr_list();
     }
     error_val=OK_SUCCESS;
     return tmp;
@@ -45,9 +45,9 @@ rcode h_insert(phash a,uint32_t data,uint32_t tag){
     int pos=a->h((void*) &data);
     rcode stat;
     if(a->type==0)
-        stat=insert(a->bins[pos],data,tag);
+        stat=st_insert(a->bins[pos],data,tag);
     else if(a->type==1){
-        stat=insert_sorted(a->bins[pos],data,tag);
+        stat=st_insert_sorted(a->bins[pos],data,tag);
     }
     error_val=stat;
     return stat;
@@ -60,9 +60,9 @@ int in_hash(phash a,uint32_t data){
     }
     int pos=a->h((void*) &data),stat;
     if(a->type==0)
-        stat= in(a->bins[pos],data);
+        stat= st_in(a->bins[pos],data);
     else if(a->type==1)
-        stat= ins(a->bins[pos],data);
+        stat= st_ins(a->bins[pos],data);
     error_val=stat;
     return stat;
 }
@@ -73,7 +73,7 @@ int h_delete(phash a,uint32_t data){
         return -1;
     }
     int pos=a->h((void*)&data);
-    delete(a->bins[pos],data);
+    st_delete(a->bins[pos],data);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
@@ -85,7 +85,7 @@ rcode ds_hash(phash a){
     }
     int i;
     for(i=0;i<a->size;i++){
-        ds_list(a->bins[i]);
+        st_ds_list(a->bins[i]);
     }
     free(a->bins);
     free(a);
@@ -98,7 +98,7 @@ int ret_tag(phash a,uint32_t data){
         return -1;
     }
     int pos=a->h((void*) &data),stat;
-    stat=get_tag(a->bins[pos],data);
+    stat=st_get_tag(a->bins[pos],data);
     error_val=stat;
     return stat;
 }

@@ -3,33 +3,33 @@
 #include "error.h"
 #include <stdint.h>
 
-typedef struct node * pnode;
-typedef struct head * phead;
+typedef struct stnode * stpnode;
+typedef struct sthead * stphead;
 
 //CREATION
-phead cr_list();
+stphead st_cr_list();
 
 //DESTRUCTION
-rcode ds_list(phead list_to_destroy);
+rcode st_ds_list(stphead list_to_destroy);
 
 //MODIFY
-rcode insert(phead listh, uint32_t data,uint32_t tag);              //inserts node in front
-rcode insert_sorted(phead listh,uint32_t data,uint32_t tag);        //inserts node sorted
-rcode insert_back(phead listh,uint32_t data,uint32_t tag);          //inserts node in back
-rcode delete(phead listh,uint32_t data);                             //deletes node with data = data
-rcode pop_back(phead listh);                                         //deletes last node in list
+rcode st_insert(stphead listh, uint32_t data,uint32_t tag);              //inserts node in front
+rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag);        //inserts node sorted
+rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag);          //inserts node in back
+rcode st_delete(stphead listh,uint32_t data);                             //deletes node with data = data
+rcode st_pop_back(stphead listh);                                         //deletes last node in list
 
 //ACCESS
-int in(const phead listh,uint32_t data);          //checks if there is an element in the listh
-int ins(const phead listh,uint32_t data);         //checks if there is an element in the sorted listh
-int get_size(const phead listh);                  //get number of elements
-int get_data(const pnode nd);                     //returns data
-int get_tag(const phead listh,uint32_t data);    //returns tag value of node
-int peek(const phead listh);                 //returns list's first int
-int peekback(const phead listh);             //returns list's last int
+int st_in(const stphead listh,uint32_t data);          //checks if there is an element in the listh
+int st_ins(const stphead listh,uint32_t data);         //checks if there is an element in the sorted listh
+int st_get_size(const stphead listh);                  //get number of elements
+int st_get_data(const stpnode nd);                     //returns data
+int st_get_tag(const stphead listh,uint32_t data);    //returns tag value of node
+int st_peek(const stphead listh);                 //returns list's first int
+int st_peekback(const stphead listh);             //returns list's last int
 
 //SPECIFIC ACCESS
-pnode get_list(const phead listh);           //returns ptr to the first node in list
-pnode next_node(const pnode nd);             //retuns next node of pnode
+stpnode st_get_list(const stphead listh);           //returns ptr to the first node in list
+stpnode st_next_node(const stpnode nd);             //retuns next node of stpnode
 
 #endif

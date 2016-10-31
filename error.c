@@ -41,6 +41,9 @@ void print_error(){
             perror("Error: hash table called in function with NULL value\n");
             error_val=OK_SUCCESS;
             break;
+        case NODE_MISSING:
+            perror("Error: request of a tag belonging to a non existing node.\n");
+            break;
         case BUFFER_CR_MALLOC:
             perror("Error: allocating struct Buffer\n");
             error_val=OK_SUCCESS;

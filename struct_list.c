@@ -5,24 +5,24 @@
 #include <string.h>
 #include <stdint.h>
 
-typedef struct node {
+typedef struct stnode {
     uint32_t data;
     uint32_t tag;
-    struct node* next;
-} node;
+    struct stnode* next;
+} stnode;
 
-typedef struct head{
+typedef struct sthead{
     int size;
-    pnode front;
-    pnode end;
-}head;
+    stpnode front;
+    stpnode end;
+}sthead;
 
-pnode cr_node(uint32_t data,uint32_t tag);
-rcode ds_node(pnode node_to_destroy);
+stpnode st_cr_node(uint32_t data,uint32_t tag);
+rcode st_ds_node(stpnode node_to_destroy);
 
-phead cr_list(){
-    phead tmphead;
-    tmphead=malloc(sizeof(struct head));
+stphead st_cr_list(){
+    stphead tmphead;
+    tmphead=malloc(sizeof(struct sthead));
     if(tmphead==NULL){
         error_val=(LIST_CR_MALLOC);
         return NULL;
@@ -34,9 +34,9 @@ phead cr_list(){
     return tmphead;
 }
 
-pnode cr_node(uint32_t data,uint32_t tag){
-    node* tmpnode;
-    tmpnode=malloc(sizeof(struct node));
+stpnode st_cr_node(uint32_t data,uint32_t tag){
+    stnode* tmpnode;
+    tmpnode=malloc(sizeof(struct stnode));
     if(tmpnode==NULL){
         error_val=(LISTNODE_CR_MALLOC);
         return NULL;
@@ -48,7 +48,7 @@ pnode cr_node(uint32_t data,uint32_t tag){
     return tmpnode;
 }
 
-rcode ds_node(pnode node_to_destroy){
+rcode st_ds_node(stpnode node_to_destroy){
     if(node_to_destroy==NULL){
         error_val=NULL_NODE;
         return NULL_NODE;
@@ -58,29 +58,29 @@ rcode ds_node(pnode node_to_destroy){
     return OK_SUCCESS;
 }
 
-rcode ds_list(phead ltodestroy){
+rcode st_ds_list(stphead ltodestroy){
     if(ltodestroy==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode todel;
-    pnode next=ltodestroy->front;
+    stpnode todel;
+    stpnode next=ltodestroy->front;
     while(next!=NULL){
         todel=next;
         next=next->next;
-        ds_node(todel);
+        st_ds_node(todel);
     }
     free (ltodestroy);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
-rcode insert(phead listh,uint32_t data,uint32_t tag){
+rcode st_insert(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode nptr=cr_node(data,tag);
+    stpnode nptr=st_cr_node(data,tag);
     if(listh->size==0){
         listh->front=nptr;
         listh->end=nptr;
@@ -95,13 +95,13 @@ rcode insert(phead listh,uint32_t data,uint32_t tag){
     return OK_SUCCESS;
 }
 
-rcode insert_sorted(phead listh,uint32_t data,uint32_t tag){
+rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode nptr=cr_node(data,tag);
-    pnode pr_node,node,temp2;
+    stpnode nptr=st_cr_node(data,tag);
+    stpnode pr_node,node,temp2;
     node=pr_node=listh->front;
     int i=0;
     for(i=0;i<listh->size;i++){
@@ -137,12 +137,12 @@ rcode insert_sorted(phead listh,uint32_t data,uint32_t tag){
     return OK_SUCCESS;
 }
 
-rcode insert_back(phead listh,uint32_t data,uint32_t tag){
+rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode nptr=cr_node(data,tag);
+    stpnode nptr=st_cr_node(data,tag);
     if(listh->size==0){
         listh->front=nptr;
         listh->end=nptr;
@@ -157,22 +157,22 @@ rcode insert_back(phead listh,uint32_t data,uint32_t tag){
     return OK_SUCCESS;
 }
 
-rcode delete(phead listh,uint32_t data){
+rcode st_delete(stphead listh,uint32_t data){
     /*puts("delete call");*/
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
     if(listh->size==1 && data==listh->front->data){
-        ds_node(listh->front);
+        st_ds_node(listh->front);
         listh->front=NULL;
         listh->end=NULL;
         listh->size=0;
     }
     else if (listh->size > 1){
-        pnode pr_node=listh->front;
-        pnode todel=listh->front;
-        pnode next;
+        stpnode pr_node=listh->front;
+        stpnode todel=listh->front;
+        stpnode next;
         while(todel!=NULL){
             if(todel->data==data){
                 if(listh->size==1){
@@ -190,7 +190,7 @@ rcode delete(phead listh,uint32_t data){
                     pr_node->next=todel->next;
                 }
                 next=todel->next;
-                ds_node(todel);
+                st_ds_node(todel);
                 todel=next;
                 listh->size--;
             }
@@ -204,7 +204,7 @@ rcode delete(phead listh,uint32_t data){
     return OK_SUCCESS;
 }
 
-rcode pop_back(phead listh){
+rcode st_pop_back(stphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -214,14 +214,14 @@ rcode pop_back(phead listh){
         return EMPTY_LIST;
     }
     if(listh->size==1){
-        ds_node(listh->front);
+        st_ds_node(listh->front);
         listh->front=NULL;
         listh->end=NULL;
         listh->size=0;
     }
     else{
-        pnode todel=listh->front;
-        pnode pr_node=listh->front;
+        stpnode todel=listh->front;
+        stpnode pr_node=listh->front;
         while(todel!=listh->end){
             pr_node=todel;
             todel=todel->next;
@@ -229,19 +229,19 @@ rcode pop_back(phead listh){
         listh->end=pr_node;
         pr_node->next=NULL;
 
-        ds_node(todel);
+        st_ds_node(todel);
         listh->size--;
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
-int in(phead listh,uint32_t data){
+int st_in(stphead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode tmp=listh->front;
+    stpnode tmp=listh->front;
     while(tmp!=NULL){
         if(data==tmp->data){
             error_val=OK_SUCCESS;
@@ -253,12 +253,12 @@ int in(phead listh,uint32_t data){
     return 0;
 }
 
-int ins(phead listh,uint32_t data){
+int st_ins(stphead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode tmp=listh->front;
+    stpnode tmp=listh->front;
     while(tmp!=NULL && tmp->data<=data){
         if(data==tmp->data){
             error_val=OK_SUCCESS;
@@ -270,7 +270,7 @@ int ins(phead listh,uint32_t data){
     return 0;
 }
 
-int get_size(phead listh){
+int st_get_size(stphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -279,7 +279,7 @@ int get_size(phead listh){
     return listh->size;
 }
 
-int peek(const phead listh){
+int st_peek(const stphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -290,7 +290,7 @@ int peek(const phead listh){
     }
 }
 
-int peekback(const phead listh){
+int st_peekback(const stphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -301,7 +301,7 @@ int peekback(const phead listh){
     }
 }
 
-int get_data(pnode nd){
+int st_get_data(stpnode nd){
     if(nd==NULL){
         error_val=NULL_NODE;
         return NULL_LIST;
@@ -312,7 +312,7 @@ int get_data(pnode nd){
     }
 }
 
-pnode get_list(const phead listh){
+stpnode st_get_list(const stphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL;
@@ -323,7 +323,7 @@ pnode get_list(const phead listh){
     }
 }
 
-pnode next_node(const pnode nd){
+stpnode st_next_node(const stpnode nd){
     if(nd==NULL){
         return NULL;
     }
@@ -333,12 +333,12 @@ pnode next_node(const pnode nd){
     }
 }
 
-int get_tag(const phead listh,uint32_t data){
+int st_get_tag(const stphead listh,uint32_t data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode tmp=listh->front;
+    stpnode tmp=listh->front;
     while(tmp!=NULL){
         if(data==tmp->data){
             error_val=OK_SUCCESS;
