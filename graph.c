@@ -4,6 +4,7 @@
 #include "index.h"
 #include "hash.h"
 #include "intlist.h"
+#include <assert.h>
 
 #define HASHTABLE_SIZE 50
 #define STARTING_HASHTABLE_SIZE 20	//used by calculate_hashtable_size()
@@ -95,7 +96,7 @@ rcode gAddNode(pGraph g, graphNode from, graphNode to)
 int bfs(pGraph g, graphNode from, graphNode to);
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to);
 
-int gFindShortestPath(pGraph g, graphNode from, graphNode to)
+int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 {
 	if (g == NULL)
 	{
@@ -107,12 +108,12 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to)
 		error_val = OK_SUCCESS;
 		return OK_SUCCESS;
 	}
-	return bfs(g, from, to);
+	return (type == BFS ? bfs(g, from, to) : bidirectional_bfs(g, from, to));
 }
 
 int calculate_hashtable_size(pGraph g)
 {	// returns the maximum of {10, number_of_g's_nodes/2}
-
+	return 0;
 }
 
 int hash_function(void *data)
@@ -167,9 +168,19 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		{	// target node found
 			ds_hash(visited);
 			ds_list(open_list);
-			error_val = 0;
+			error_val = OK_SUCCESS;
 			return path_length;
 		}
+		// check if current node is already visited
+		return_value = in_hash(visited, temp_node);
+		if (return_value < 0)
+		{
+			ds_hash(visited);
+			ds_list(open_list);
+			return return_value;
+		}
+		if (return_value > 0)
+			continue;	// node already visited
 		if ((return_value = h_insert(visited, temp_node, 0)) < 0)
 		{
 			ds_hash(visited);
@@ -243,6 +254,204 @@ int bfs(pGraph g, graphNode from, graphNode to)
 }
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
-{
+{	// 0 is for out-Index, 1 is for in-Index
+	phash visited;
+	phead open_list[2];
+	int i, n, return_value, path_length[2], number_of_nodes, current;
+	char path_found = 0;
+	graphNode temp_node;
+	pBuffer temp_buffer;
+	ptr buffer_ptr_to_listnode;
+	plnode listnode;
+	if ((visited = create_hashtable(HASHTABLE_SIZE, &hash_function, 1)) == NULL)
+	{
+		// error_val not set here, so print_error() will print the error from create_hashtable()
+		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+	}
+	if ((open_list[0] = cr_list()) == NULL)
+	{
+		ds_hash(visited);
+		// error_val not set here, so print_error() will print the error from create_hashtable()
+		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+	}
+	if ((open_list[1] = cr_list()) == NULL)
+	{
+		ds_list(open_list[0]);
+		ds_hash(visited);
+		// error_val not set here, so print_error() will print the error from create_hashtable()
+		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+	}
+	if ((return_value = insert_back(open_list[0], from)) != OK_SUCCESS)
+	{
+		ds_hash(visited);
+		ds_list(open_list[0]);
+		ds_list(open_list[1]);
+		return return_value;
+	}
+	if ((return_value = insert_back(open_list[1], to)) != OK_SUCCESS)
+	{
+		ds_hash(visited);
+		ds_list(open_list[0]);
+		ds_list(open_list[1]);
+		return return_value;
+	}
+	path_length[0] = 0;
+	path_length[1] = 0;
+	current = 1;
+	while(get_size(open_list[0]) > 0 && get_size(open_list[1]) > 0)
+	{
+		current = 1-current;
+		path_length[current]++;
+		if ((number_of_nodes = get_size(open_list[current])) < 0)
+		{
+			ds_hash(visited);
+			ds_list(open_list[0]);
+			ds_list(open_list[1]);
+			return number_of_nodes;
+		}
+		for (n = 0 ; n < number_of_nodes ; ++n)
+		{
+			if ((temp_node = peek(open_list[current])) < 0)
+			{
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return temp_node;
+			}
+			if ((return_value = pop_front(open_list[current])) < 0)
+			{
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return return_value;
+			}
+			return_value = in_hash(visited, temp_node);
+			if (return_value < 0)
+			{
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return return_value;
+			}
+			if (return_value > 0)
+			{
+				if ((return_value = ret_tag(visited, temp_node)) < 0)
+				{
 
+				}
+				assert(return_value == current-1);
+				// return value (=tag) == current - the node has been visited before by this bfs
+				continue;
+			}
+			// if return_value == 0 then the node hasn't been visited yet, so proceed as normal
+			/*if (temp_node == to)
+			{	// target node found
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				error_val = OK_SUCCESS;
+				return path_length;
+			}*/
+			if ((return_value = h_insert(visited, temp_node, current)) < 0)
+			{
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return return_value;
+			}
+			if ((buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node)) < 0)
+			{
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return buffer_ptr_to_listnode;
+			}
+			if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
+			{
+				return_value = error_val;
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return return_value;
+			}
+			if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+			{
+				return_value = error_val;
+				ds_hash(visited);
+				ds_list(open_list[0]);
+				ds_list(open_list[1]);
+				return return_value;
+			}
+			i = 0;
+			while (listnode->neighbor[i] != -1)
+			{
+				// check if the two nodes (from-to) are directly connected
+				if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
+				{	// the two nodes are direct neighbors, so the path is 1
+					ds_hash(visited);
+					ds_list(open_list[0]);
+					ds_list(open_list[1]);
+					return 1;
+				}
+				return_value = in_hash(visited, listnode->neighbor[i]);
+				if (return_value < 0)
+				{
+					ds_hash(visited);
+					ds_list(open_list[0]);
+					ds_list(open_list[1]);
+					return return_value;
+				}
+				else if (!return_value)
+				{	// if this node hasn't been visited yet, insert it to the list
+					if ((return_value = insert_back(open_list[current], listnode->neighbor[i])) != OK_SUCCESS)
+					{
+						ds_hash(visited);
+						ds_list(open_list[0]);
+						ds_list(open_list[1]);
+						return return_value;
+					}
+				}
+				else if (return_value > 0)
+				{
+					return_value = ret_tag(visited, listnode->neighbor[i]);
+					if (return_value < 0)
+					{
+						ds_hash(visited);
+						ds_list(open_list[0]);
+						ds_list(open_list[1]);
+						return return_value;
+					}
+					if (return_value == current-1)
+					{	// if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
+						// then the two bfss have just met so a path has been found
+						path_found = 1;
+						break;
+					}
+					// if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
+				}
+				i++;
+				if (i == N)
+				{
+					if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+					{
+						return_value = error_val;
+						ds_hash(visited);
+						ds_list(open_list[0]);
+						ds_list(open_list[1]);
+						return return_value;
+					}
+					i = 0;
+				}
+			}
+			if (path_found)
+				break;
+		}
+	}
+	ds_hash(visited);
+	ds_list(open_list[0]);
+	ds_list(open_list[1]);
+	if (path_found)
+		return path_length[0] + path_length[1] - 1;
+	else
+		return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
