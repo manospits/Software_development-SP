@@ -18,6 +18,7 @@ rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag);        //inser
 rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag);          //inserts node in back
 rcode st_delete(stphead listh,uint32_t data);                             //deletes node with data = data
 rcode st_pop_back(stphead listh);                                         //deletes last node in list
+rcode st_pop_front(stphead listh);                         //deletes first node in list
 
 //ACCESS
 int st_in(const stphead listh,uint32_t data);          //checks if there is an element in the listh
