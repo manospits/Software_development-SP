@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     // read initial graph
+    puts("Reading initial graph...");
     for (i = 1 ;; ++i)
     {
         command = fgetc(initial_graph);
@@ -76,18 +77,22 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
+    puts("Reading complete.");
+    puts("Processing workload...");
     // process workload
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
-        printf("check: '%c'\n", command); // DEBUG
-        if (/*(command = fgetc(workload))*/command == 'S')
+        //printf("check: '%c'\n", command); // DEBUG
+        if (command == EOF)
             break;
-        if (/*(command = fgetc(workload))*/command == 'F')
+        if (command == 'F')
         {
             //take the '\n' and continue
-            fgetc(workload);
-            continue;
+            if (fgetc(workload) == EOF)
+                break;
+            else
+                continue;
         }
         ungetc(command, workload);
         if (fscanf(workload, "%c %d %d\n", &command, &node1, &node2) != 3)
@@ -99,7 +104,7 @@ int main(int argc, char *argv[])
             gDestroyGraph(&graph);
             return -1;
         }
-        printf("%c %d %d\n", command, node1, node2);
+        //printf("%c %d %d\n", command, node1, node2); // DEBUG
         if (command == 'A')
         {
             ret_val = gAddEdge(graph, node1, node2);
@@ -119,11 +124,11 @@ int main(int argc, char *argv[])
             ret_val = gFindShortestPath(graph, node1, node2, BFS);
             if (ret_val >= 0)
             {
-                printf("%d\n", ret_val);
+                fprintf(results, "%d\n", ret_val);
             }
             else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
             {
-                puts("-1");
+                fputs("-1", results);
             }
             else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
             {
@@ -146,6 +151,8 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
+    puts("Processing complete.");
+    printf("Results can be found in file '%s'.", OUTPUT_FILE_NAME);
 
     gDestroyGraph(&graph);
     fclose(initial_graph);

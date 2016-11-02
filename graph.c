@@ -252,6 +252,8 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			i++;
 			if (i == N)
 			{
+			    if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                    break;
 				if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
 				{
 					return_value = error_val;
