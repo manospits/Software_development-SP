@@ -9,7 +9,7 @@
 #include <assert.h>
 
 #define HASHTABLE_SIZE 1000
-#define STARTING_HASHTABLE_SIZE 50	//used by calculate_hashtable_size()
+#define HASHTABLE_INITIAL_SIZE 50	//used by calculate_hashtable_size()
 
 typedef struct graph
 {
@@ -114,8 +114,8 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 }
 
 int calculate_hashtable_size(pGraph g)
-{	// returns the maximum of {10, number_of_g's_nodes/2}
-	return 0;
+{	// returns the maximum of {HASHTABLE_INITIAL_SIZE, number_of_g's_nodes/3}
+   return (HASHTABLE_INITIAL_SIZE > (get_index_size(g->outIndex)/3) ? HASHTABLE_INITIAL_SIZE : (get_index_size(g->outIndex)/3));
 }
 
 int hash_function(void *data)

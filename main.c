@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
             }
             else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
             {
-                fputs("-1\n", results);
+                fprintf(results, "-1\n");
             }
             else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
             {
