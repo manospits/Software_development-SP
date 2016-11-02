@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "index.h"
 #include "hash.h"
+#include "struct_list.h"
 #include "intlist.h"
 #include <assert.h>
 
@@ -125,8 +126,8 @@ int hash_function(void *data)
 int bfs(pGraph g, graphNode from, graphNode to)
 {
 	phash visited;
-	phead open_list;
-	int i, return_value, path_length;
+	stphead open_list;
+	int i, return_value;
 	graphNode temp_node;
 	pBuffer temp_buffer;
 	ptr buffer_ptr_to_listnode;
@@ -137,47 +138,45 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
-	if ((open_list = cr_list()) == NULL)
+	if ((open_list = st_cr_list()) == NULL)
 	{
 		ds_hash(visited);
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
-	if ((return_value = insert_back(open_list, from)) != OK_SUCCESS)
+	if ((return_value = st_insert_back(open_list, from, 0)) != OK_SUCCESS)
 	{
 		ds_hash(visited);
-		ds_list(open_list);
+		st_ds_list(open_list);
 		return return_value;
 	}
-	path_length = 0;
-	while(get_size(open_list) > 0)
+	while(st_get_size(open_list) > 0)
 	{
-		path_length++;
-		if ((temp_node = peek(open_list)) < 0)
+		if ((temp_node = st_peek(open_list)) < 0)
 		{
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return temp_node;
-		}
-		if ((return_value = pop_front(open_list)) < 0)
-		{
-			ds_hash(visited);
-			ds_list(open_list);
-			return return_value;
 		}
 		if (temp_node == to)
 		{	// target node found
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			error_val = OK_SUCCESS;
-			return path_length-1;
+			return st_get_tag(open_list, temp_node);
+		}
+		if ((return_value = st_pop_front(open_list)) < 0)
+		{
+			ds_hash(visited);
+			st_ds_list(open_list);
+			return return_value;
 		}
 		// check if current node is already visited
 		return_value = in_hash(visited, temp_node);
 		if (return_value < 0)
 		{
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return return_value;
 		}
 		if (return_value > 0)
@@ -185,27 +184,27 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		if ((return_value = h_insert(visited, temp_node, 0)) < 0)
 		{
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return return_value;
 		}
 		if ((buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node)) < 0)
 		{
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return buffer_ptr_to_listnode;
 		}
 		if ((temp_buffer = return_buffer(g->outIndex)) == NULL)
 		{
 			return_value = error_val;
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return return_value;
 		}
 		if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
 		{
 			return_value = error_val;
 			ds_hash(visited);
-			ds_list(open_list);
+			st_ds_list(open_list);
 			return return_value;
 		}
 		i = 0;
@@ -215,15 +214,15 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			if (return_value < 0)
 			{
 				ds_hash(visited);
-				ds_list(open_list);
+				st_ds_list(open_list);
 				return return_value;
 			}
 			if (!return_value)
 			{	// if this node hasn't been visited yet
-				if ((return_value = insert_back(open_list, listnode->neighbor[i])) != OK_SUCCESS)
+				if ((return_value = st_insert_back(open_list, listnode->neighbor[i], st_get_tag(open_list, temp_node)+1)) != OK_SUCCESS)
 				{
 					ds_hash(visited);
-					ds_list(open_list);
+					st_ds_list(open_list);
 					return return_value;
 				}
 			}
@@ -234,7 +233,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 				{
 					return_value = error_val;
 					ds_hash(visited);
-					ds_list(open_list);
+					st_ds_list(open_list);
 					return return_value;
 				}
 				i = 0;
@@ -242,14 +241,14 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		}
 	}
 	// check if control exited the loop because of an error instead of just empty list
-	if ((return_value = get_size(open_list)) < 0)
+	if ((return_value = st_get_size(open_list)) < 0)
 	{
 		ds_hash(visited);
-		ds_list(open_list);
+		st_ds_list(open_list);
 		return return_value;
 	}
 	ds_hash(visited);
-	ds_list(open_list);
+	st_ds_list(open_list);
 	error_val = OK_SUCCESS;
 	return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
@@ -349,14 +348,6 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				continue;
 			}
 			// if return_value == 0 then the node hasn't been visited yet, so proceed as normal
-			/*if (temp_node == to)
-			{	// target node found
-				ds_hash(visited);
-				ds_list(open_list[0]);
-				ds_list(open_list[1]);
-				error_val = OK_SUCCESS;
-				return path_length;
-			}*/
 			if ((return_value = h_insert(visited, temp_node, current)) < 0)
 			{
 				ds_hash(visited);

@@ -1,5 +1,5 @@
-#ifndef _INTLIST_
-#define _INTLIST_
+#ifndef _STRUCT_LIST_
+#define _STRUCT_LIST_
 #include "error.h"
 #include <stdint.h>
 
