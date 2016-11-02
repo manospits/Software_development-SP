@@ -127,7 +127,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 {
 	phash visited;
 	stphead open_list;
-	int i, return_value;
+	int i, return_value, temp_node_tag;
 	graphNode temp_node;
 	pBuffer temp_buffer;
 	ptr buffer_ptr_to_listnode;
@@ -158,12 +158,18 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			st_ds_list(open_list);
 			return temp_node;
 		}
+		if ((temp_node_tag = st_get_tag(open_list, temp_node)) < 0)
+        {
+            ds_hash(visited);
+			st_ds_list(open_list);
+			return temp_node_tag;
+        }
 		if (temp_node == to)
 		{	// target node found
 			ds_hash(visited);
 			st_ds_list(open_list);
 			error_val = OK_SUCCESS;
-			return st_get_tag(open_list, temp_node);
+			return temp_node_tag;
 		}
 		if ((return_value = st_pop_front(open_list)) < 0)
 		{
@@ -181,6 +187,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		}
 		if (return_value > 0)
 			continue;	// node already visited
+        // if return_value == 0, then the node hasn't been visited yet, so we visit & expand him
 		if ((return_value = h_insert(visited, temp_node, 0)) < 0)
 		{
 			ds_hash(visited);
@@ -219,7 +226,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			}
 			if (!return_value)
 			{	// if this node hasn't been visited yet
-				if ((return_value = st_insert_back(open_list, listnode->neighbor[i], st_get_tag(open_list, temp_node)+1)) != OK_SUCCESS)
+				if ((return_value = st_insert_back(open_list, listnode->neighbor[i], temp_node_tag+1)) != OK_SUCCESS)
 				{
 					ds_hash(visited);
 					st_ds_list(open_list);
@@ -417,7 +424,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 						ds_list(open_list[1]);
 						return return_value;
 					}
-					if (return_value == current-1)
+					if (return_value == 1-current)
 					{	// if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
 						// then the two bfss have just met so a path has been found
 						path_found = 1;
