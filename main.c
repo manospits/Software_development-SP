@@ -88,10 +88,10 @@ int main(int argc, char *argv[])
             break;
         if (command == 'F')
         {
-            //take the '\n' and continue
+            // if it's the last F, exit
             if (fgetc(workload) == EOF)
                 break;
-            else
+            else    // take the '\n' and continue
                 continue;
         }
         ungetc(command, workload);
@@ -122,6 +122,8 @@ int main(int argc, char *argv[])
         else if (command == 'Q')
         {
             printf("i = %lu\n", i);
+            if(i == 1008)
+                getchar();
             ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
             if (ret_val >= 0)
             {
