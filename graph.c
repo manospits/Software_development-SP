@@ -120,7 +120,7 @@ int calculate_hashtable_size(pGraph g)
 
 int hash_function(void *data,void *size)
 {	// TODO change HASHTABLE_SIZE with calculate_hashtable_size() to better adjust to greater amount of data
-	return (*(uint32_t *)data) % *(int*)size;
+	return (*(uint32_t *)data) % (*(int*)size);
 }
 
 int bfs(pGraph g, graphNode from, graphNode to)
