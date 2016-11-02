@@ -502,6 +502,8 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 			if (path_found)
 				break;
 		}
+		if (path_found)
+            break;
 	}
 	ds_hash(visited);
 	ds_list(open_list[0]);

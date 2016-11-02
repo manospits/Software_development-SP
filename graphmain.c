@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     int node1, node2, ret_val;
     pGraph testgraph = gCreateGraph();
     while(choice!=0){
-        printf("1 add node\n2 query\n3 print\n");
+        printf("1 add node\n2 query\n3 print\n0 exit\n");
         scanf("%d",&choice);
         switch(choice){
             case 1:
