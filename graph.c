@@ -118,9 +118,9 @@ int calculate_hashtable_size(pGraph g)
    return (HASHTABLE_INITIAL_SIZE > (get_index_size(g->outIndex)/3) ? HASHTABLE_INITIAL_SIZE : (get_index_size(g->outIndex)/3));
 }
 
-int hash_function(void *data)
+int hash_function(void *data,void *size)
 {	// TODO change HASHTABLE_SIZE with calculate_hashtable_size() to better adjust to greater amount of data
-	return (*(uint32_t *)data) % HASHTABLE_SIZE;
+	return (*(uint32_t *)data) % *(int*)size;
 }
 
 int bfs(pGraph g, graphNode from, graphNode to)
@@ -133,7 +133,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 	ptr buffer_ptr_to_listnode;
 	plnode listnode;
 	// TODO change 1 to 0 with greater hash size to see if it adjust better in greater amount of data
-	if ((visited = create_hashtable(HASHTABLE_SIZE, &hash_function, 1)) == NULL)
+	if ((visited = create_hashtable(calculate_hashtable_size(g), &hash_function, 1)) == NULL)
 	{
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
@@ -295,7 +295,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 	pBuffer temp_buffer;
 	ptr buffer_ptr_to_listnode;
 	plnode listnode;
-	if ((visited = create_hashtable(HASHTABLE_SIZE, &hash_function, 1)) == NULL)
+	if ((visited = create_hashtable(calculate_hashtable_size(g), &hash_function, 1)) == NULL)
 	{
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;

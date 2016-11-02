@@ -7,13 +7,13 @@
 typedef struct hash_info {
     stphead* bins;                //array of lists
     int size;                   //hash_table size
-    int (*h)(void *);
+    int (*h)(void *,void*);
     int type;
 }hash_info;
 
 phnode create_phnode(void* el);   //creates a hash_node
 
-phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
+phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
     if((type != 1 && type!=0)||hash_table_size<=0){
         error_val=HASH_WRONG_PARMS;
         return NULL;
@@ -42,7 +42,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *),int type){
 }
 
 rcode h_insert(phash a,uint32_t data,uint32_t tag){
-    int pos=a->h((void*) &data);
+    int pos=a->h((void*) &data,(void *)&(a->size));
     rcode stat;
     if(a->type==0)
         stat=st_insert(a->bins[pos],data,tag);
@@ -58,7 +58,7 @@ int in_hash(phash a,uint32_t data){
         error_val=NULL_HASH;
         return -1;
     }
-    int pos=a->h((void*) &data),stat;
+    int pos=a->h((void*) &data,(void *)&(a->size)),stat;
     if(a->type==0)
         stat= st_in(a->bins[pos],data);
     else if(a->type==1)
@@ -72,7 +72,7 @@ int h_delete(phash a,uint32_t data){
         error_val=NULL_HASH;
         return -1;
     }
-    int pos=a->h((void*)&data);
+    int pos=a->h((void*)&data,(void *)&(a->size));
     st_delete(a->bins[pos],data);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
@@ -97,7 +97,7 @@ int ret_tag(phash a,uint32_t data){
         error_val=NULL_HASH;
         return -1;
     }
-    int pos=a->h((void*) &data),stat;
+    int pos=a->h((void*) &data,(void *)&(a->size)),stat;
     stat=st_get_tag(a->bins[pos],data);
     error_val=stat;
     return stat;
