@@ -140,7 +140,11 @@ int bfs(pGraph g, graphNode from, graphNode to)
 	}
 	if ((open_list = st_cr_list()) == NULL)
 	{
+	    // save error_value
+	    return_value = error_val;
 		ds_hash(visited);
+		// and restore it
+		error_val = return_value;
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
@@ -148,6 +152,8 @@ int bfs(pGraph g, graphNode from, graphNode to)
 	{
 		ds_hash(visited);
 		st_ds_list(open_list);
+        // update error_value changed by destroy_<>() functions
+		error_val = return_value;
 		return return_value;
 	}
 	while(st_get_size(open_list) > 0)
@@ -156,12 +162,14 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		{
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = temp_node;
 			return temp_node;
 		}
 		if ((temp_node_tag = st_get_tag(open_list, temp_node)) < 0)
         {
             ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = temp_node_tag;
 			return temp_node_tag;
         }
 		if (temp_node == to)
@@ -175,6 +183,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		{
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return return_value;
 		}
 		// check if current node is already visited
@@ -183,6 +192,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		{
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return return_value;
 		}
 		if (return_value > 0)
@@ -192,12 +202,14 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		{
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return return_value;
 		}
 		if ((buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node)) < 0)
 		{
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return buffer_ptr_to_listnode;
 		}
 		if ((temp_buffer = return_buffer(g->outIndex)) == NULL)
@@ -205,6 +217,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			return_value = error_val;
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return return_value;
 		}
 		if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
@@ -212,6 +225,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			return_value = error_val;
 			ds_hash(visited);
 			st_ds_list(open_list);
+			error_val = return_value;
 			return return_value;
 		}
 		i = 0;
@@ -222,6 +236,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			{
 				ds_hash(visited);
 				st_ds_list(open_list);
+				error_val = return_value;
 				return return_value;
 			}
 			if (!return_value)
@@ -230,6 +245,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 				{
 					ds_hash(visited);
 					st_ds_list(open_list);
+					error_val = return_value;
 					return return_value;
 				}
 			}
@@ -241,7 +257,6 @@ int bfs(pGraph g, graphNode from, graphNode to)
 					return_value = error_val;
 					ds_hash(visited);
 					st_ds_list(open_list);
-					// update error_value changed by destroy_<>() functions
 					error_val = return_value;
 					return return_value;
 				}
@@ -254,6 +269,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 	{
 		ds_hash(visited);
 		st_ds_list(open_list);
+		error_val = return_value;
 		return return_value;
 	}
 	ds_hash(visited);
@@ -279,14 +295,20 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 	}
 	if ((open_list[0] = cr_list()) == NULL)
 	{
+	    // save error_val
+	    return_value = error_val;
 		ds_hash(visited);
+		// and restore it
+		error_val = return_value;
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
 	if ((open_list[1] = cr_list()) == NULL)
 	{
+	    return_value = error_val;
 		ds_list(open_list[0]);
 		ds_hash(visited);
+		error_val = return_value;
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
@@ -295,6 +317,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 		ds_hash(visited);
 		ds_list(open_list[0]);
 		ds_list(open_list[1]);
+		error_val = return_value;
 		return return_value;
 	}
 	if ((return_value = insert_back(open_list[1], to)) != OK_SUCCESS)
@@ -302,6 +325,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 		ds_hash(visited);
 		ds_list(open_list[0]);
 		ds_list(open_list[1]);
+		error_val = return_value;
 		return return_value;
 	}
 	path_length[0] = 0;
@@ -316,6 +340,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 			ds_hash(visited);
 			ds_list(open_list[0]);
 			ds_list(open_list[1]);
+			error_val = number_of_nodes;
 			return number_of_nodes;
 		}
 		for (n = 0 ; n < number_of_nodes ; ++n)
@@ -325,6 +350,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = temp_node;
 				return temp_node;
 			}
 			if ((return_value = pop_front(open_list[current])) < 0)
@@ -332,6 +358,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = return_value;
 				return return_value;
 			}
 			return_value = in_hash(visited, temp_node);
@@ -340,6 +367,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = return_value;
 				return return_value;
 			}
 			if (return_value > 0)
@@ -349,6 +377,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     ds_hash(visited);
                     ds_list(open_list[0]);
                     ds_list(open_list[1]);
+                    error_val = return_value;
                     return return_value;
 				}
 				// if the node was visited by the other bfs, then there is an error because the search should have stopped earlier
@@ -362,6 +391,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = return_value;
 				return return_value;
 			}
 			if ((buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node)) < 0)
@@ -369,6 +399,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = buffer_ptr_to_listnode;
 				return buffer_ptr_to_listnode;
 			}
 			if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
@@ -377,6 +408,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = return_value;
 				return return_value;
 			}
 			if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
@@ -385,6 +417,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
+				error_val = return_value;
 				return return_value;
 			}
 			i = 0;
@@ -404,6 +437,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 					ds_hash(visited);
 					ds_list(open_list[0]);
 					ds_list(open_list[1]);
+					error_val = return_value;
 					return return_value;
 				}
 				else if (!return_value)
@@ -413,6 +447,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 						ds_hash(visited);
 						ds_list(open_list[0]);
 						ds_list(open_list[1]);
+						error_val = return_value;
 						return return_value;
 					}
 				}
@@ -424,6 +459,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 						ds_hash(visited);
 						ds_list(open_list[0]);
 						ds_list(open_list[1]);
+						error_val = return_value;
 						return return_value;
 					}
 					if (return_value == 1-current)
@@ -443,6 +479,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 						ds_hash(visited);
 						ds_list(open_list[0]);
 						ds_list(open_list[1]);
+						error_val = return_value;
 						return return_value;
 					}
 					i = 0;
