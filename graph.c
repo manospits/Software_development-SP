@@ -205,8 +205,13 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			error_val = return_value;
 			return return_value;
 		}
-		if ((buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node)) < 0)
-		{
+		buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node);
+		if (buffer_ptr_to_listnode == -1)
+        {   // node has no neighbors
+            continue;
+        }
+		else if (buffer_ptr_to_listnode < 0)
+		{   // an error occurred
 			ds_hash(visited);
 			st_ds_list(open_list);
 			error_val = return_value;
@@ -396,8 +401,13 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				error_val = return_value;
 				return return_value;
 			}
-			if ((buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node)) < 0)
-			{
+			buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
+            if (buffer_ptr_to_listnode == -1)
+            {   // node has no neighbors
+                continue;
+            }
+            else if (buffer_ptr_to_listnode < 0)
+            {   // an error occurred
 				ds_hash(visited);
 				ds_list(open_list[0]);
 				ds_list(open_list[1]);
@@ -475,7 +485,9 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				i++;
 				if (i == N)
 				{
-					if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+					if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                        break;
+                    if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
 					{
 						return_value = error_val;
 						ds_hash(visited);
