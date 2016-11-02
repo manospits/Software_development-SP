@@ -15,12 +15,12 @@ typedef struct graph
 {
 	Index_ptr inIndex;
 	Index_ptr outIndex;
-}graph;
+}_graph;
 
 pGraph gCreateGraph()
 {
 	pGraph g;
-	if ((g = malloc(sizeof(graph))) == NULL)
+	if ((g = malloc(sizeof(_graph))) == NULL)
 	{
 		error_val = GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
 		return NULL;
@@ -241,6 +241,8 @@ int bfs(pGraph g, graphNode from, graphNode to)
 					return_value = error_val;
 					ds_hash(visited);
 					st_ds_list(open_list);
+					// update error_value changed by destroy_<>() functions
+					error_val = return_value;
 					return return_value;
 				}
 				i = 0;
