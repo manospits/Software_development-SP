@@ -338,8 +338,12 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 			{
 				if ((return_value = ret_tag(visited, temp_node)) < 0)
 				{
-
+                    ds_hash(visited);
+                    ds_list(open_list[0]);
+                    ds_list(open_list[1]);
+                    return return_value;
 				}
+				// if the node was visited by the other bfs, then there is an error because the search should have stopped earlier
 				assert(return_value == current-1);
 				// return value (=tag) == current - the node has been visited before by this bfs
 				continue;

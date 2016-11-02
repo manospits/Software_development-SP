@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
                 break;
             case 2:
                 scanf("%d %d",&node1, &node2);
-                ret_val = gFindShortestPath(testgraph, node1, node2, BFS);
+                ret_val = gFindShortestPath(testgraph, node1, node2, BIDIRECTIONAL_BFS);
                 if (ret_val < 0) print_error();
                 else printf("Shortest path length: %d\n", ret_val);
                 break;
