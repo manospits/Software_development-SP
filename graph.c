@@ -388,7 +388,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     return return_value;
 				}
 				// if the node was visited by the other bfs, then there is an error because the search should have stopped earlier
-				assert(return_value == current-1);
+				assert(return_value == 1-current);
 				// return value (=tag) == current - the node has been visited before by this bfs
 				continue;
 			}

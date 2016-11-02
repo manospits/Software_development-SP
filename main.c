@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         }
         else if (command == 'Q')
         {
-            ret_val = gFindShortestPath(graph, node1, node2, BFS);
+            ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
             if (ret_val >= 0)
             {
                 fprintf(results, "%d\n", ret_val);
