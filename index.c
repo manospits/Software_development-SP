@@ -17,6 +17,7 @@ typedef struct NodeIndex{
     Inode *index;
     pBuffer buffer;
     int size;
+    int edges;
 }NodeIndex;
 
 
@@ -43,6 +44,7 @@ Index_ptr createNodeIndex(){
         tmp->index[i].list_node_for_next_neigbor=-1;
         tmp->index[i].node_index_for_next_neighbor=-1;
     }
+    tmp->edges=0;
     tmp->size=INDEX_INIT_SIZE;
     error_val=OK_SUCCESS;
     return tmp;
@@ -166,6 +168,14 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
         hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
+    tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
+    if(tmplnode==NULL){
+        print_error();
+        error_val=INDEX_GET_LIST_NODE_FAIL;
+        return INDEX_GET_LIST_NODE_FAIL;
+    }
+    tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
+    hindex->index[nodeId].node_index_for_next_neighbor++;
     if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
@@ -186,15 +196,8 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         //changing position in inner array in list node to 0
         hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
-    tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
-    if(tmplnode==NULL){
-        print_error();
-        error_val=INDEX_GET_LIST_NODE_FAIL;
-        return INDEX_GET_LIST_NODE_FAIL;
-    }
-    tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
-    hindex->index[nodeId].node_index_for_next_neighbor++;
     error_val=OK_SUCCESS;
+    hindex->edges++;
     return OK_SUCCESS;
 }
 
@@ -226,4 +229,13 @@ int get_index_size(const Index_ptr hindex){
     }
     error_val=OK_SUCCESS;
     return hindex->size;
+}
+
+int get_number_of_edges(const Index_ptr hindex){
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return INDEX_NULL_HEAD;
+    }
+    error_val=OK_SUCCESS;
+    return hindex->edges;
 }

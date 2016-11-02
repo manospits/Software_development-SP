@@ -115,7 +115,8 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 
 int calculate_hashtable_size(pGraph g)
 {	// returns the maximum of {HASHTABLE_INITIAL_SIZE, number_of_g's_nodes/3}
-   return (HASHTABLE_INITIAL_SIZE > (get_index_size(g->outIndex)/3) ? HASHTABLE_INITIAL_SIZE : (get_index_size(g->outIndex)/3));
+    return 1000;
+   /*return (HASHTABLE_INITIAL_SIZE > (get_number_of_edges(g->outIndex)/get_index_size(g->outIndex)) ? HASHTABLE_INITIAL_SIZE : (get_number_of_edges(g->outIndex)/get_index_size(g->outIndex)));*/
 }
 
 int hash_function(void *data,void *size)

@@ -25,6 +25,8 @@ int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 	// 'type' is the type of search, defined above
 
+int calculate_hashtable_size(pGraph g);
+
 void gPrintGraph(pGraph);
 	/*	prints the graph in format:
 		Node <node number>
