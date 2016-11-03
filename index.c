@@ -11,6 +11,7 @@ typedef struct Inode{
     ptr List_start;
     ptr list_node_for_next_neigbor;
     int node_index_for_next_neighbor;
+    int edges;
 }Inode;
 
 typedef struct NodeIndex{
@@ -43,6 +44,7 @@ Index_ptr createNodeIndex(){
         tmp->index[i].List_start=-1;
         tmp->index[i].list_node_for_next_neigbor=-1;
         tmp->index[i].node_index_for_next_neighbor=-1;
+        tmp->edges=0;
     }
     tmp->edges=0;
     tmp->size=INDEX_INIT_SIZE;
@@ -99,6 +101,24 @@ ptr getListHead(const Index_ptr hindex,uint32_t nodeId){
     }
     error_val=OK_SUCCESS;
     return hindex->index[nodeId].List_start;
+}
+
+int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId){
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return INDEX_NULL_HEAD;
+    }
+    if(nodeId<0){
+        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        return INDEX_INSERT_NEGATIVE_NODEID;
+    }
+    if(nodeId>hindex->size){
+        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        return INDEX_NODE_ID_OUT_BOUNDS;
+    }
+    error_val=OK_SUCCESS;
+    return hindex->index[nodeId].edges;
+
 }
 
 int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
@@ -198,6 +218,7 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     }
     error_val=OK_SUCCESS;
     hindex->edges++;
+    hindex->index[nodeId].edges++;
     return OK_SUCCESS;
 }
 

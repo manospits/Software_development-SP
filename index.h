@@ -34,6 +34,10 @@ pBuffer return_buffer(const Index_ptr);
 int get_index_size(const Index_ptr);
     //returns index size
 
+int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId);
+    //returns number of edges a node has
+
+
 int get_number_of_edges(const Index_ptr hindex);
     //returns total number of edges
 #endif
