@@ -81,7 +81,9 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
 	if (return_value) return return_value;
 	return_value = insertNode(g->inIndex, max);
 	if (return_value) return return_value;
-	// check if edge exists (no need to check both indexes; if it exists in one, it exists in the other one as well)
+	// check if edge exists
+	// we check in the index that has the fewer neighbors, so that extreme cases that slow the process are avoided
+	// (no need to check both indexes; if it exists in one, it exists in the other one as well)
 	if(get_node_number_of_edges(g->outIndex,from)<= get_node_number_of_edges(g->inIndex,to))
         return_value = edge_exists(g->outIndex, from, to);
     else
