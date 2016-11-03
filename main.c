@@ -6,7 +6,6 @@
 #include "error.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define BUFFER_SIZE 50
 
 int main(int argc, char *argv[])
 {
