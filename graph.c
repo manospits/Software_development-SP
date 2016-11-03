@@ -15,8 +15,8 @@ typedef struct graph
 {
 	Index_ptr inIndex;
 	Index_ptr outIndex;
-    int hash_additions;
-    int queries;
+    int hash_additions;     //total hash_additions
+    int queries;            //total queries
 }_graph;
 
 pGraph gCreateGraph()
@@ -219,6 +219,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			error_val = return_value;
 			return return_value;
 		}
+        // add to number of total additions the above addition
         g->hash_additions++;
 		buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node);
 		if (buffer_ptr_to_listnode == -1)
