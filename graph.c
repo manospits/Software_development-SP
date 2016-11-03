@@ -8,8 +8,8 @@
 #include "intlist.h"
 #include <assert.h>
 
-#define HASHTABLE_SIZE 5000
-#define HASHTABLE_INITIAL_SIZE 50	//used by calculate_hashtable_size()
+#define HASHTABLE_SIZE 5000         // hard-coded hashtable size (not used)
+#define HASHTABLE_INITIAL_SIZE 50	// used by calculate_hashtable_size()
 
 typedef struct graph
 {
@@ -115,11 +115,9 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 		error_val = OK_SUCCESS;
 		return OK_SUCCESS;
 	}
-   (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
-   if(return_value==-1||return_value>0){
-       g->queries++;
-   }
-   return return_value;
+    (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
+    g->queries++;
+    return return_value;
 }
 
 int calculate_hashtable_size(pGraph g)
@@ -403,9 +401,10 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     error_val = return_value;
                     return return_value;
 				}
-				// if the node was visited by the other bfs, then there is an error because the search should have stopped earlier
-				assert(return_value != 1-current);
-				// return value (=tag) == current - the node has been visited before by this bfs
+				//assert(return_value != 1-current);    // DEBUG
+				// if the node was found in the 'visited' hashtable, then its tag will be 'current'
+				// It can't be 1-current, because if it was, it would have been recognized before it entered the 'visited', and the search would have stopped (a path would have been found)
+				// Therefore, the tag is equal to current, which means that the node has already been visited by this bfs, so we don't expand it; instead, we continue
 				continue;
 			}
 			// if return_value == 0 then the node hasn't been visited yet, so proceed as normal
