@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
     puts("Reading complete.");
     puts("Processing workload...");
     // process workload
-    printf("Hash table size to be used : %d\n",calculate_hashtable_size(graph));
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);

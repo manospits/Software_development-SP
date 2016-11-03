@@ -8,13 +8,15 @@
 #include "intlist.h"
 #include <assert.h>
 
-#define HASHTABLE_SIZE 1000
+#define HASHTABLE_SIZE 5000
 #define HASHTABLE_INITIAL_SIZE 50	//used by calculate_hashtable_size()
 
 typedef struct graph
 {
 	Index_ptr inIndex;
 	Index_ptr outIndex;
+    int hash_additions;
+    int queries;
 }_graph;
 
 pGraph gCreateGraph()
@@ -38,6 +40,8 @@ pGraph gCreateGraph()
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
 		return NULL;
 	}
+    g->hash_additions=0;
+    g->queries=0;
 	return g;
 }
 
@@ -100,6 +104,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to);
 
 int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 {
+    int return_value;
 	if (g == NULL)
 	{
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
@@ -110,12 +115,20 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 		error_val = OK_SUCCESS;
 		return OK_SUCCESS;
 	}
-	return (type == BFS ? bfs(g, from, to) : bidirectional_bfs(g, from, to));
+   (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
+   if(return_value==-1||return_value>0){
+       g->queries++;
+   }
+   return return_value;
 }
 
 int calculate_hashtable_size(pGraph g)
 {	// returns the maximum of {HASHTABLE_INITIAL_SIZE, number_of_g's_nodes/3}
-    return 1000;
+    /*return 50000;*/
+    if(g->queries>0)
+        return (HASHTABLE_INITIAL_SIZE>g->hash_additions/g->queries ? HASHTABLE_INITIAL_SIZE : g->hash_additions/g->queries);
+    else
+        return HASHTABLE_INITIAL_SIZE;
    /*return (HASHTABLE_INITIAL_SIZE > (get_number_of_edges(g->outIndex)/get_index_size(g->outIndex)) ? HASHTABLE_INITIAL_SIZE : (get_number_of_edges(g->outIndex)/get_index_size(g->outIndex)));*/
 }
 
@@ -206,6 +219,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			error_val = return_value;
 			return return_value;
 		}
+        g->hash_additions++;
 		buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node);
 		if (buffer_ptr_to_listnode == -1)
         {   // node has no neighbors
@@ -402,6 +416,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				error_val = return_value;
 				return return_value;
 			}
+            g->hash_additions++;
 			buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
             if (buffer_ptr_to_listnode == -1)
             {   // node has no neighbors
