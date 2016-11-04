@@ -19,6 +19,7 @@ rcode h_insert(phash a,uint32_t data,uint32_t tag);                             
 int in_hash(phash a,uint32_t data);                                         //checks if data  exists in hash
 int h_delete(phash a,uint32_t data);                                        //deletes node with data
 rcode ds_hash(phash a);                                                     //destroys hash table a
+rcode empty_hash(phash a);                                                  //removes all elements from hash table
 int ret_tag(phash a,uint32_t data);                                        //returns previous node of data
 
 #endif

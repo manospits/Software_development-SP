@@ -75,6 +75,25 @@ rcode st_ds_list(stphead ltodestroy){
     return OK_SUCCESS;
 }
 
+rcode st_empty_list(stphead list_to_empty){
+    if(list_to_empty==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    stpnode todel;
+    stpnode next=list_to_empty->front;
+    while(next!=NULL){
+        todel=next;
+        next=next->next;
+        st_ds_node(todel);
+    }
+    list_to_empty->size=0;
+    list_to_empty->front=NULL;
+    list_to_empty->end=NULL;
+    error_val=OK_SUCCESS;
+    return OK_SUCCESS;
+}
+
 rcode st_insert(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
         error_val=NULL_LIST;

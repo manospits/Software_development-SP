@@ -11,7 +11,7 @@ stphead st_cr_list();
 
 //DESTRUCTION
 rcode st_ds_list(stphead list_to_destroy);
-
+rcode st_empty_list(stphead list_to_empty);
 //MODIFY
 rcode st_insert(stphead listh, uint32_t data,uint32_t tag);              //inserts node in front
 rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag);        //inserts node sorted

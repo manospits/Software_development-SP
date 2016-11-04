@@ -41,5 +41,6 @@ extern int error_val;
 #define GRAPH_SEARCH_INIT_STRUCTS_FAIL -31
 #define GRAPH_SEARCH_PATH_NOT_FOUND -32
 #define NODE_MISSING -33
+#define GRAPH_HASH_DESTROY_FAIL -34
 
 #endif

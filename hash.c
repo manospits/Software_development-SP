@@ -92,6 +92,18 @@ rcode ds_hash(phash a){
     return OK_SUCCESS;
 }
 
+rcode empty_hash(phash a){
+    if(a==NULL){
+        error_val=NULL_HASH;
+        return NULL_HASH;
+    }
+    int i;
+    for(i=0;i<a->size;i++){
+        st_empty_list(a->bins[i]);
+    }
+    return OK_SUCCESS;
+}
+
 int ret_tag(phash a,uint32_t data){
     if(a==NULL){
         error_val=NULL_HASH;
