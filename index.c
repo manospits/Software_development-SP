@@ -44,7 +44,7 @@ Index_ptr createNodeIndex(){
         tmp->index[i].List_start=-1;
         tmp->index[i].list_node_for_next_neigbor=-1;
         tmp->index[i].node_index_for_next_neighbor=-1;
-        tmp->edges=0;
+        tmp->index[i].edges=0;
     }
     tmp->edges=0;
     tmp->size=INDEX_INIT_SIZE;
@@ -79,6 +79,7 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             hindex->index[i].List_start=-1;
             hindex->index[i].list_node_for_next_neigbor=-1;
             hindex->index[i].node_index_for_next_neighbor=-1;
+            hindex->index[i].edges=0;
         }
         hindex->size=next_size;
     }

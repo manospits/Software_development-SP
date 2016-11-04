@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         }
     }
     puts("Processing complete.");
-    printf("Results can be found in file '%s'.", OUTPUT_FILE_NAME);
+    printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);
 
     gDestroyGraph(&graph);
     fclose(initial_graph);
