@@ -8,7 +8,7 @@
 #include "intlist.h"
 #include <assert.h>
 
-#define HASHTABLE_SIZE 10000         // hard-coded hashtable size (not used)
+#define HASHTABLE_SIZE 1000003         // hard-coded hashtable size (not used)
 
 int hash_function(void *data,void *size);
 
