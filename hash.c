@@ -1,6 +1,7 @@
 #include "error.h"
 #include "hash.h"
 #include "struct_list.h"
+#include "intlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,6 +10,7 @@ typedef struct hash_info {
     int size;                   //hash_table size
     int (*h)(void *,void*);
     int type;
+    phead accessed_bins;
 }hash_info;
 
 phnode create_phnode(void* el);   //creates a hash_node
@@ -37,12 +39,16 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
     for(i=0;i<hash_table_size;i++){
         tmp->bins[i]=st_cr_list();
     }
+    tmp->accessed_bins=cr_list();
     error_val=OK_SUCCESS;
     return tmp;
 }
 
 rcode h_insert(phash a,uint32_t data,uint32_t tag){
     int pos=a->h((void*) &data,(void *)&(a->size));
+    if(st_get_size(a->bins[pos])==0){
+        insert(a->accessed_bins,pos);
+    }
     rcode stat;
     if(a->type==0)
         stat=st_insert(a->bins[pos],data,tag);
@@ -87,6 +93,7 @@ rcode ds_hash(phash a){
     for(i=0;i<a->size;i++){
         st_ds_list(a->bins[i]);
     }
+    ds_list(a->accessed_bins);
     free(a->bins);
     free(a);
     return OK_SUCCESS;
@@ -98,8 +105,10 @@ rcode empty_hash(phash a){
         return NULL_HASH;
     }
     int i;
-    for(i=0;i<a->size;i++){
+    while(get_size(a->accessed_bins)!=0){
+        i=peek(a->accessed_bins);
         st_empty_list(a->bins[i]);
+        pop_front(a->accessed_bins);
     }
     return OK_SUCCESS;
 }
