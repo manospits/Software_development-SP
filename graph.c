@@ -8,7 +8,7 @@
 #include "intlist.h"
 #include <assert.h>
 
-#define HASHTABLE_SIZE 1000003         // hard-coded hashtable size (not used)
+#define HASHTABLE_SIZE 100003
 
 int hash_function(void *data,void *size);
 
@@ -29,10 +29,7 @@ pGraph gCreateGraph()
 		error_val = GRAPH_CREATION_BASIC_STRUCT_MALLOC_FAIL;
 		return NULL;
 	}
-    if((g->visited=create_hashtable(HASHTABLE_SIZE,hash_function,1))==NULL){
-        free(g);
-        return NULL;
-    }
+    g->visited=NULL;
     if ((g->inIndex = createNodeIndex()) == NULL)
 	{
 		free(g);
@@ -58,7 +55,7 @@ rcode gDestroyGraph(pGraph *g)
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
 		return GRAPH_NULL_POINTER_PROVIDED;
 	}
-    if( ds_hash((*g)->visited)<0 ){
+    if( (*g)->visited!=NULL && ds_hash((*g)->visited)<0 ){
         print_error();
         error_val =GRAPH_HASH_DESTROY_FAIL;
         return GRAPH_HASH_DESTROY_FAIL;
@@ -121,7 +118,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to);
 
 int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 {
-    int return_value,eval;
+    int return_value;
 	if (g == NULL)
 	{
 		error_val = GRAPH_NULL_POINTER_PROVIDED;
@@ -132,12 +129,12 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 		error_val = OK_SUCCESS;
 		return OK_SUCCESS;
 	}
+    if(g->visited==NULL)
+        g->visited=create_hashtable(HASHTABLE_SIZE,hash_function,1);
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
     g->queries++;
-    if( (eval=empty_hash(g->visited))<0){
-        error_val=eval;
-        return eval;
-    }
+    ds_hash(g->visited);
+    g->visited=NULL;
     return return_value;
 }
 

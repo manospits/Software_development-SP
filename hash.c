@@ -37,7 +37,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
     }
     tmp->type=type;
     for(i=0;i<hash_table_size;i++){
-        tmp->bins[i]=st_cr_list();
+        tmp->bins[i]=NULL;
     }
     tmp->accessed_bins=cr_list();
     error_val=OK_SUCCESS;
@@ -46,6 +46,9 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
 
 rcode h_insert(phash a,uint32_t data,uint32_t tag){
     int pos=a->h((void*) &data,(void *)&(a->size));
+    if(a->bins[pos]==NULL){
+        a->bins[pos]=st_cr_list();
+    }
     if(st_get_size(a->bins[pos])==0){
         insert(a->accessed_bins,pos);
     }
@@ -65,6 +68,9 @@ int in_hash(phash a,uint32_t data){
         return -1;
     }
     int pos=a->h((void*) &data,(void *)&(a->size)),stat;
+    if(a->bins[pos]==NULL){
+        return 0;
+    }
     if(a->type==0)
         stat= st_in(a->bins[pos],data);
     else if(a->type==1)
@@ -79,6 +85,9 @@ int h_delete(phash a,uint32_t data){
         return -1;
     }
     int pos=a->h((void*)&data,(void *)&(a->size));
+    if(a->bins[pos]==NULL){
+         return OK_SUCCESS;
+    }
     st_delete(a->bins[pos],data);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
@@ -91,7 +100,9 @@ rcode ds_hash(phash a){
     }
     int i;
     for(i=0;i<a->size;i++){
-        st_ds_list(a->bins[i]);
+        if(a->bins[i]!=NULL){
+           st_ds_list(a->bins[i]);
+        }
     }
     ds_list(a->accessed_bins);
     free(a->bins);
@@ -107,7 +118,8 @@ rcode empty_hash(phash a){
     int i;
     while(get_size(a->accessed_bins)!=0){
         i=peek(a->accessed_bins);
-        st_empty_list(a->bins[i]);
+        st_ds_list(a->bins[i]);
+        a->bins[i]=NULL;
         pop_front(a->accessed_bins);
     }
     return OK_SUCCESS;
