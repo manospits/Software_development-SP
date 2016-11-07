@@ -8,16 +8,12 @@
 #include "intlist.h"
 #include <assert.h>
 
-#define HASHTABLE_SIZE 20000
-
 int hash_function(void *data,void *size);
 
     typedef struct graph
 {
 	Index_ptr inIndex;
 	Index_ptr outIndex;
-    int hash_additions;     //total hash_additions
-    int queries;            //total queries
     phash visited;
 }_graph;
 
@@ -43,8 +39,6 @@ pGraph gCreateGraph()
 		error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
 		return NULL;
 	}
-    g->hash_additions=0;
-    g->queries=0;
 	return g;
 }
 
@@ -132,7 +126,6 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
     if(g->visited==NULL)
         g->visited=create_hashtable(HASHTABLE_SIZE,hash_function,1);
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
-    g->queries++;
     ds_hash(g->visited);
     g->visited=NULL;
     return return_value;
@@ -212,7 +205,6 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			return return_value;
 		}
         // add to number of total additions the above addition
-        g->hash_additions++;
 		buffer_ptr_to_listnode = getListHead(g->outIndex, temp_node);
 		if (buffer_ptr_to_listnode == -1)
         {   // node has no neighbors
@@ -386,7 +378,6 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				error_val = return_value;
 				return return_value;
 			}
-            g->hash_additions++;
 			buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
             if (buffer_ptr_to_listnode == -1)
             {   // node has no neighbors

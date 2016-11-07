@@ -303,6 +303,9 @@ int st_ins(stphead listh,uint32_t data){
         return NULL_LIST;
     }
     stpnode tmp=listh->front;
+    if(listh->end!=NULL && data >listh->end->data){
+        return 0;
+    }
     while(tmp!=NULL && tmp->data<=data){
         if(data==tmp->data){
             error_val=OK_SUCCESS;

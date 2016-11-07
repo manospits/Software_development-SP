@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 typedef struct hash_info {
-    stphead* bins;                //array of lists
+    stphead bins[HASHTABLE_SIZE];                //array of lists
     int size;                   //hash_table size
     int (*h)(void *,void*);
     int type;
@@ -29,12 +29,6 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
     }
     tmp->size=hash_table_size;
     tmp->h=h;
-    tmp->bins=malloc(sizeof(stphead)*hash_table_size);
-    if(tmp->bins==NULL){
-        error_val=HASH_BINS_CR_MALLOC;
-        free (tmp);
-        return NULL;
-    }
     tmp->type=type;
     for(i=0;i<hash_table_size;i++){
         tmp->bins[i]=NULL;
@@ -105,7 +99,6 @@ rcode ds_hash(phash a){
         }
     }
     ds_list(a->accessed_bins);
-    free(a->bins);
     free(a);
     return OK_SUCCESS;
 }

@@ -2,6 +2,7 @@
 #define _HASHT_
 #include "error.h"
 #include <stdint.h>
+#define HASHTABLE_SIZE 20000
 
 typedef struct hash_info *phash;
 typedef struct hash_node *phnode;
