@@ -9,14 +9,14 @@ CC=gcc
 FLAGS = -c -Wall
 CHECK = -lcheck -lrt
 
-all : $(BIN) $(FINAL)
+all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -g -o $@ $(FOBJS)
+	$(CC) -o $@ $(FOBJS)
 
 $(BIN): $(OBJS)
-	$(CC) -g -o $@ $(OBJS) $(CHECK)
+	$(CC) -o $@ $(OBJS) $(CHECK)
 
 main.o: main.c
 	$(CC) $(FLAGS) $?
