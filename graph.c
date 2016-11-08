@@ -8,6 +8,9 @@
 #include "intlist.h"
 #include <assert.h>
 
+#define VISITED 1
+#define EXPANDED 2
+
 int hash_function(void *data,void *size);
 
     typedef struct graph
@@ -154,7 +157,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		// error_val not set here, so print_error() will print the error from create_hashtable()
 		return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
 	}
-	if ((return_value = st_insert_back(open_list, from, 0)) != OK_SUCCESS)
+	if ((return_value = st_insert_back(open_list, from, 0, 0)) != OK_SUCCESS)
 	{
 		st_ds_list(open_list);
         // update error_value changed by destroy_<>() functions
@@ -198,7 +201,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 		if (return_value > 0)
 			continue;	// node already visited
         // if return_value == 0, then the node hasn't been visited yet, so we visit & expand him
-		if ((return_value = h_insert(g->visited, temp_node, 0)) < 0)
+		if ((return_value = h_insert(g->visited, temp_node, 0, 0)) < 0)
 		{
 			st_ds_list(open_list);
 			error_val = return_value;
@@ -242,7 +245,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 			}
 			if (!return_value)
 			{	// if this node hasn't been visited yet
-				if ((return_value = st_insert_back(open_list, listnode->neighbor[i], temp_node_tag+1)) != OK_SUCCESS)
+				if ((return_value = st_insert_back(open_list, listnode->neighbor[i], temp_node_tag+1, 0)) != OK_SUCCESS)
 				{
 					st_ds_list(open_list);
 					error_val = return_value;
@@ -310,7 +313,21 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 		error_val = return_value;
 		return return_value;
 	}
+	if ((return_value = h_insert(g->visited, from, 0, VISITED)) < 0)
+	{
+		ds_list(open_list[0]);
+		ds_list(open_list[1]);
+		error_val = return_value;
+		return return_value;
+	}
 	if ((return_value = insert_back(open_list[1], to)) != OK_SUCCESS)
+	{
+		ds_list(open_list[0]);
+		ds_list(open_list[1]);
+		error_val = return_value;
+		return return_value;
+	}
+	if ((return_value = h_insert(g->visited, to, 1, VISITED)) < 0)
 	{
 		ds_list(open_list[0]);
 		ds_list(open_list[1]);
@@ -351,37 +368,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 				error_val = return_value;
 				return return_value;
 			}
-			return_value = in_hash(g->visited, temp_node);
-			if (return_value < 0)
-			{
-				ds_list(open_list[0]);
-				ds_list(open_list[1]);
-				error_val = return_value;
-				return return_value;
-			}
-			if (return_value > 0)
-			{
-				if ((return_value = ret_tag(g->visited, temp_node)) < 0)
-				{
-                    ds_list(open_list[0]);
-                    ds_list(open_list[1]);
-                    error_val = return_value;
-                    return return_value;
-				}
-				//assert(return_value != 1-current);    // DEBUG
-				// if the node was found in the 'visited' hashtable, then its tag will be 'current'
-				// It can't be 1-current, because if it was, it would have been recognized before it entered the 'visited', and the search would have stopped (a path would have been found)
-				// Therefore, the tag is equal to current, which means that the node has already been visited by this bfs, so we don't expand it; instead, we continue
-				continue;
-			}
-			// if return_value == 0 then the node hasn't been visited yet, so proceed as normal
-			if ((return_value = h_insert(g->visited, temp_node, current)) < 0)
-			{
-				ds_list(open_list[0]);
-				ds_list(open_list[1]);
-				error_val = return_value;
-				return return_value;
-			}
+			return_value = set_expanded(g->visited, temp_node, EXPANDED);
 			buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
             if (buffer_ptr_to_listnode == -1)
             {   // node has no neighbors
@@ -437,6 +424,13 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 						error_val = return_value;
 						return return_value;
 					}
+                    if ((return_value = h_insert(g->visited, listnode->neighbor[i], current, VISITED)) < 0)
+                    {
+                        ds_list(open_list[0]);
+                        ds_list(open_list[1]);
+                        error_val = return_value;
+                        return return_value;
+                    }
 				}
 				else if (return_value > 0)
 				{
@@ -451,6 +445,15 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 					if (return_value == 1-current)
 					{	// if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
 						// then the two bfss have just met so a path has been found
+						if ((return_value = ret_expanded(g->visited, listnode->neighbor[i])) < 0)
+                        {
+                            ds_list(open_list[0]);
+                            ds_list(open_list[1]);
+                            error_val = return_value;
+                            return return_value;
+                        }
+                        if (return_value == VISITED)
+                            path_length[1-current]++;
 						path_found = 1;
 						break;
 					}
