@@ -61,8 +61,8 @@ START_TEST(struct_list)
         fail_unless((list=st_cr_list())!=NULL);
         fail_unless((sorted_list=st_cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(st_insert(list,j,j)==OK_SUCCESS);
-            fail_unless(st_insert_sorted(sorted_list,j,j)==OK_SUCCESS);
+            fail_unless(st_insert(list,j,j,i)==OK_SUCCESS);
+            fail_unless(st_insert_sorted(sorted_list,j,j,i)==OK_SUCCESS);
             fail_unless(st_peek(list)==j);
         }
         fail_unless(st_get_size(list)==1000);
@@ -71,6 +71,8 @@ START_TEST(struct_list)
             if(k<1000){
                 fail_unless(st_in(list,k));
                 fail_unless(st_ins(sorted_list,k));
+                fail_unless(st_get_expanded(list,k)==i);
+                fail_unless(st_get_expanded(sorted_list,k)==i);
             }
             else{
                 fail_unless(!st_in(list,k));
@@ -86,7 +88,7 @@ END_TEST
 
 START_TEST(hash)
 {
-#line 70
+#line 72
     phash hash;
     phash sorted_hash;
     int i,j,k;
@@ -94,13 +96,15 @@ START_TEST(hash)
         fail_unless((hash=create_hashtable(HASHTABLE_SIZE,hash_function,0))!=NULL);
         fail_unless((sorted_hash=create_hashtable(HASHTABLE_SIZE,hash_function,1))!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(h_insert(hash,j,j)==OK_SUCCESS);
-            fail_unless(h_insert(sorted_hash,j,j)==OK_SUCCESS);
+            fail_unless(h_insert(hash,j,j,i)==OK_SUCCESS);
+            fail_unless(h_insert(sorted_hash,j,j,i)==OK_SUCCESS);
         }
         for(k=0;k<1100;k++){
             if(k<1000){
                 fail_unless(in_hash(hash,k));
                 fail_unless(in_hash(sorted_hash,k));
+                fail_unless(ret_expanded(hash,k)==i);
+                fail_unless(ret_expanded(sorted_hash,k)==i);
             }
             else{
                 fail_unless(!in_hash(hash,k));
@@ -117,7 +121,7 @@ END_TEST
 
 START_TEST(test_serial)
 {
-#line 96
+#line 100
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -142,7 +146,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 116
+#line 120
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);

@@ -8,6 +8,7 @@
 typedef struct stnode {
     uint32_t data;
     uint32_t tag;
+    int expanded;
     struct stnode* next;
 } stnode;
 
@@ -17,7 +18,7 @@ typedef struct sthead{
     stpnode end;
 }sthead;
 
-stpnode st_cr_node(uint32_t data,uint32_t tag);
+stpnode st_cr_node(uint32_t data,uint32_t tag,int expanded);
 rcode st_ds_node(stpnode node_to_destroy);
 
 stphead st_cr_list(){
@@ -34,7 +35,7 @@ stphead st_cr_list(){
     return tmphead;
 }
 
-stpnode st_cr_node(uint32_t data,uint32_t tag){
+stpnode st_cr_node(uint32_t data,uint32_t tag,int expanded){
     stnode* tmpnode;
     tmpnode=malloc(sizeof(struct stnode));
     if(tmpnode==NULL){
@@ -43,6 +44,7 @@ stpnode st_cr_node(uint32_t data,uint32_t tag){
     }
     tmpnode->data=data;
     tmpnode->tag=tag;
+    tmpnode->expanded=expanded;
     tmpnode->next=NULL;
     error_val=OK_SUCCESS;
     return tmpnode;
@@ -94,12 +96,12 @@ rcode st_empty_list(stphead list_to_empty){
     return OK_SUCCESS;
 }
 
-rcode st_insert(stphead listh,uint32_t data,uint32_t tag){
+rcode st_insert(stphead listh,uint32_t data,uint32_t tag,int expanded){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    stpnode nptr=st_cr_node(data,tag);
+    stpnode nptr=st_cr_node(data,tag,expanded);
     if(listh->size==0){
         listh->front=nptr;
         listh->end=nptr;
@@ -114,12 +116,12 @@ rcode st_insert(stphead listh,uint32_t data,uint32_t tag){
     return OK_SUCCESS;
 }
 
-rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag){
+rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag,int expanded){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    stpnode nptr=st_cr_node(data,tag);
+    stpnode nptr=st_cr_node(data,tag,expanded);
     stpnode pr_node,node,temp2;
     node=pr_node=listh->front;
     int i=0;
@@ -156,12 +158,12 @@ rcode st_insert_sorted(stphead listh,uint32_t data,uint32_t tag){
     return OK_SUCCESS;
 }
 
-rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
+rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag,int expanded){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    stpnode nptr=st_cr_node(data,tag);
+    stpnode nptr=st_cr_node(data,tag,expanded);
     if(listh->size==0){
         listh->front=nptr;
         listh->end=nptr;
@@ -390,6 +392,42 @@ int st_get_tag(const stphead listh,uint32_t data){
         if(data==tmp->data){
             error_val=OK_SUCCESS;
             return tmp->tag;
+        }
+        tmp=tmp->next;
+    }
+    error_val=NODE_MISSING;
+    return NODE_MISSING;
+}
+
+int st_get_expanded(const stphead listh,uint32_t data){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    stpnode tmp=listh->front;
+    while(tmp!=NULL){
+        if(data==tmp->data){
+            error_val=OK_SUCCESS;
+            return tmp->expanded;
+        }
+        tmp=tmp->next;
+    }
+    error_val=NODE_MISSING;
+    return NODE_MISSING;
+}
+
+rcode st_set_expanded(const stphead listh,uint32_t data,int expanded){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    stpnode tmp=listh->front;
+    while(tmp!=NULL){
+        if(data==tmp->data){
+            error_val=OK_SUCCESS;
+            tmp->expanded=expanded;
+            error_val=OK_SUCCESS;
+            return OK_SUCCESS;
         }
         tmp=tmp->next;
     }

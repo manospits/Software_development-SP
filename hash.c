@@ -38,7 +38,7 @@ phash create_hashtable(int hash_table_size ,int(*h)(void *,void*),int type){
     return tmp;
 }
 
-rcode h_insert(phash a,uint32_t data,uint32_t tag){
+rcode h_insert(phash a,uint32_t data,uint32_t tag,int expanded){
     int pos=a->h((void*) &data,(void *)&(a->size));
     if(a->bins[pos]==NULL){
         a->bins[pos]=st_cr_list();
@@ -48,9 +48,9 @@ rcode h_insert(phash a,uint32_t data,uint32_t tag){
     }
     rcode stat;
     if(a->type==0)
-        stat=st_insert(a->bins[pos],data,tag);
+        stat=st_insert(a->bins[pos],data,tag,expanded);
     else if(a->type==1){
-        stat=st_insert_sorted(a->bins[pos],data,tag);
+        stat=st_insert_sorted(a->bins[pos],data,tag,expanded);
     }
     error_val=stat;
     return stat;
@@ -125,6 +125,28 @@ int ret_tag(phash a,uint32_t data){
     }
     int pos=a->h((void*) &data,(void *)&(a->size)),stat;
     stat=st_get_tag(a->bins[pos],data);
+    error_val=stat;
+    return stat;
+}
+
+int ret_expanded(phash a,uint32_t data){
+    if(a==NULL){
+        error_val=NULL_HASH;
+        return NULL_HASH;
+    }
+    int pos=a->h((void*) &data,(void *)&(a->size)),stat;
+    stat=st_get_expanded(a->bins[pos],data);
+    error_val=stat;
+    return stat;
+}
+
+rcode set_expanded(phash a,uint32_t data,int expanded){
+    if(a==NULL){
+        error_val=NULL_HASH;
+        return NULL_HASH;
+    }
+    int pos=a->h((void*) &data,(void *)&(a->size)),stat;
+    stat=st_set_expanded(a->bins[pos],data,expanded);
     error_val=stat;
     return stat;
 }
