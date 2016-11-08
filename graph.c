@@ -322,7 +322,8 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 	current = 1;
 	while(get_size(open_list[0]) > 0 && get_size(open_list[1]) > 0)
 	{
-		current = 1-current;
+		if (get_size(open_list[1-current]) < get_size(open_list[current]))
+            current = 1-current;
 		path_length[current]++;
 		if ((number_of_nodes = get_size(open_list[current])) < 0)
 		{
