@@ -58,6 +58,10 @@ int hash_function(void *data,void *size)
                 fail_unless(st_ins(sorted_list,k));
                 fail_unless(st_get_expanded(list,k)==i);
                 fail_unless(st_get_expanded(sorted_list,k)==i);
+                fail_unless(st_set_expanded(list,k,i+1)==OK_SUCCESS);
+                fail_unless(st_set_expanded(sorted_list,k,i+1)==OK_SUCCESS);
+                fail_unless(st_get_expanded(list,k)==i+1);
+                fail_unless(st_get_expanded(sorted_list,k)==i+1);
             }
             else{
                 fail_unless(!st_in(list,k));
@@ -85,6 +89,11 @@ int hash_function(void *data,void *size)
                 fail_unless(in_hash(sorted_hash,k));
                 fail_unless(ret_expanded(hash,k)==i);
                 fail_unless(ret_expanded(sorted_hash,k)==i);
+                fail_unless(set_expanded(hash,k,i+1)==OK_SUCCESS);
+                fail_unless(set_expanded(sorted_hash,k,i+1)==OK_SUCCESS);
+                fail_unless(ret_expanded(hash,k)==i+1);
+                fail_unless(ret_expanded(sorted_hash,k)==i+1);
+
             }
             else{
                 fail_unless(!in_hash(hash,k));

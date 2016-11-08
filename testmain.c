@@ -73,6 +73,10 @@ START_TEST(struct_list)
                 fail_unless(st_ins(sorted_list,k));
                 fail_unless(st_get_expanded(list,k)==i);
                 fail_unless(st_get_expanded(sorted_list,k)==i);
+                fail_unless(st_set_expanded(list,k,i+1)==OK_SUCCESS);
+                fail_unless(st_set_expanded(sorted_list,k,i+1)==OK_SUCCESS);
+                fail_unless(st_get_expanded(list,k)==i+1);
+                fail_unless(st_get_expanded(sorted_list,k)==i+1);
             }
             else{
                 fail_unless(!st_in(list,k));
@@ -88,7 +92,7 @@ END_TEST
 
 START_TEST(hash)
 {
-#line 72
+#line 76
     phash hash;
     phash sorted_hash;
     int i,j,k;
@@ -105,6 +109,11 @@ START_TEST(hash)
                 fail_unless(in_hash(sorted_hash,k));
                 fail_unless(ret_expanded(hash,k)==i);
                 fail_unless(ret_expanded(sorted_hash,k)==i);
+                fail_unless(set_expanded(hash,k,i+1)==OK_SUCCESS);
+                fail_unless(set_expanded(sorted_hash,k,i+1)==OK_SUCCESS);
+                fail_unless(ret_expanded(hash,k)==i+1);
+                fail_unless(ret_expanded(sorted_hash,k)==i+1);
+
             }
             else{
                 fail_unless(!in_hash(hash,k));
@@ -121,7 +130,7 @@ END_TEST
 
 START_TEST(test_serial)
 {
-#line 100
+#line 109
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -146,7 +155,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 120
+#line 129
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
