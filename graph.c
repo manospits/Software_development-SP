@@ -322,7 +322,10 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 	current = 1;
 	while(get_size(open_list[0]) > 0 && get_size(open_list[1]) > 0)
 	{
-		if (get_size(open_list[1-current]) < get_size(open_list[current]))
+	    // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
+	    // This prevents the extreme case where every node in the path has only 1 child, and if "<" was used only the first bfs would expand nodes continuously,
+	    // while the other bfs wouldn't have entered its first node in "visited", so the two bfss wouldn't be able to meet
+		if (get_size(open_list[1-current]) <= get_size(open_list[current]))
             current = 1-current;
 		path_length[current]++;
 		if ((number_of_nodes = get_size(open_list[current])) < 0)
