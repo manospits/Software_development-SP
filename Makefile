@@ -1,10 +1,10 @@
 BIN=unittesting
 FINAL=spath
-SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c hash.c graph.c main.c
+SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c hash.c graph.c main.c visited.c
 OBJS=buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o
-FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o hash.o graph.o
+FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o hash.o graph.o visited.o
 AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o hash.o graph.o
-HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h
+HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h
 CC=gcc
 FLAGS = -c -Wall
 CHECK = -lcheck -lrt
@@ -13,12 +13,15 @@ all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -o $@ $(FOBJS)
+	$(CC) -O3 -o $@ $(FOBJS)
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)
 
 main.o: main.c
+	$(CC) $(FLAGS) $?
+
+visited.o: visited.c
 	$(CC) $(FLAGS) $?
 
 intlist.o: intlist.c
