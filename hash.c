@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct bucket {
+    char *bucketpos;
+    int size;
+    int elements;
+    int last_pos;
+}bucket ;
+
 typedef struct hash_info {
     stphead bins[HASHTABLE_SIZE];                //array of lists
     int size;                   //hash_table size

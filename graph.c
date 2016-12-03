@@ -17,6 +17,8 @@ typedef struct graph
     Index_ptr inIndex;
     Index_ptr outIndex;
     pvis visited;
+    stphead open_list;
+    phead open_intlist[2];
 }_graph;
 
 pGraph gCreateGraph()
@@ -28,6 +30,9 @@ pGraph gCreateGraph()
         return NULL;
     }
     g->visited=NULL;
+    g->open_list=NULL;
+    g->open_intlist[0]=NULL;
+    g->open_intlist[1]=NULL;
     if ((g->inIndex = createNodeIndex()) == NULL)
     {
         free(g);
@@ -51,12 +56,22 @@ rcode gDestroyGraph(pGraph *g)
         error_val = GRAPH_NULL_POINTER_PROVIDED;
         return GRAPH_NULL_POINTER_PROVIDED;
     }
-    if( (*g)->visited!=NULL && v_ds_visited((*g)->visited)<0 ){
+    if( (*g)->visited!=NULL && v_ds_visited((*g)->visited) <0 ){
         print_error();
         error_val =GRAPH_HASH_DESTROY_FAIL;
         return GRAPH_HASH_DESTROY_FAIL;
     }
+    if(((*g)->open_list!=NULL)){
+        st_ds_list((*g)->open_list);
+    }
+    if(((*g)->open_intlist[0]!=NULL)){
+        ds_list((*g)->open_intlist[0]);
+    }
+    if(((*g)->open_intlist[1]!=NULL)){
+        ds_list((*g)->open_intlist[1]);
+    }
     destroyNodeIndex((*g)->outIndex);
+
     destroyNodeIndex((*g)->inIndex);
     free(*g);
     *g = NULL;
@@ -127,59 +142,87 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
     }
     if(g->visited==NULL)
         g->visited=create_visited(get_index_size(g->inIndex));
+    if(type == BFS && g->open_list==NULL){
+        if ((g->open_list = st_cr_list()) == NULL)
+        {
+            // save error_value
+            return_value = error_val;
+            // and restore it
+            error_val = return_value;
+            // error_val not set here, so print_error() will print the error from create_hashtable()
+            return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+        }
+    }
+    else if(g->open_intlist[0]==NULL && g->open_intlist[1]==NULL){
+        if ((g->open_intlist[0] = cr_list()) == NULL)
+        {
+            // save error_value
+            return_value = error_val;
+            // and restore it
+            error_val = return_value;
+            // error_val not set here, so print_error() will print the error from create_hashtable()
+            return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+        }
+        if ((g->open_intlist[1] = cr_list()) == NULL)
+        {
+            // save error_value
+            return_value = error_val;
+            // and restore it
+            error_val = return_value;
+            // error_val not set here, so print_error() will print the error from create_hashtable()
+            return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
+        }
+    }
     v_update_loop(g->visited,get_index_size(g->inIndex));
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
+    if(type!=BFS){
+        empty_list(g->open_intlist[0]);
+        empty_list(g->open_intlist[1]);
+    }
+    else{
+         st_empty_list(g->open_list);
+    }
     return return_value;
 }
 
 int bfs(pGraph g, graphNode from, graphNode to)
 {
-    stphead open_list;
     int i, return_value, temp_node_tag;
     graphNode temp_node;
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
     // TODO change 1 to 0 with greater hash size to see if it adjust better in greater amount of data
-    if ((open_list = st_cr_list()) == NULL)
+    if ((return_value = st_insert_back(g->open_list, from, 0, 0)) != OK_SUCCESS)
     {
-        // save error_value
-        return_value = error_val;
-        // and restore it
-        error_val = return_value;
-        // error_val not set here, so print_error() will print the error from create_hashtable()
-        return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
-    }
-    if ((return_value = st_insert_back(open_list, from, 0, 0)) != OK_SUCCESS)
-    {
-        st_ds_list(open_list);
+        st_ds_list(g->open_list);
         // update error_value changed by destroy_<>() functions
         error_val = return_value;
         return return_value;
     }
-    while(st_get_size(open_list) > 0)
+    while(st_get_size(g->open_list) > 0)
     {
-        if ((temp_node = st_peek(open_list)) < 0)
+        if ((temp_node = st_peek(g->open_list)) < 0)
         {
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = temp_node;
             return temp_node;
         }
-        if ((temp_node_tag = st_get_tag(open_list, temp_node)) < 0)
+        if ((temp_node_tag = st_get_tag(g->open_list, temp_node)) < 0)
         {
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = temp_node_tag;
             return temp_node_tag;
         }
         if (temp_node == to)
         {    // target node found
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = OK_SUCCESS;
             return temp_node_tag;
         }
-        if ((return_value = st_pop_front(open_list)) < 0)
+        if ((return_value = st_pop_front(g->open_list)) < 0)
         {
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return return_value;
         }
@@ -187,7 +230,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
         return_value =v_visited(g->visited, temp_node);
         if (return_value < 0)
         {
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return return_value;
         }
@@ -196,7 +239,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
         // if return_value == 0, then the node hasn't been visited yet, so we visit & expand him
         if ((return_value = v_mark(g->visited, temp_node, 0, 0)) < 0)
         {
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return return_value;
         }
@@ -208,21 +251,21 @@ int bfs(pGraph g, graphNode from, graphNode to)
         }
         else if (buffer_ptr_to_listnode < 0)
         {   // an error occurred
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return buffer_ptr_to_listnode;
         }
         if ((temp_buffer = return_buffer(g->outIndex)) == NULL)
         {
             return_value = error_val;
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return return_value;
         }
         if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
         {
             return_value = error_val;
-            st_ds_list(open_list);
+            st_ds_list(g->open_list);
             error_val = return_value;
             return return_value;
         }
@@ -232,15 +275,15 @@ int bfs(pGraph g, graphNode from, graphNode to)
             return_value = v_visited(g->visited, listnode->neighbor[i]);
             if (return_value < 0)
             {
-                st_ds_list(open_list);
+                st_ds_list(g->open_list);
                 error_val = return_value;
                 return return_value;
             }
             if (!return_value)
             {    // if this node hasn't been visited yet
-                if ((return_value = st_insert_back(open_list, listnode->neighbor[i], temp_node_tag+1, 0)) != OK_SUCCESS)
+                if ((return_value = st_insert_back(g->open_list, listnode->neighbor[i], temp_node_tag+1, 0)) != OK_SUCCESS)
                 {
-                    st_ds_list(open_list);
+                    st_ds_list(g->open_list);
                     error_val = return_value;
                     return return_value;
                 }
@@ -253,7 +296,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
                 if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                 {
                     return_value = error_val;
-                    st_ds_list(open_list);
+                    st_ds_list(g->open_list);
                     error_val = return_value;
                     return return_value;
                 }
@@ -262,102 +305,83 @@ int bfs(pGraph g, graphNode from, graphNode to)
         }
     }
     // check if control exited the loop because of an error instead of just empty list
-    if ((return_value = st_get_size(open_list)) < 0)
+    if ((return_value = st_get_size(g->open_list)) < 0)
     {
-        st_ds_list(open_list);
+        st_ds_list(g->open_list);
         error_val = return_value;
         return return_value;
     }
-    st_ds_list(open_list);
     error_val = OK_SUCCESS;
     return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
-    phead open_list[2];
     int i, n, return_value, path_length[2], number_of_nodes, current;
     char path_found = 0;
     graphNode temp_node;
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
-    if ((open_list[0] = cr_list()) == NULL)
+    if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
     {
-        // save error_val
-        return_value = error_val;
-        // and restore it
-        error_val = return_value;
-        // error_val not set here, so print_error() will print the error from create_hashtable()
-        return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
-    }
-    if ((open_list[1] = cr_list()) == NULL)
-    {
-        return_value = error_val;
-        ds_list(open_list[0]);
-        error_val = return_value;
-        // error_val not set here, so print_error() will print the error from create_hashtable()
-        return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
-    }
-    if ((return_value = insert_back(open_list[0], from)) != OK_SUCCESS)
-    {
-        ds_list(open_list[0]);
-        ds_list(open_list[1]);
+        ds_list(g->open_intlist[0]);
+        ds_list(g->open_intlist[1]);
         error_val = return_value;
         return return_value;
     }
     if ((return_value = v_mark(g->visited, from, 0, VISITED)) < 0)
     {
-        ds_list(open_list[0]);
-        ds_list(open_list[1]);
+        ds_list(g->open_intlist[0]);
+        ds_list(g->open_intlist[1]);
         error_val = return_value;
         return return_value;
     }
-    if ((return_value = insert_back(open_list[1], to)) != OK_SUCCESS)
+    if ((return_value = insert_back(g->open_intlist[1], to)) != OK_SUCCESS)
     {
-        ds_list(open_list[0]);
-        ds_list(open_list[1]);
+        ds_list(g->open_intlist[0]);
+        ds_list(g->open_intlist[1]);
         error_val = return_value;
         return return_value;
     }
     if ((return_value = v_mark(g->visited, to, 1, VISITED)) < 0)
     {
-        ds_list(open_list[0]);
-        ds_list(open_list[1]);
+        ds_list(g->open_intlist[0]);
+        ds_list(g->open_intlist[1]);
         error_val = return_value;
         return return_value;
     }
     path_length[0] = 0;
     path_length[1] = 0;
     current = 1;
-    while(get_size(open_list[0]) > 0 && get_size(open_list[1]) > 0)
+    while(get_size(g->open_intlist[0]) > 0 && get_size(g->open_intlist[1]) > 0)
     {
         // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
         // This prevents the extreme case where every node in the path has only 1 child, and if "<" was used only the first bfs would expand nodes continuously,
         // while the other bfs wouldn't have entered its first node in "visited", so the two bfss wouldn't be able to meet
-        if (get_size(open_list[1-current]) <= get_size(open_list[current]))
+        if (get_size(g->open_intlist[1-current]) <= get_size(g->open_intlist[current]))
             current = 1-current;
         path_length[current]++;
-        if ((number_of_nodes = get_size(open_list[current])) < 0)
+        if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
         {
-            ds_list(open_list[0]);
-            ds_list(open_list[1]);
+            ds_list(g->open_intlist[0]);
+            ds_list(g->open_intlist[1]);
             error_val = number_of_nodes;
             return number_of_nodes;
         }
         for (n = 0 ; n < number_of_nodes ; ++n)
         {
-            if ((temp_node = peek(open_list[current])) < 0)
+            if ((temp_node = peek(g->open_intlist[current])) < 0)
             {
-                ds_list(open_list[0]);
-                ds_list(open_list[1]);
+                ds_list(g->open_intlist[0]);
+                ds_list(g->open_intlist[1]);
                 error_val = temp_node;
                 return temp_node;
             }
-            if ((return_value = pop_front(open_list[current])) < 0)
+            if ((return_value = pop_front(g->open_intlist[current])) < 0)
             {
-                ds_list(open_list[0]);
-                ds_list(open_list[1]);
+                ds_list(g->open_intlist[0]);
+                ds_list(g->open_intlist[1]);
                 error_val = return_value;
                 return return_value;
             }
@@ -369,24 +393,24 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
             }
             else if (buffer_ptr_to_listnode < 0)
             {   // an error occurred
-                ds_list(open_list[0]);
-                ds_list(open_list[1]);
+                ds_list(g->open_intlist[0]);
+                ds_list(g->open_intlist[1]);
                 error_val = buffer_ptr_to_listnode;
                 return buffer_ptr_to_listnode;
             }
             if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
             {
                 return_value = error_val;
-                ds_list(open_list[0]);
-                ds_list(open_list[1]);
+                ds_list(g->open_intlist[0]);
+                ds_list(g->open_intlist[1]);
                 error_val = return_value;
                 return return_value;
             }
             if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
             {
                 return_value = error_val;
-                ds_list(open_list[0]);
-                ds_list(open_list[1]);
+                ds_list(g->open_intlist[0]);
+                ds_list(g->open_intlist[1]);
                 error_val = return_value;
                 return return_value;
             }
@@ -396,31 +420,31 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                 // check if the two nodes (from-to) are directly connected
                 if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
                 {    // the two nodes are direct neighbors, so the path is 1
-                    ds_list(open_list[0]);
-                    ds_list(open_list[1]);
+                    ds_list(g->open_intlist[0]);
+                    ds_list(g->open_intlist[1]);
                     return 1;
                 }
                 return_value = v_visited(g->visited, listnode->neighbor[i]);
                 if (return_value < 0)
                 {
-                    ds_list(open_list[0]);
-                    ds_list(open_list[1]);
+                    ds_list(g->open_intlist[0]);
+                    ds_list(g->open_intlist[1]);
                     error_val = return_value;
                     return return_value;
                 }
                 else if (!return_value)
                 {    // if this node hasn't been visited yet, insert it to the list
-                    if ((return_value = insert_back(open_list[current], listnode->neighbor[i])) != OK_SUCCESS)
+                    if ((return_value = insert_back(g->open_intlist[current], listnode->neighbor[i])) != OK_SUCCESS)
                     {
-                        ds_list(open_list[0]);
-                        ds_list(open_list[1]);
+                        ds_list(g->open_intlist[0]);
+                        ds_list(g->open_intlist[1]);
                         error_val = return_value;
                         return return_value;
                     }
                     if ((return_value = v_mark(g->visited, listnode->neighbor[i], current, VISITED)) < 0)
                     {
-                        ds_list(open_list[0]);
-                        ds_list(open_list[1]);
+                        ds_list(g->open_intlist[0]);
+                        ds_list(g->open_intlist[1]);
                         error_val = return_value;
                         return return_value;
                     }
@@ -430,8 +454,8 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     return_value = v_ret_tag(g->visited, listnode->neighbor[i]);
                     if (return_value < 0)
                     {
-                        ds_list(open_list[0]);
-                        ds_list(open_list[1]);
+                        ds_list(g->open_intlist[0]);
+                        ds_list(g->open_intlist[1]);
                         error_val = return_value;
                         return return_value;
                     }
@@ -440,8 +464,8 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         // then the two bfss have just met so a path has been found
                         if ((return_value = v_ret_expanded(g->visited, listnode->neighbor[i])) < 0)
                         {
-                            ds_list(open_list[0]);
-                            ds_list(open_list[1]);
+                            ds_list(g->open_intlist[0]);
+                            ds_list(g->open_intlist[1]);
                             error_val = return_value;
                             return return_value;
                         }
@@ -460,8 +484,8 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                     {
                         return_value = error_val;
-                        ds_list(open_list[0]);
-                        ds_list(open_list[1]);
+                        ds_list(g->open_intlist[0]);
+                        ds_list(g->open_intlist[1]);
                         error_val = return_value;
                         return return_value;
                     }
@@ -474,8 +498,6 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
         if (path_found)
             break;
     }
-    ds_list(open_list[0]);
-    ds_list(open_list[1]);
     if (path_found)
         return path_length[0] + path_length[1] - 1;
     else

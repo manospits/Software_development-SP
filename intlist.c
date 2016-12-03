@@ -7,17 +7,14 @@
 
 typedef struct node {
     uint32_t data;
-    struct node* next;
 } node;
 
 typedef struct head{
     int size;
-    pnode front;
-    pnode end;
+    int front;
+    int elements;
+    node *array_queue;
 }head;
-
-pnode cr_node(uint32_t data);
-rcode ds_node(pnode node_to_destroy);
 
 phead cr_list(){
     phead tmphead;
@@ -26,34 +23,15 @@ phead cr_list(){
         error_val=(LIST_CR_MALLOC);
         return NULL;
     }
-    tmphead->size=0;
-    tmphead->front=NULL;
-    tmphead->end=NULL;
-    error_val=OK_SUCCESS;
-    return tmphead;
-}
-
-pnode cr_node(uint32_t data){
-    node* tmpnode;
-    tmpnode=malloc(sizeof(struct node));
-    if(tmpnode==NULL){
-        error_val=(LISTNODE_CR_MALLOC);
+    tmphead->size=QUEUE_INIT_SIZE;
+    tmphead->front=0;
+    tmphead->elements=0;
+    if((tmphead->array_queue=malloc(QUEUE_INIT_SIZE*sizeof(struct node)))==NULL){
+        error_val=(LIST_CR_MALLOC);
         return NULL;
     }
-    tmpnode->data=data;
-    tmpnode->next=NULL;
     error_val=OK_SUCCESS;
-    return tmpnode;
-}
-
-rcode ds_node(pnode node_to_destroy){
-    if(node_to_destroy==NULL){
-        error_val=NULL_NODE;
-        return NULL_NODE;
-    }
-    free(node_to_destroy);
-    error_val=OK_SUCCESS;
-    return OK_SUCCESS;
+    return tmphead;
 }
 
 rcode ds_list(phead ltodestroy){
@@ -61,76 +39,19 @@ rcode ds_list(phead ltodestroy){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode todel;
-    pnode next=ltodestroy->front;
-    while(next!=NULL){
-        todel=next;
-        next=next->next;
-        ds_node(todel);
-    }
+    free(ltodestroy->array_queue);
     free (ltodestroy);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
 
-rcode insert(phead listh,uint32_t data){
-    if(listh==NULL){
+rcode empty_list(phead list_to_empty){
+    if(list_to_empty==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode nptr=cr_node(data);
-    if(listh->size==0){
-        listh->front=nptr;
-        listh->end=nptr;
-        listh->size++;
-    }
-    else{
-        nptr->next=listh->front;
-        listh->front=nptr;
-        listh->size++;
-    }
-    error_val=OK_SUCCESS;
-    return OK_SUCCESS;
-}
-
-rcode insert_sorted(phead listh,uint32_t data){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    pnode nptr=cr_node(data);
-    pnode prev,node,temp2;
-    node=prev=listh->front;
-    int i=0;
-    for(i=0;i<listh->size;i++){
-        if(data<node->data){
-            prev=node;
-            break;
-        }
-        else{
-            temp2=node;
-            node=node->next;
-        }
-    }
-    if(listh->size==0){
-        listh->front=nptr;
-        listh->end=nptr;
-    }
-    else{
-        if(prev==listh->front && i!=listh->size){//front
-            listh->front=nptr;
-            nptr->next=prev;
-        }
-        else if(i==listh->size){//end
-            listh->end->next=nptr;
-            listh->end=nptr;
-        }
-        else{
-            temp2->next=nptr;
-            nptr->next=prev;
-        }
-    }
-    listh->size++;
+    list_to_empty->front=0;
+    list_to_empty->elements=0;
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
 }
@@ -140,65 +61,19 @@ rcode insert_back(phead listh,uint32_t data){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    pnode nptr=cr_node(data);
-    if(listh->size==0){
-        listh->front=nptr;
-        listh->end=nptr;
-        listh->size++;
-    }
-    else{
-        listh->end->next=nptr;
-        listh->end=nptr;
-        listh->size++;
-    }
-    error_val=OK_SUCCESS;
-    return OK_SUCCESS;
-}
-
-rcode delete(phead listh,uint32_t data){
-    /*puts("delete call");*/
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    if(listh->size==1 && data==listh->front->data){
-        ds_node(listh->front);
-        listh->front=NULL;
-        listh->end=NULL;
-        listh->size=0;
-    }
-    else if (listh->size > 1){
-        pnode prev=listh->front;
-        pnode todel=listh->front;
-        pnode next;
-        while(todel!=NULL){
-            if(todel->data==data){
-                if(listh->size==1){
-                    listh->end=NULL;
-                    listh->front=NULL;
-                }
-                else if(listh->front==todel){
-                    listh->front=todel->next;
-                }
-                else if(listh->end==todel){
-                    listh->end=prev;
-                    prev->next=NULL;
-                }
-                else{
-                    prev->next=todel->next;
-                }
-                next=todel->next;
-                ds_node(todel);
-                todel=next;
-                listh->size--;
-            }
-            else{
-                prev=todel;
-                todel=todel->next;
-            }
+    int pos,newsize;
+    if(listh->elements+1>listh->size){
+        newsize=listh->size*2;
+        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct node));
+        if(listh->front!=0){
+            memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct node));
         }
+        listh->front=newsize-(listh->size-listh->front);
+        listh->size=newsize;
     }
-    error_val=OK_SUCCESS;
+    pos=(listh->front+listh->elements)%listh->size;
+    listh->array_queue[pos].data=data;
+    listh->elements++;
     return OK_SUCCESS;
 }
 
@@ -207,90 +82,14 @@ rcode pop_front(phead listh){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    if(listh->size < 1){
+    if(listh->elements < 1){
         error_val=EMPTY_LIST;
         return EMPTY_LIST;
     }
-    if(listh->size==1){
-        ds_node(listh->front);
-        listh->front=NULL;
-        listh->end=NULL;
-        listh->size=0;
-    }
-    else{
-        pnode todel=listh->front;
-        listh->front=listh->front->next;
-        ds_node(todel);
-        listh->size--;
-    }
+    listh->front=(listh->front+1)%listh->size;
+    listh->elements--;
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
-}
-
-rcode pop_back(phead listh){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    if(listh->size < 1){
-        error_val=EMPTY_LIST;
-        return EMPTY_LIST;
-    }
-    if(listh->size==1){
-        ds_node(listh->front);
-        listh->front=NULL;
-        listh->end=NULL;
-        listh->size=0;
-    }
-    else{
-        pnode todel=listh->front;
-        pnode prev=listh->front;
-        while(todel!=listh->end){
-            prev=todel;
-            todel=todel->next;
-        }
-        listh->end=prev;
-        prev->next=NULL;
-
-        ds_node(todel);
-        listh->size--;
-    }
-    error_val=OK_SUCCESS;
-    return OK_SUCCESS;
-}
-
-int in(phead listh,uint32_t data){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    pnode tmp=listh->front;
-    while(tmp!=NULL){
-        if(data==tmp->data){
-            error_val=OK_SUCCESS;
-            return 1;
-        }
-        tmp=tmp->next;
-    }
-    error_val=OK_SUCCESS;
-    return 0;
-}
-
-int ins(phead listh,uint32_t data){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    pnode tmp=listh->front;
-    while(tmp!=NULL && tmp->data<=data){
-        if(data==tmp->data){
-            error_val=OK_SUCCESS;
-            return 1;
-        }
-        tmp=tmp->next;
-    }
-    error_val=OK_SUCCESS;
-    return 0;
 }
 
 int get_size(phead listh){
@@ -299,7 +98,7 @@ int get_size(phead listh){
         return NULL_LIST;
     }
     error_val=OK_SUCCESS;
-    return listh->size;
+    return listh->elements;
 }
 
 int peek(const phead listh){
@@ -307,51 +106,7 @@ int peek(const phead listh){
         error_val=NULL_LIST;
         return NULL_LIST;
     }
-    else{
-        error_val=OK_SUCCESS;
-        return listh->front->data;
-    }
+    error_val=OK_SUCCESS;
+    return listh->array_queue[listh->front].data;
 }
 
-int peekback(const phead listh){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    else{
-        error_val=OK_SUCCESS;
-        return listh->end->data;
-    }
-}
-
-int get_data(pnode nd){
-    if(nd==NULL){
-        error_val=NULL_NODE;
-        return NULL_LIST;
-    }
-    else{
-        error_val=OK_SUCCESS;
-        return nd->data;
-    }
-}
-
-pnode get_list(const phead listh){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL;
-    }
-    else{
-        error_val=OK_SUCCESS;
-        return listh->front;
-    }
-}
-
-pnode next_node(const pnode nd){
-    if(nd==NULL){
-        return NULL;
-    }
-    else{
-        error_val=OK_SUCCESS;
-        return nd->next;
-    }
-}
