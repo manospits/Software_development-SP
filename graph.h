@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "error.h"
 
+#define EDGE_EXISTS 666
 #define BFS 0
 #define BIDIRECTIONAL_BFS 1
 

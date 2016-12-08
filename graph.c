@@ -11,7 +11,6 @@
 #define VISITED 0
 #define EXPANDED 1
 
-
 typedef struct graph
 {
     Index_ptr inIndex;
@@ -118,6 +117,9 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
         if (return_value) return return_value;
         return_value = add_edge(g->inIndex, to, from);
         if (return_value) return return_value;
+    }
+    else{
+        return EDGE_EXISTS;
     }
     // if return_value == 1 the edge already exists, so there is nothing to be done
     error_val = OK_SUCCESS;

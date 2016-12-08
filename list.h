@@ -6,23 +6,23 @@
 #include <stdlib.h>
 
 
-typedef struct head * phead;
+typedef struct ghead * gphead;
 
 //CREATION
-phead cr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(void*,void*));
+gphead gcr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(void*,void*));
 //DESTRUCTION
-rcode ds_list(phead list_to_destroy);
-rcode empty_list(phead list_to_empty);
+rcode gds_list(gphead list_to_destroy);
+rcode gempty_list(gphead list_to_empty);
 //MODIFY
-rcode insert_back(phead listh,void * data);          //inserts node in back
-rcode pop_front(phead listh);                         //deletes first node in list
-rcode pop_back(phead listh);
+rcode ginsert_back(phead listh,void * data);          //inserts node in back
+rcode gpop_front(phead listh);                         //deletes first node in list
+rcode gpop_back(phead listh);
 
 
 //ACCESS
-int get_size(const phead listh);                  //get number of elements
-void * get_data(void *data);                     //returns data
-void * peek(const phead listh);                 //returns list's first int
+int gget_size(const gphead listh);                  //get number of elements
+void * gget_data(void *data);                     //returns data
+void * gpeek(const gphead listh);                 //returns list's first int
 rcode int_copy(char*a,void*b);
 int int_cmp(void*a,void*b);
 

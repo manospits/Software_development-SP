@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 
-typedef struct head{
+typedef struct ghead{
     int size;
     int front;
     int elements;
@@ -15,11 +15,11 @@ typedef struct head{
     int (*data_cmp)(void*,void*);
     size_t data_size;
 
-}head;
+}ghead;
 
-phead cr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(void*,void*)){
-    phead tmphead;
-    tmphead=malloc(sizeof(struct head));
+gphead gcr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(void*,void*)){
+    gphead tmphead;
+    tmphead=malloc(sizeof(struct ghead));
     if(tmphead==NULL){
         error_val=(LIST_CR_MALLOC);
         return NULL;
@@ -38,7 +38,7 @@ phead cr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(voi
     return tmphead;
 }
 
-rcode ds_list(phead ltodestroy){
+rcode gds_list(gphead ltodestroy){
     if(ltodestroy==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -49,7 +49,7 @@ rcode ds_list(phead ltodestroy){
     return OK_SUCCESS;
 }
 
-rcode empty_list(phead list_to_empty){
+rcode gempty_list(gphead list_to_empty){
     if(list_to_empty==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -60,7 +60,7 @@ rcode empty_list(phead list_to_empty){
     return OK_SUCCESS;
 }
 
-rcode insert_back(phead listh,void * data){
+rcode ginsert_back(gphead listh,void * data){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -81,7 +81,7 @@ rcode insert_back(phead listh,void * data){
     return OK_SUCCESS;
 }
 
-rcode pop_front(phead listh){
+rcode gpop_front(gphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -96,7 +96,7 @@ rcode pop_front(phead listh){
     return OK_SUCCESS;
 }
 
-rcode pop_back(phead listh){
+rcode gpop_back(gphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -110,7 +110,7 @@ rcode pop_back(phead listh){
     return OK_SUCCESS;
 }
 
-int get_size(phead listh){
+int gget_size(gphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -119,7 +119,7 @@ int get_size(phead listh){
     return listh->elements;
 }
 
-void* peek(const phead listh){
+void* gpeek(const gphead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL;
