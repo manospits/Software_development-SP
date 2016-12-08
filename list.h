@@ -14,9 +14,9 @@ gphead gcr_list(size_t data_size,rcode(*data_copy)(char*,void*),int(*data_cmp)(v
 rcode gds_list(gphead list_to_destroy);
 rcode gempty_list(gphead list_to_empty);
 //MODIFY
-rcode ginsert_back(phead listh,void * data);          //inserts node in back
-rcode gpop_front(phead listh);                         //deletes first node in list
-rcode gpop_back(phead listh);
+rcode ginsert_back(gphead listh,void * data);          //inserts node in back
+rcode gpop_front(gphead listh);                         //deletes first node in list
+rcode gpop_back(gphead listh);
 
 
 //ACCESS
