@@ -132,12 +132,16 @@ void print_error(){
             fprintf(stderr, "Error: malloc for SCC structure's ids array failed\n");
             error_val=OK_SUCCESS;
             break;
-        case SCC_MALLOC_FAIL_BOOL_ARRAY:
+        case SCC_MALLOC_FAIL_FLAGS_ARRAY:
             fprintf(stderr, "Error: malloc for SCC structure's bool array failed\n");
             error_val=OK_SUCCESS;
             break;
         case SCC_TARJAN_FAIL:
             fprintf(stderr, "Error: An error occurred while running Tarjan algorithm\n");
+            error_val=OK_SUCCESS;
+            break;
+        case SCC_STACK_CREATION_FAIL:
+            fprintf(stderr, "Error: An error occurred during stack creation for Tarjan\n");
             error_val=OK_SUCCESS;
             break;
     }

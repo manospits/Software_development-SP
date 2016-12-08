@@ -8,4 +8,6 @@ typedef struct Component* pcomponent;
 
 pSCC estimateStronglyConnectedComponents(pGraph);
 
+int findNodeStronglyConnectedComponentID(pSCC components, uint32_t nodeId);
+
 #endif  // _SCC_H_
