@@ -4,10 +4,19 @@
 #include "graph.h"
 
 typedef struct SCC* pSCC;
-typedef struct Component* pcomponent;
+typedef struct Component* pComponent;
+typedef struct ComponentCursor* pComponentCursor;
 
 pSCC estimateStronglyConnectedComponents(pGraph);
 
 int findNodeStronglyConnectedComponentID(pSCC components, uint32_t nodeId);
+
+void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor cursor);
+
+char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor);
+
+int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node);
+
+void destroyStronglyConnectedComponents(pSCC components);
 
 #endif  // _SCC_H_
