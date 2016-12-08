@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "CCindex.h"
 #include "graph.h"
 #include "error.h"
 
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     FILE *initial_graph, *workload, *results;
     char command;
     pGraph graph = gCreateGraph();
+    CC_index Connected_components;
     if (graph == NULL)
     {
         print_error();
@@ -77,6 +79,7 @@ int main(int argc, char *argv[])
         }
     }
     puts("Reading complete.");
+    Connected_components=CC_create_index(graph);
     puts("Processing workload...");
     // process workload
     for (i = 1 ; !feof(workload) ; ++i)
@@ -107,7 +110,7 @@ int main(int argc, char *argv[])
         if (command == 'A')
         {
             ret_val = gAddEdge(graph, node1, node2);
-            if (ret_val)
+            if (ret_val<0)
             {
                 print_error();
                 fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
@@ -117,10 +120,16 @@ int main(int argc, char *argv[])
                 gDestroyGraph(&graph);
                 return -1;
             }
+            if(ret_val!=EDGE_EXISTS){
+                CC_insertNewEdge(Connected_components,node1,node2);
+            }
         }
         else if (command == 'Q')
         {
-            ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
+            if(CC_same_component(Connected_components,node1,node2))
+                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
+            else
+                ret_val=GRAPH_SEARCH_PATH_NOT_FOUND;
             if (ret_val >= 0)
             {
                 fprintf(results, "%d\n", ret_val);
@@ -152,7 +161,7 @@ int main(int argc, char *argv[])
     }
     puts("Processing complete.");
     printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);
-
+    CC_destroy(Connected_components);
     gDestroyGraph(&graph);
     fclose(initial_graph);
     fclose(workload);
