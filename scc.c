@@ -19,6 +19,11 @@ typedef struct SCC
 }_scc;
 
 
+rcode tarjan(pSCC sccs, uint32_t nodeId)
+{
+
+}
+
 pSCC estimateStronglyConnectedComponents(pGraph graph)
 {
     pSCC sccs;
@@ -50,6 +55,19 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     // run Tarjan algorithm for all nodes
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
         if (!sccs->id_added[i])
-            ;//tarjan
+            if (tarjan(sccs, i) != OK_SUCCESS)
+            {
+                print_error();
+                free(sccs->id_added);
+                free(sccs->id_belongs_to_component);
+                free(sccs);
+                error_val = SCC_TARJAN_FAIL;
+                return SCC_TARJAN_FAIL;
+            }
     return sccs;
+}
+
+int findNodeStronglyConnectedComponentID(pSCC components, uint32_t nodeId)
+{
+    return pSCC->id_belongs_to_component[nodeId];
 }

@@ -49,5 +49,6 @@ extern int error_val;
 #define SCC_MALLOC_FAIL_BASIC_STRUCT -39
 #define SCC_MALLOC_FAIL_IDS_ARRAY -40
 #define SCC_MALLOC_FAIL_BOOL_ARRAY -41
+#define SCC_TARJAN_FAIL -42
 
 #endif

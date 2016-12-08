@@ -136,5 +136,9 @@ void print_error(){
             fprintf(stderr, "Error: malloc for SCC structure's bool array failed\n");
             error_val=OK_SUCCESS;
             break;
+        case SCC_TARJAN_FAIL:
+            fprintf(stderr, "Error: An error occurred while running Tarjan algorithm\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }
