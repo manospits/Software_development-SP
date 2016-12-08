@@ -51,5 +51,6 @@ extern int error_val;
 #define SCC_MALLOC_FAIL_FLAGS_ARRAY -41
 #define SCC_TARJAN_FAIL -42
 #define SCC_STACK_CREATION_FAIL -43
+#define TARJAN_STACK_INSERT_FAIL -44
 
 #endif

@@ -144,5 +144,9 @@ void print_error(){
             fprintf(stderr, "Error: An error occurred during stack creation for Tarjan\n");
             error_val=OK_SUCCESS;
             break;
+        case TARJAN_STACK_INSERT_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan execution: failed to add a node to stack\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

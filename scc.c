@@ -27,12 +27,19 @@ typedef struct scc_flags
 } scc_flags;
 
 
-rcode tarjan(pSCC sccs, uint32_t nodeId, scc_flags *flags, uint32_t *index)
+rcode tarjan(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint32_t nodeId)
 {
     flags[nodeId].index = *index;
     flags[nodeId].lowlink = *index;
     (*index)++;
-    //push
+    if (insert_back(stack, nodeId) < 0)
+    {
+        print_error();
+        error_val = TARJAN_STACK_INSERT_FAIL;
+        return TARJAN_STACK_INSERT_FAIL;
+    }
+    flags[nodeId].onStack = 1;
+    //
 
     return OK_SUCCESS;
 }
@@ -85,15 +92,18 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     // run Tarjan algorithm for all nodes
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
         if (flags[i].index == UINT_MAX) // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
-            if (tarjan(sccs, i, flags, &index) != OK_SUCCESS)
+            if (tarjan(sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
                 print_error();
                 free(flags);
                 free(sccs->id_belongs_to_component);
                 free(sccs);
+                ds_list(stack);
                 error_val = SCC_TARJAN_FAIL;
                 return NULL;
             }
+    ds_list(stack);
+    free(flags);
     return sccs;
 }
 
