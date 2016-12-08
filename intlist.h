@@ -18,6 +18,7 @@ rcode empty_list(phead list_to_empty);
 rcode insert(phead listh, uint32_t data);              //inserts node in front
 rcode insert_back(phead listh,uint32_t data);          //inserts node in back
 rcode pop_front(phead listh);                         //deletes first node in list
+rcode pop_back(phead listh);                         //deletes first node in list
 
 
 //ACCESS

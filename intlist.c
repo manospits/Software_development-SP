@@ -92,6 +92,20 @@ rcode pop_front(phead listh){
     return OK_SUCCESS;
 }
 
+rcode pop_back(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    if(listh->elements < 1){
+        error_val=EMPTY_LIST;
+        return EMPTY_LIST;
+    }
+    listh->elements--;
+    error_val=OK_SUCCESS;
+    return OK_SUCCESS;
+}
+
 int get_size(phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
@@ -125,4 +139,18 @@ int advance_iterator(const phead listh,iterator it){
     else{
         return (it+1)%listh->size;
     }
+}
+
+int in(const phead listh,uint32_t data){
+    int i,pos=listh->front;
+    for(i=0;i<listh->elements;i++){
+        if(listh->array_queue[pos].data==data){
+            return 1;
+        }
+        pos++;
+        if(pos==listh->size){
+            pos=0;
+        }
+    }
+    return 0;
 }
