@@ -42,5 +42,9 @@ extern int error_val;
 #define GRAPH_SEARCH_PATH_NOT_FOUND -32
 #define NODE_MISSING -33
 #define GRAPH_HASH_DESTROY_FAIL -34
+#define CC_MALLOC_FAIL -35
+#define CC_REALLOC_FAIL -36;
+#define LP_MALLOC_FAIL -37;
+#define LP_REALLOC_FAIL -38;
 
 #endif

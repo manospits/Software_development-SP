@@ -1,6 +1,6 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
-
+#include "index.h"
 #include <stdint.h>
 #include "error.h"
 
@@ -33,4 +33,8 @@ void gPrintGraph(pGraph);
 			 Outcoming: <node1> <node2> ... <node N>
 			 Incoming: <node1> <node2> ... <node N>	*/
 
+Index_ptr ret_inIndex(pGraph);
+Index_ptr ret_outIndex(pGraph);
+void print_ccid(pGraph,graphNode gnode);
+void rebuild(pGraph);
 #endif // _GRAPH_H_

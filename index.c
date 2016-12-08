@@ -19,6 +19,7 @@ typedef struct NodeIndex{
     pBuffer buffer;
     int size;
     int edges;
+    int nodes;
 }NodeIndex;
 
 
@@ -47,6 +48,7 @@ Index_ptr createNodeIndex(){
         tmp->index[i].edges=0;
     }
     tmp->edges=0;
+    tmp->nodes=0;
     tmp->size=INDEX_INIT_SIZE;
     error_val=OK_SUCCESS;
     return tmp;
@@ -63,6 +65,9 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
     }
     if(nodeId<hindex->size){
         error_val=OK_SUCCESS;
+        if(nodeId>hindex->nodes){
+            hindex->nodes=nodeId;
+        }
         return OK_SUCCESS;
     }
     else{
@@ -82,6 +87,9 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             hindex->index[i].edges=0;
         }
         hindex->size=next_size;
+        if(nodeId>hindex->nodes){
+            hindex->nodes=nodeId;
+        }
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
@@ -260,4 +268,8 @@ int get_number_of_edges(const Index_ptr hindex){
     }
     error_val=OK_SUCCESS;
     return hindex->edges;
+}
+
+int ret_biggest_node(const Index_ptr hindex){
+    return hindex->nodes;
 }

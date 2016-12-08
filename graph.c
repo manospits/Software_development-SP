@@ -597,3 +597,11 @@ void gPrintGraph(pGraph g)
         puts("");
     }
 }
+
+Index_ptr ret_outIndex(pGraph g){
+    return g->outIndex;
+}
+
+Index_ptr ret_inIndex(pGraph g){
+    return g->inIndex;
+}

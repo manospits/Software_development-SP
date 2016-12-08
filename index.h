@@ -40,4 +40,6 @@ int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId);
 
 int get_number_of_edges(const Index_ptr hindex);
     //returns total number of edges
+
+int ret_biggest_node(const Index_ptr hindex);
 #endif
