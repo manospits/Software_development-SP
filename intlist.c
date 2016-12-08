@@ -110,3 +110,19 @@ int peek(const phead listh){
     return listh->array_queue[listh->front].data;
 }
 
+iterator ret_iterator(const phead listh){
+    return listh->front;
+}
+
+int get_iterator_data(const phead listh,iterator it){
+    return listh->array_queue[it].data;
+}
+
+int advance_iterator(const phead listh,iterator it){
+    if(it==(listh->front+listh->elements-1)%listh->size){
+        return -1;
+    }
+    else{
+        return (it+1)%listh->size;
+    }
+}

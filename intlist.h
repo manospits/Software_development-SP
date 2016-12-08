@@ -4,7 +4,7 @@
 #include "error.h"
 #include <stdint.h>
 
-
+typedef int iterator;
 typedef struct node * pnode;
 typedef struct head * phead;
 
@@ -25,7 +25,9 @@ int in(const phead listh,uint32_t data);          //checks if there is an elemen
 int get_size(const phead listh);                  //get number of elements
 int get_data(const pnode nd);                     //returns data
 int peek(const phead listh);                 //returns list's first int
-
+iterator ret_iterator(const phead listh);
+int get_iterator_data(const phead listh,iterator it);
+int advance_iterator(const phead listh,iterator it);
 
 
 #endif
