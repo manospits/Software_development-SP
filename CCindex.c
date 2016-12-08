@@ -280,8 +280,11 @@ int CC_same_component(CC_index c, uint32_t a, uint32_t b){
     c->queries++;
     c->metric--;
     if(c->metric==0){
-        c->metric=(double)c->queries/(double)c->update_queries;
+        /*c->metric=(double)c->queries/(double)c->update_queries;*/
+        c->metric=100;
         CC_rebuildIndexes(c);
+        c->queries=0;
+        c->update_queries=0;
     }
     if(c->ccindex[a]==c->ccindex[b]){
         return 1;
@@ -330,7 +333,7 @@ int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
 rcode CC_rebuildIndexes(CC_index c){
     int j,tmp;
     for(j=0;j<c->updated_size;j++){
-        if(c->updated[j]==c->version){
+        if(c->updated[j]==c->version && c->marked[j]<c->check){
             int min=j,data;
             insert_back(c->idlist,j);
             insert_back(c->uidlist,j);
@@ -356,16 +359,15 @@ rcode CC_rebuildIndexes(CC_index c){
             while(get_size(c->uidlist)!=0){
                 tmp = peek(c->uidlist);
                 c->vals[tmp]=min;
-                c->updated[tmp]--;
                 pop_front(c->uidlist);
             }
             empty_list(c->uidlist);
         }
     }
-    c->check++;
     for(j=0;j<c->index_size;j++){
-        if(c->ccindex[j]!=-1)
+        if(c->ccindex[j]!=-1 && c->updated[c->ccindex[j]]==c->version){
             c->ccindex[j]=c->vals[c->ccindex[j]];
+        }
     }
     c->check++;
     c->version++;
