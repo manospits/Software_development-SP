@@ -15,5 +15,5 @@ int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid);
 rcode CC_rebuildIndexes(CC_index c);
 rcode CC_destroy(CC_index c);
 int CC_same_component(CC_index c, uint32_t a, uint32_t b);
-
+void print_max(CC_index);
 #endif

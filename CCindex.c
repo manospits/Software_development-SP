@@ -18,6 +18,7 @@ typedef struct CC{
     uint32_t *ccindex; //CCindex
     int *updated; //
     int *marked; //
+    int *markedrebuild;
     int *vals; //
     UpdateIndex UpdateIndex;
     uint32_t metricVal;
@@ -27,11 +28,12 @@ typedef struct CC{
     int update_queries;
     int queries;
     int metric;
-    long int version;
+    int version;
     phead idlist;
     phead uidlist;
     lpool lists;
-    long int check;
+    int check;
+    int checkrebuild;
 } CC;
 
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
@@ -40,7 +42,7 @@ CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
     Index_ptr outIndex=ret_outIndex(g);
     CC_index tmp;
-    int i,index,max_nodes=ret_biggest_node(inIndex)+1,return_value,l;
+    int i,index,max_nodes=ret_biggest_node(inIndex)+1,return_value,l,state=0,last;
     if((tmp=malloc(sizeof(struct CC)))==NULL){
         error_val=CC_MALLOC_FAIL;
         return NULL;
@@ -57,6 +59,7 @@ CC_index CC_create_index(pGraph g){
     tmp->uidlist=cr_list();
     tmp->version=0;
     tmp->check=0;
+    tmp->checkrebuild=0;
     tmp->update_queries=0;
     tmp->queries=0;
     tmp->metric= METRIC_INIT_VALUE;
@@ -122,7 +125,9 @@ CC_index CC_create_index(pGraph g){
                     {
                         if (tmp->ccindex[listnode->neighbor[i]]==-1)
                         {    // if this node hasn't been visited yet
+                            state=1;
                             tmp->ccindex[listnode->neighbor[i]]=tmp->next_component_num;
+                            last=listnode->neighbor[i];
                             if ((return_value =insert_back(tmp->idlist, listnode->neighbor[i])) != OK_SUCCESS)
                             {
                                 ds_list(tmp->idlist);
@@ -147,10 +152,13 @@ CC_index CC_create_index(pGraph g){
                     }
                 }
             }
-            tmp->next_component_num++;
+            if(state==1){
+                tmp->next_component_num++;
+                state=0;
+            }
         }
     }
-    tmp->updated_size=tmp->next_component_num-1;
+    tmp->updated_size=tmp->next_component_num;
     if((tmp->updated=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
         free(tmp);
@@ -169,9 +177,16 @@ CC_index CC_create_index(pGraph g){
         error_val=CC_MALLOC_FAIL;
         return NULL;
     }
+    if((tmp->markedrebuild=malloc((tmp->updated_size)*sizeof(int)))==NULL){
+        free(tmp->ccindex);
+        free(tmp);
+        error_val=CC_MALLOC_FAIL;
+        return NULL;
+    }
     for(i=0;i<tmp->updated_size;i++){
         tmp->updated[i]=-1;
         tmp->marked[i]=-1;
+        tmp->markedrebuild[i]=-1;
     }
     if((tmp->UpdateIndex.uindex=malloc(tmp->updated_size*sizeof(uint32_t*)))==NULL){
         free(tmp->ccindex);
@@ -190,6 +205,7 @@ rcode CC_destroy(CC_index c){
     free(c->ccindex);
     free(c->updated);
     free(c->marked);
+    free(c->markedrebuild);
     free(c->vals);
     free(c->UpdateIndex.uindex);
     free(c);
@@ -219,17 +235,22 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
         c->ccindex[nodeida]=c->next_component_num;
         c->ccindex[nodeidb]=c->next_component_num;
         c->next_component_num++;
-        if(c->updated_size==c->next_component_num){
-            int i;
-            c->updated=realloc(c->updated,c->updated_size*2*(sizeof(int)));
-            c->marked=realloc(c->marked,c->updated_size*2*(sizeof(int)));
-            c->vals=realloc(c->vals,c->updated_size*2*(sizeof(int)));
-            c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,c->UpdateIndex.size*2*sizeof(phead));
-            for(i=c->updated_size;i<c->updated_size*2;i++){
+        if(c->updated_size<=c->next_component_num){
+            int i,next_size=c->updated_size;
+            while(next_size<=c->next_component_num){
+                next_size*=2;
+            }
+            c->updated=realloc(c->updated,next_size*(sizeof(int)));
+            c->marked=realloc(c->marked,next_size*(sizeof(int)));
+            c->markedrebuild=realloc(c->markedrebuild,next_size*(sizeof(int)));
+            c->vals=realloc(c->vals,next_size*(sizeof(int)));
+            c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,next_size*sizeof(phead));
+            for(i=c->updated_size;i<next_size;i++){
                 c->updated[i]=-1;
                 c->marked[i]=-1;
+                c->markedrebuild[i]=-1;
             }
-            c->updated_size*=2;
+            c->updated_size=next_size;
         }
     }
     else if(c->ccindex[nodeida]==-1||c->ccindex[nodeidb]==-1){
@@ -280,7 +301,6 @@ int CC_same_component(CC_index c, uint32_t a, uint32_t b){
     c->queries++;
     c->metric--;
     if(c->metric==0){
-        /*c->metric=(double)c->queries/(double)c->update_queries;*/
         c->metric=100;
         CC_rebuildIndexes(c);
         c->queries=0;
@@ -296,6 +316,9 @@ int CC_same_component(CC_index c, uint32_t a, uint32_t b){
 
 int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
     int a,b;
+    if(c->ccindex[nodeid]==-1){
+        return -1;
+    }
     a=c->updated[c->ccindex[nodeid]];
     b=c->version;
     if(a<b){
@@ -331,10 +354,10 @@ int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
 
 
 rcode CC_rebuildIndexes(CC_index c){
-    int j,tmp;
+    int j,tmp,com_num=0;
     for(j=0;j<c->updated_size;j++){
-        if(c->updated[j]==c->version && c->marked[j]<c->check){
-            int min=j,data;
+        if(c->updated[j]==c->version && c->markedrebuild[j] < c->checkrebuild){
+            int data;
             insert_back(c->idlist,j);
             insert_back(c->uidlist,j);
             while(get_size(c->idlist)!=0){
@@ -345,9 +368,6 @@ rcode CC_rebuildIndexes(CC_index c){
                 while(it!=-1){
                     data=get_iterator_data(c->UpdateIndex.uindex[tmp],it);
                     if(c->marked[data]<c->check){
-                        if(data<min){
-                            min=data;
-                        }
                         c->marked[data]=c->check;
                         insert_back(c->idlist,data);
                         insert_back(c->uidlist,data);
@@ -356,22 +376,43 @@ rcode CC_rebuildIndexes(CC_index c){
                 }
             }
             empty_list(c->idlist);
+            int i=0;
             while(get_size(c->uidlist)!=0){
+                i++;
                 tmp = peek(c->uidlist);
-                c->vals[tmp]=min;
+                c->markedrebuild[tmp]=c->checkrebuild;
+                c->vals[tmp]=com_num;
                 pop_front(c->uidlist);
             }
+            com_num++;
             empty_list(c->uidlist);
+            c->check++;
+        }
+        else if(c->updated[j]<c->version){
+            c->vals[j]=com_num++;
         }
     }
     for(j=0;j<c->index_size;j++){
-        if(c->ccindex[j]!=-1 && c->updated[c->ccindex[j]]==c->version){
+        if(c->ccindex[j]!=-1 ){
             c->ccindex[j]=c->vals[c->ccindex[j]];
         }
     }
     c->check++;
     c->version++;
+    c->checkrebuild++;
     empty_lists(c->lists);
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
+}
+
+void print_max(CC_index c ){
+    int max,i;
+    max=0;
+    for(i=0;i<c->index_size;i++){
+        if(c->ccindex[i]>max){
+            /*printf("%d\n",c->ccindex[i]);*/
+            max=c->ccindex[i];
+        }
+    }
+    printf("%d\n",max+1);
 }
