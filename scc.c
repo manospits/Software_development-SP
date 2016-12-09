@@ -26,6 +26,11 @@ typedef struct scc_flags
     uint32_t lowlink;
 } scc_flags;
 
+struct ComponentCursor{
+    _component* component_ptr;  // pointer to current’s iteration component
+    //
+};
+
 
 rcode tarjan(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint32_t nodeId)
 {
@@ -110,4 +115,29 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
 int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)
 {
     return sccomponents->id_belongs_to_component[nodeId];
+}
+
+void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
+{
+    if (components->components_count == 0)
+        cursor->component_ptr = NULL;
+    else
+        cursor->component_ptr = components->components;
+}
+
+char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
+{
+    return 0;
+}
+
+int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node)
+{
+
+}
+
+void destroyStronglyConnectedComponents(pSCC components)
+{
+    free(components->id_belongs_to_component);
+    //delete/free components
+    free(components);
 }
