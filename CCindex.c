@@ -27,7 +27,7 @@ typedef struct CC{
     int next_component_num;
     int update_queries;
     int queries;
-    int metric;
+    double metric;
     int version;
     phead idlist;
     phead uidlist;
@@ -62,7 +62,7 @@ CC_index CC_create_index(pGraph g){
     tmp->checkrebuild=0;
     tmp->update_queries=0;
     tmp->queries=0;
-    tmp->metric= METRIC_INIT_VALUE;
+    tmp->metric= 0;
     tmp->index_size = max_nodes;
     tmp->next_component_num = 0;
     tmp->lists=create_listpool();
@@ -216,6 +216,13 @@ rcode CC_destroy(CC_index c){
 rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
     uint32_t max=nodeidb;
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
+    c->queries++;
+    c->metric=(double)c->update_queries/(double)c->queries;
+    if(c->metric>METRIC_VAL){
+        CC_rebuildIndexes(c);
+        c->queries=0;
+        c->update_queries=0;
+    }
     if(max>=c->index_size){
         int prev_size=c->index_size;
         int next_size=c->index_size,i;
@@ -298,14 +305,13 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
 }
 
 int CC_same_component(CC_index c, uint32_t a, uint32_t b){
-    c->queries++;
-    c->metric--;
-    if(c->metric==0){
-        c->metric=100;
+    c->metric=(double)c->update_queries/(double)c->queries;
+    if(c->metric>METRIC_VAL){
         CC_rebuildIndexes(c);
         c->queries=0;
         c->update_queries=0;
     }
+    c->queries++;
     if(c->ccindex[a]==c->ccindex[b]){
         return 1;
     }

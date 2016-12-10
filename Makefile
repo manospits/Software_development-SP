@@ -3,7 +3,7 @@ FINAL=spath
 SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c
 OBJS=buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o
 FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o
-AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o
+AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o
 HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h
 CC=gcc
 FLAGS = -c -Wall
@@ -13,7 +13,7 @@ all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -O1 -o   $@ $(FOBJS)
+	$(CC) -o   $@ $(FOBJS)
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)

@@ -71,8 +71,8 @@ rcode ginsert_back(gphead listh,void * data){
         listh->array_queue=realloc(listh->array_queue,newsize*listh->data_size);
         if(listh->front!=0){
             memcpy(&listh->array_queue[listh->size],&listh->array_queue[0],(listh->front));
+            listh->front=newsize-(listh->size-listh->front);
         }
-        listh->front=newsize-(listh->size-listh->front);
         listh->size=newsize;
     }
     pos=(((listh->front/listh->data_size)+listh->elements)%listh->size)*listh->data_size;

@@ -10,7 +10,7 @@ typedef struct node {
 } node;
 
 typedef struct head{
-    int size;
+    long int size;
     int front;
     int elements;
     node *array_queue;
@@ -57,6 +57,7 @@ rcode empty_list(phead list_to_empty){
 }
 
 rcode insert_back(phead listh,uint32_t data){
+    /*puts("insert_back");*/
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -66,14 +67,17 @@ rcode insert_back(phead listh,uint32_t data){
         newsize=listh->size*2;
         listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct node));
         if(listh->front!=0){
-            memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct node));
+            memcpy(&(listh->array_queue[newsize-(listh->size-listh->front)]),&(listh->array_queue[listh->front]),(listh->size-listh->front)*sizeof(struct node));
+            listh->front=newsize-(listh->size-listh->front);
         }
-        listh->front=newsize-(listh->size-listh->front);
         listh->size=newsize;
     }
     pos=(listh->front+listh->elements)%listh->size;
+    /*if(listh->front==pos)*/
+        /*printf("front %d pos %d, %ld %d\n",listh->front,pos,listh->size,listh->elements);*/
     listh->array_queue[pos].data=data;
     listh->elements++;
+    /*puts("insert_back_ok");*/
     return OK_SUCCESS;
 }
 

@@ -69,8 +69,8 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag,int expanded){
         listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct stnode));
         if(listh->front!=0){
             memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct stnode));
+            listh->front=newsize-(listh->size-listh->front);
         }
-        listh->front=newsize-(listh->size-listh->front);
         listh->size=newsize;
     }
     pos=(listh->front+listh->elements)%listh->size;
