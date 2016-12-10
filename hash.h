@@ -15,14 +15,11 @@ typedef struct hash_node *phnode;
 //| .|
 //|__|->N->...|-
 
-phash create_hashtable(int hash_table_size,int(*h)(void *,void*),int type);       //type 0 for simple 1 for sorted lists
-rcode h_insert(phash a,uint32_t data,uint32_t tag,int expanded);                                      //inserts data
+phash create_hashtable(int hash_table_size,int(*h)(void *,void*));       //type 0 for simple 1 for sorted lists
+rcode h_insert(phash a,uint32_t data);                                      //inserts data
 int in_hash(phash a,uint32_t data);                                         //checks if data  exists in hash
-int h_delete(phash a,uint32_t data);                                        //deletes node with data
 rcode ds_hash(phash a);                                                     //destroys hash table a
 rcode empty_hash(phash a);                                                  //removes all elements from hash table
-int ret_tag(phash a,uint32_t data);                                        //returns previous node of data
-int ret_expanded(phash a,uint32_t data);
-rcode set_expanded(phash a,uint32_t data,int expanded);
+
 
 #endif
