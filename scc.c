@@ -42,7 +42,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
-    int i;
+    int i, temp;
     rcode return_value;
     flags[nodeId].index = *index;
     flags[nodeId].lowlink = *index;
@@ -57,53 +57,52 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
     //
     // check node's neighbors
     buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), nodeId);
-    if (buffer_ptr_to_listnode == -1)
-    {   // node has no neighbors
-        //continue;
-    }
-    else if (buffer_ptr_to_listnode < 0)
+    if (buffer_ptr_to_listnode < -1)
     {   // an error occurred
         print_error();
         error_val = TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
         return TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
     }
-    if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
-    {
-        print_error();
-        error_val = TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
-        return TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
-    }
-    if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
-    {
-        print_error();
-        error_val = TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
-        return TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
-    }
-    i = 0;
-    while (listnode->neighbor[i] != -1)
-    {
-        if (flags[listnode->neighbor[i]].index == UINT_MAX)
+    else if (buffer_ptr_to_listnode != -1)
+    {   // if buffer_ptr_to_listnode == -1 then node has no neighbors, so continue to the end
+        if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
         {
-            return_value = tarjan_rec(graph, sccs, stack, flags, index, listnode->neighbor[i]);
-            if (return_value != OK_SUCCESS)
-                return return_value;
-            flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
+            print_error();
+            error_val = TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
+            return TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
         }
-        else if (flags[listnode->neighbor[i]].onStack == 1)
-            flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
-        // get next neighbor
-        i++;
-        if (i == N)
+        if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
         {
-            if (listnode->nextListNode == -1)   // if there are no more neighbors, break
-                break;
-            if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+            print_error();
+            error_val = TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
+            return TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
+        }
+        i = 0;
+        while (listnode->neighbor[i] != -1)
+        {
+            if (flags[listnode->neighbor[i]].index == UINT_MAX)
             {
-                print_error();
-                error_val = TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
-                return TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
+                return_value = tarjan_rec(graph, sccs, stack, flags, index, listnode->neighbor[i]);
+                if (return_value != OK_SUCCESS)
+                    return return_value;
+                flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
             }
-            i = 0;
+            else if (flags[listnode->neighbor[i]].onStack == 1)
+                flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
+            // get next neighbor
+            i++;
+            if (i == N)
+            {
+                if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                    break;
+                if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                {
+                    print_error();
+                    error_val = TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
+                    return TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
+                }
+                i = 0;
+            }
         }
     }
     // if nodeId is a root nonde, pop the stack and generate an SCC
@@ -112,8 +111,20 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
         // create new component
         do
         {
-            //peek
-            //pop
+            if ((temp = peek(stack)) < 0)
+            {
+                print_error();
+                error_val = TARJAN_REC_STACK_PEEK_FAIL;
+                return TARJAN_REC_STACK_PEEK_FAIL;
+            }
+            if (pop_back(stack) < 0)
+            {
+                print_error();
+                error_val = TARJAN_REC_STACK_POP_FAIL;
+                return TARJAN_REC_STACK_POP_FAIL;
+            }
+            flags[temp].onStack = 0;
+            // add temp to current component
         }while(1);
     }
 

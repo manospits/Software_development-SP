@@ -160,8 +160,12 @@ void print_error(){
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve initial listnode\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_LISTNODE_RETRIEVAL_FAIL:
-            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve listnode\n");
+        case TARJAN_REC_STACK_PEEK_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to peek top item in stack\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_STACK_POP_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to pop top item in stack\n");
             error_val=OK_SUCCESS;
             break;
     }
