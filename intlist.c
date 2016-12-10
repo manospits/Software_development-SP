@@ -128,6 +128,15 @@ int peek(const phead listh){
     return listh->array_queue[listh->front].data;
 }
 
+int peek_back(const phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    error_val=OK_SUCCESS;
+    int pos=(listh->front+listh->elements-1)%listh->size;
+    return listh->array_queue[pos].data;
+}
 iterator ret_iterator(const phead listh){
     return listh->front;
 }

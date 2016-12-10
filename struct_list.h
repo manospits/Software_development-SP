@@ -27,6 +27,7 @@ int st_get_data(const stpnode nd);                     //returns data
 int st_get_tag(const stphead listh,uint32_t data);    //returns tag value of node
 int st_get_expanded(const stphead listh,uint32_t data);    //returns tag value of node
 int st_peek(const stphead listh);                 //returns list's first int
+int st_peek_back(const stphead listh);                 //returns list's first int
 
 
 

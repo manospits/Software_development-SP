@@ -8,7 +8,6 @@
 #line 1 "testmain.check"
 #include "intlist.h"
 #include "struct_list.h"
-#include "hash.h"
 #include "index.h"
 #include "error.h"
 #include <stdio.h>
@@ -20,32 +19,25 @@ int hash_function(void *data,void *size)
 
 START_TEST(intlist)
 {
-#line 14
+#line 13
     phead list;
-    phead sorted_list;
     int i,j,k;
     for(i=0;i<3;i++){
         fail_unless((list=cr_list())!=NULL);
-        fail_unless((sorted_list=cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(insert(list,j)==OK_SUCCESS);
-            fail_unless(insert_sorted(sorted_list,j)==OK_SUCCESS);
-            fail_unless(peek(list)==j);
+            fail_unless(insert_back(list,j)==OK_SUCCESS);
+            fail_unless(peek_back(list)==j);
         }
         fail_unless(get_size(list)==1000);
-        fail_unless(get_size(sorted_list)==1000);
         for(k=0;k<1100;k++){
             if(k<1000){
                 fail_unless(in(list,k));
-                fail_unless(ins(sorted_list,k));
             }
             else{
                 fail_unless(!in(list,k));
-                fail_unless(!ins(sorted_list,k));
             }
         }
         fail_unless(ds_list(list)==OK_SUCCESS);
-        fail_unless(ds_list(sorted_list)==OK_SUCCESS);
     }
     puts("testing intlist finished");
 }
@@ -53,84 +45,36 @@ END_TEST
 
 START_TEST(struct_list)
 {
-#line 42
+#line 34
     stphead list;
-    stphead sorted_list;
     int i,j,k;
     for(i=0;i<3;i++){
         fail_unless((list=st_cr_list())!=NULL);
-        fail_unless((sorted_list=st_cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(st_insert(list,j,j,i)==OK_SUCCESS);
-            fail_unless(st_insert_sorted(sorted_list,j,j,i)==OK_SUCCESS);
-            fail_unless(st_peek(list)==j);
+            fail_unless(st_insert_back(list,j,j,i)==OK_SUCCESS);
+            fail_unless(st_peek_back(list)==j);
         }
         fail_unless(st_get_size(list)==1000);
-        fail_unless(st_get_size(sorted_list)==1000);
         for(k=0;k<1100;k++){
             if(k<1000){
                 fail_unless(st_in(list,k));
-                fail_unless(st_ins(sorted_list,k));
                 fail_unless(st_get_expanded(list,k)==i);
-                fail_unless(st_get_expanded(sorted_list,k)==i);
                 fail_unless(st_set_expanded(list,k,i+1)==OK_SUCCESS);
-                fail_unless(st_set_expanded(sorted_list,k,i+1)==OK_SUCCESS);
                 fail_unless(st_get_expanded(list,k)==i+1);
-                fail_unless(st_get_expanded(sorted_list,k)==i+1);
             }
             else{
                 fail_unless(!st_in(list,k));
-                fail_unless(!st_ins(sorted_list,k));
             }
         }
         fail_unless(st_ds_list(list)==OK_SUCCESS);
-        fail_unless(st_ds_list(sorted_list)==OK_SUCCESS);
     }
     puts("testing structlist finished");
 }
 END_TEST
 
-START_TEST(hash)
-{
-#line 76
-    phash hash;
-    phash sorted_hash;
-    int i,j,k;
-    for(i=0;i<3;i++){
-        fail_unless((hash=create_hashtable(HASHTABLE_SIZE,hash_function,0))!=NULL);
-        fail_unless((sorted_hash=create_hashtable(HASHTABLE_SIZE,hash_function,1))!=NULL);
-        for(j=0;j<1000;j++){
-            fail_unless(h_insert(hash,j,j,i)==OK_SUCCESS);
-            fail_unless(h_insert(sorted_hash,j,j,i)==OK_SUCCESS);
-        }
-        for(k=0;k<1100;k++){
-            if(k<1000){
-                fail_unless(in_hash(hash,k));
-                fail_unless(in_hash(sorted_hash,k));
-                fail_unless(ret_expanded(hash,k)==i);
-                fail_unless(ret_expanded(sorted_hash,k)==i);
-                fail_unless(set_expanded(hash,k,i+1)==OK_SUCCESS);
-                fail_unless(set_expanded(sorted_hash,k,i+1)==OK_SUCCESS);
-                fail_unless(ret_expanded(hash,k)==i+1);
-                fail_unless(ret_expanded(sorted_hash,k)==i+1);
-
-            }
-            else{
-                fail_unless(!in_hash(hash,k));
-                fail_unless(!in_hash(sorted_hash,k));
-            }
-        }
-        fail_unless(ds_hash(hash)==OK_SUCCESS);
-        fail_unless(ds_hash(sorted_hash)==OK_SUCCESS);
-    }
-    puts("testing hashtable finished");
-
-}
-END_TEST
-
 START_TEST(test_serial)
 {
-#line 109
+#line 58
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -155,7 +99,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 129
+#line 78
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -192,7 +136,6 @@ int main(void)
     suite_add_tcase(s1, tc1_1);
     tcase_add_test(tc1_1, intlist);
     tcase_add_test(tc1_1, struct_list);
-    tcase_add_test(tc1_1, hash);
     tcase_add_test(tc1_1, test_serial);
     tcase_add_test(tc1_1, test_step10);
 

@@ -77,7 +77,6 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag,int expanded){
     listh->array_queue[pos].data=data;
     listh->array_queue[pos].tag=data;
     listh->array_queue[pos].expanded=expanded;
-    listh->front=pos;
     listh->elements++;
     return OK_SUCCESS;
 }
@@ -113,6 +112,16 @@ int st_peek(const stphead listh){
     }
     error_val=OK_SUCCESS;
     return listh->array_queue[listh->front].data;
+}
+
+int st_peek_back(const stphead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    error_val=OK_SUCCESS;
+    int pos=(listh->front+listh->elements-1)%listh->size;
+    return listh->array_queue[pos].data;
 }
 
 int st_get_tag(const stphead listh,uint32_t data){
@@ -165,4 +174,18 @@ rcode st_set_expanded(const stphead listh,uint32_t data,int expanded){
     }
     error_val=NODE_MISSING;
     return NODE_MISSING;
+}
+
+int st_in(const stphead listh,uint32_t data){
+    int i,pos=listh->front;
+    for(i=0;i<listh->elements;i++){
+        if(listh->array_queue[pos].data==data){
+            return 1;
+        }
+        pos++;
+        if(pos==listh->size){
+            pos=0;
+        }
+    }
+    return 0;
 }
