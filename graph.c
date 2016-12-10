@@ -305,7 +305,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
-    int i, n, return_value, path_length[2], number_of_nodes, current;
+    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
     char path_found = 0;
     graphNode temp_node;
     pBuffer temp_buffer;
@@ -333,14 +333,17 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     }
     path_length[0] = 0;
     path_length[1] = 0;
+    grandchildren[0] = 0;
+    grandchildren[1] = 0;
     current = 1;
     while(get_size(g->open_intlist[0]) > 0 && get_size(g->open_intlist[1]) > 0)
     {
         // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
         // This prevents the extreme case where every node in the path has only 1 child, and if "<" was used only the first bfs would expand nodes continuously,
         // while the other bfs wouldn't have entered its first node in "visited", so the two bfss wouldn't be able to meet
-        if (get_size(g->open_intlist[1-current]) <= get_size(g->open_intlist[current]))
+        if (get_size(g->open_intlist[1-current]) + grandchildren[1-current] <= get_size(g->open_intlist[current]) + grandchildren[current])
             current = 1-current;
+        grandchildren[current] = 0;
         path_length[current]++;
         if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
         {
@@ -408,6 +411,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         error_val = return_value;
                         return return_value;
                     }
+                    grandchildren[current] += get_node_number_of_edges(g->outIndex, listnode->neighbor[i]);
                 }
                 else if (return_value > 0)
                 {

@@ -37,7 +37,7 @@ struct ComponentCursor{
 
 
 
-rcode tarjan_rec(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint32_t nodeId)
+rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint32_t nodeId)
 {
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
@@ -51,15 +51,15 @@ rcode tarjan_rec(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint
     {
         print_error();
         error_val = TARJAN_REC_STACK_INSERT_FAIL;
-        return TARJAN_STACK_INSERT_FAIL;
+        return TARJAN_REC_STACK_INSERT_FAIL;
     }
     flags[nodeId].onStack = 1;
     //
     // check node's neighbors
-    buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), nodeId);
+    buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), nodeId);
     if (buffer_ptr_to_listnode == -1)
     {   // node has no neighbors
-        continue;
+        //continue;
     }
     else if (buffer_ptr_to_listnode < 0)
     {   // an error occurred
@@ -67,7 +67,7 @@ rcode tarjan_rec(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint
         error_val = TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
         return TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
     }
-    if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
+    if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
     {
         print_error();
         error_val = TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
@@ -77,14 +77,14 @@ rcode tarjan_rec(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint
     {
         print_error();
         error_val = TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
-        return TARJAN_INIT_REC_LISTNODE_RETRIEVAL_FAIL;
+        return TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
     }
     i = 0;
     while (listnode->neighbor[i] != -1)
     {
         if (flags[listnode->neighbor[i]].index == UINT_MAX)
         {
-            return_value = tarjan_rec(sccs, stack, flags, index, listnode->neighbor[i]);
+            return_value = tarjan_rec(graph, sccs, stack, flags, index, listnode->neighbor[i]);
             if (return_value != OK_SUCCESS)
                 return return_value;
             flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
@@ -112,8 +112,9 @@ rcode tarjan_rec(pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint
         // create new component
         do
         {
-
-        }while();
+            //peek
+            //pop
+        }while(1);
     }
 
     return OK_SUCCESS;
@@ -167,7 +168,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     // run Tarjan algorithm for all nodes
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
         if (flags[i].index == UINT_MAX) // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
-            if (tarjan_rec(sccs, stack, flags, &index, i) != OK_SUCCESS)
+            if (tarjan_rec(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
                 print_error();
                 free(flags);
