@@ -144,8 +144,24 @@ void print_error(){
             fprintf(stderr, "Error: An error occurred during stack creation for Tarjan\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_STACK_INSERT_FAIL:
-            fprintf(stderr, "Error: An error occurred during Tarjan execution: failed to add a node to stack\n");
+        case TARJAN_REC_STACK_INSERT_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to add a node to stack\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve buffer pointer\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_BUFFER_RETRIEVAL_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve buffer\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve initial listnode\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_LISTNODE_RETRIEVAL_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve listnode\n");
             error_val=OK_SUCCESS;
             break;
     }
