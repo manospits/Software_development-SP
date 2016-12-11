@@ -769,15 +769,15 @@ rcode create_indexes(pGraph g,int type){
         if (estimateSCCsNeighbors(g->sccs, g) < 0)
         {
             //error
-        }
+            return -1;
+        }/*
         uint32_t i, sum = 0, temp;
-        /*pComponent array = get_SCComponents(g->sccs);
         for (i = 0 ; i < get_number_of_components(g->sccs) ; ++i)
         {
-            get_component_neighbors(array + i, NULL, &temp);
+            get_component_neighbors(g->sccs, i, NULL, &temp);
             sum += temp;
         }
-        printf("hypergraph edges: %d", temp);*/
+        printf("hypergraph edges: %d\n", sum);    //DEBUG*/
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;

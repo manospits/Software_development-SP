@@ -260,6 +260,7 @@ int add_component_neighbor(pComponent comp, uint32_t neighborId)
         if ((comp->neighbor_ids = malloc(sizeof(uint32_t))) == NULL)
         {
             //error
+            return -1;
         }
         comp->neighbor_ids[0] = neighborId;
         (comp->neighbors_count)++;
@@ -270,6 +271,7 @@ int add_component_neighbor(pComponent comp, uint32_t neighborId)
         if ((comp->neighbor_ids = realloc(comp->neighbor_ids, (comp->neighbors_count)*sizeof(uint32_t))) == NULL)
         {
             //error
+            return -1;
         }
         comp->neighbor_ids[comp->neighbors_count - 1] = neighborId;
     }
@@ -329,6 +331,7 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
                             if (add_component_neighbor(&(sccs->components[j]), sccs->id_belongs_to_component[listnode->neighbor[k]]) < 0)
                             {
                                 //error
+                                return -1;
                             }
                         }
                     }
@@ -359,14 +362,14 @@ int get_number_of_components(pSCC sccs)
     if (sccs == NULL) return -1;
     return sccs->components_count;
 }
-
+/*
 pComponent get_SCComponents(pSCC sccs)
 {
     if (sccs == NULL) return NULL;
     return sccs->components;
 }
-
-void get_component_neighbors(pSCC sccs, uint32_t componentId, uint32_t **neighbors, int *number_of_neighbors)
+*/
+void get_component_neighbors(pSCC sccs, uint32_t componentId, uint32_t **neighbors, uint32_t *number_of_neighbors)
 {
     if (sccs == NULL || componentId > sccs->components_count) return;   //error
     *number_of_neighbors = sccs->components[componentId].neighbors_count;
