@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         }
     }
     puts("Reading complete.");
-    puts("Processing workload...");
+    puts("Building assistant structures/indexes...");
     // process workload
     fscanf(workload,"%s",typebuf);
     if(strcmp(typebuf,"DYNAMIC")==0){
@@ -88,6 +88,8 @@ int main(int argc, char *argv[])
     else if(strcmp(typebuf,"STATIC")==0){
         create_indexes(graph,STATIC);
     }
+    puts("Building complete.");
+    puts("Processing workload...");
     fgets(typebuf,255,workload);
     for (i = 1 ; !feof(workload) ; ++i)
     {
