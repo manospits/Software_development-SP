@@ -182,7 +182,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         return NULL;
     }
     sccs->components_count = 0;
-    sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph)) + 1;
+    sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph)) + 1;  // first node is 0
     if ((sccs->components = malloc((sccs->number_of_nodes)*sizeof(_component))) == NULL)
     {
         error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
@@ -245,12 +245,19 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     }
     ds_list(stack);
     free(flags);
-    //printf("Number of sccs created: %d nodes: %d\n", sccs->components_count, ret_biggest_node(ret_outIndex(graph)));
+    //printf("Number of sccs created: %d nodes: %d\n", sccs->components_count, ret_biggest_node(ret_outIndex(graph)));  //DEBUG
     return sccs;
+}
+
+int ret_number_of_components(pSCC sccs)
+{
+    if (sccs == NULL) return -1;
+    return sccs->components_count;
 }
 
 int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)
 {
+    if (sccomponents == NULL) return -1;
     return sccomponents->id_belongs_to_component[nodeId];
 }
 
@@ -266,6 +273,7 @@ void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor curso
 
 char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
 {
+    if (components == NULL) return 0;
     if (cursor->component_ptr < components->components)
     {
         fprintf(stderr, "out of bounds\n");

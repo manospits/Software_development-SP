@@ -78,9 +78,8 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
-    puts("Reading complete.");//printf("edges: %d\n", get_number_of_edges(ret_outIndex(graph)));
+    puts("Reading complete.");
     puts("Building assistant structures/indexes...");
-    // process workload
     fscanf(workload,"%s",typebuf);
     if(strcmp(typebuf,"DYNAMIC")==0){
         create_indexes( graph,DYNAMIC);
@@ -89,7 +88,7 @@ int main(int argc, char *argv[])
         create_indexes(graph,STATIC);
     }
     else{
-        fprintf(stderr, "Error: unrecognized graph type (neither of DYNAMIC, STATIC)\n");
+        fprintf(stderr, "Error: unrecognized graph type (neither of DYNAMIC, STATIC). Exiting...\n");
         fclose(initial_graph);
         fclose(workload);
         fclose(results);
