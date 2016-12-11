@@ -21,7 +21,7 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph);
 
 int get_number_of_components(pSCC);
 
-int get_number_of_component_neighbors(pComponent, int *);
+void get_component_neighbors(pComponent comp, uint32_t **neighbors, int *number_of_neighbors);
 
 void destroyStronglyConnectedComponents(pSCC components);
 

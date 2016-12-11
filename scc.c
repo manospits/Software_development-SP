@@ -308,7 +308,7 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
                     }
                     // get next neighbor
                     k++;
-                    if (i == N)
+                    if (k == N)
                     {
                         if (listnode->nextListNode == -1)   // if there are no more neighbors, break
                             break;
@@ -334,10 +334,11 @@ int get_number_of_components(pSCC sccs)
     return sccs->components_count;
 }
 
-int get_number_of_component_neighbors(pComponent comp, int *number_of_neighbors)
+void get_component_neighbors(pComponent comp, uint32_t **neighbors, int *number_of_neighbors)
 {
-    if (comp == NULL) return -1;
-    return comp->neighbors_count;
+    if (comp == NULL || neighbors == NULL) return;
+    *number_of_neighbors = comp->neighbors_count;
+    *neighbors = comp->neighbor_ids;
 }
 
 int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)
