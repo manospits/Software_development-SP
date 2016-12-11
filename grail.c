@@ -4,6 +4,7 @@
 #include "error.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 typedef struct Gnode{
@@ -17,6 +18,7 @@ typedef struct GrailIndex{
 }GrailIndex;
 
 Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
+    puts("ok");
     Grail g;
     int *visited;
     int visited_version=1;
@@ -44,6 +46,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     //ITERATIVE
     srand(time(NULL));
     int rank=0 ;
+    puts("ok");
     uint32_t nodeid,parent,**neighbors=NULL,size;
     for(l=0;l<LABEL_NUMBER;l++){
         nodeid=rand()%g->gindex_size;
@@ -53,16 +56,20 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                 nodeid=k;
                 parent=k;
             }
-            if(visited[k]<visited_version){
+            if(visited[nodeid]<visited_version){
                 insert_back(nodes,nodeid);
                 insert_back(nodesp,parent);
+                puts("ok");
                 while(get_size(nodes)!=0){
                     nodeid=peek_back(nodes);
                     parent=peek_back(nodesp);
+                    puts("ok");
                     if(visited[nodeid]<visited_version){
                         get_component_neighbors(s,nodeid,neighbors,&size);
+                        puts("ok");
                         for(i=0;i<size;i++)
                         {
+                            puts("ok");
                             if(visited[*neighbors[i]]<visited_version){
                                 insert_back(nodes,*neighbors[i]);
                                 insert_back(nodesp,nodeid);
@@ -92,6 +99,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
         visited_version++;
     }
     free(visited);
+    puts("ok");
     return g;
 }
 
