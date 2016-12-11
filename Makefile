@@ -6,17 +6,20 @@ FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o 
 AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o
 HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h
 CC=gcc
-FLAGS = -c -Wall
+FLAGS = -c -Wall -O2
 CHECK = -lcheck -lrt
 
 all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -O1 -o   $@ $(FOBJS)
+	$(CC) -O2 -o $@ $(FOBJS)
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)
+
+graph.o: graph.c
+	$(CC) $(FLAGS) $?
 
 main.o: main.c
 	$(CC) $(FLAGS) $?

@@ -81,14 +81,28 @@ int main(int argc, char *argv[])
     puts("Reading complete.");
     puts("Processing workload...");
     // process workload
-    fscanf(workload,"%s",typebuf);
+    if(fscanf(workload,"%s",typebuf)==EOF){
+        fprintf(stderr,"Error in workload file");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        return -1;
+    }
     if(strcmp(typebuf,"DYNAMIC")==0){
         create_indexes( graph,DYNAMIC);
     }
     else if(strcmp(typebuf,"STATIC")==0){
         create_indexes(graph,STATIC);
     }
-    fgets(typebuf,255,workload);
+    if(fgets(typebuf,255,workload)==NULL){
+        fprintf(stderr,"Error in workload file");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        return -1;
+    }
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
