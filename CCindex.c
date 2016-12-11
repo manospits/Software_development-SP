@@ -127,7 +127,6 @@ CC_index CC_create_index(pGraph g){
                         {    // if this node hasn't been visited yet
                             state=1;
                             tmp->ccindex[listnode->neighbor[i]]=tmp->next_component_num;
-                            listnode->neighbor[i];
                             if ((return_value =insert_back(tmp->idlist, listnode->neighbor[i])) != OK_SUCCESS)
                             {
                                 ds_list(tmp->idlist);
