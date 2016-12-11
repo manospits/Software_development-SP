@@ -40,12 +40,12 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     }
     for(i=0;i<g->gindex_size;i++){
         for(k=0;k<LABEL_NUMBER;k++)
-            g->gindex[i].min_rank[k]=0;
-        visited[i]=0;
+            g->gindex[i].min_rank[k]=16777216;
+        visited[i]=-1;
     }
     //ITERATIVE
     srand(time(NULL));
-    int rank=0 ;
+    uint32_t rank=0 ;
     uint32_t nodeid,parent,*neighbors,size;
     for(l=0;l<LABEL_NUMBER;l++){
         nodeid=rand() % g->gindex_size;
@@ -79,13 +79,13 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                     }
                     else{
                         rank++;
-                        if(g->gindex[nodeid].min_rank==0){
+                        g->gindex[nodeid].rank[l]=rank;
+                        if(g->gindex[nodeid].min_rank[l]==16777216){
                             g->gindex[nodeid].min_rank[l]=rank;
                         }
                         if(g->gindex[parent].min_rank[l]>g->gindex[nodeid].min_rank[l]){
                             g->gindex[parent].min_rank[l]=g->gindex[nodeid].min_rank[l];
                         }
-                        g->gindex[nodeid].rank[l]=rank;
                         pop_back(nodes);
                         pop_back(nodesp);
                     }
@@ -107,7 +107,7 @@ GRAIL_ANSWER isReachableGrailIndex(GrailIndex* g, uint32_t source_node,uint32_t 
             return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
 rcode destroyGrailIndex(GrailIndex * g){
