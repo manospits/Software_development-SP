@@ -1,6 +1,6 @@
 #ifndef _INT_LIST_
 #define _INT_LIST_
-#define QUEUE_INIT_SIZE 10000
+#define QUEUE_INIT_SIZE 20000
 #include "error.h"
 #include <stdint.h>
 
