@@ -412,8 +412,8 @@ extern int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_
 
 int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node)
 {
-    if (findNodeStronglyConnectedComponentID(components, source_node) != findNodeStronglyConnectedComponentID(components, target_node))
-        return -1;
+    /*if (findNodeStronglyConnectedComponentID(components, source_node) != findNodeStronglyConnectedComponentID(components, target_node))
+        return -1;*/
     return bidirectional_bfs_inside_component(components, graph, source_node, target_node, findNodeStronglyConnectedComponentID(components, source_node));
 }
 
