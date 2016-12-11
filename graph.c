@@ -770,8 +770,14 @@ rcode create_indexes(pGraph g,int type){
         {
             //error
         }
-        uint32_t temp = 0;
-
+        uint32_t i, sum = 0, temp;
+        /*pComponent array = get_SCComponents(g->sccs);
+        for (i = 0 ; i < get_number_of_components(g->sccs) ; ++i)
+        {
+            get_component_neighbors(array + i, NULL, &temp);
+            sum += temp;
+        }
+        printf("hypergraph edges: %d", temp);*/
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
