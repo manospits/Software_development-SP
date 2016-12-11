@@ -3,13 +3,14 @@
 #define UINDEX_INIT_SIZE 2
 #define CCINDEX_INIT_SIZE 2
 #define UPDATED_INIT_SIZE 2
-#define METRIC_VAL 0.29
+#define METRIC_VAL 0.31
 #include "error.h"
 #include <stdint.h>
+#include "graph.h"
 
 typedef struct CC *CC_index;
 
-CC_index CC_create_index();
+CC_index CC_create_index(pGraph g);
 rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb);
 int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid);
 rcode CC_rebuildIndexes(CC_index c);

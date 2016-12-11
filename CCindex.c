@@ -202,6 +202,7 @@ CC_index CC_create_index(pGraph g){
 rcode CC_destroy(CC_index c){
     ds_list(c->idlist);
     ds_list(c->uidlist);
+    ds_pool(c->lists);
     free(c->ccindex);
     free(c->updated);
     free(c->marked);

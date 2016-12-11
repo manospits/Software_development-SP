@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     FILE *initial_graph, *workload, *results;
     char command;
     pGraph graph = gCreateGraph();
-    CC_index Connected_components;
+    char typebuf[256];
     if (graph == NULL)
     {
         print_error();
@@ -79,9 +79,16 @@ int main(int argc, char *argv[])
         }
     }
     puts("Reading complete.");
-    Connected_components=CC_create_index(graph);
     puts("Processing workload...");
     // process workload
+    fscanf(workload,"%s",typebuf);
+    if(strcmp(typebuf,"DYNAMIC")==0){
+        create_indexes( graph,DYNAMIC);
+    }
+    else if(strcmp(typebuf,"STATIC")==0){
+        create_indexes(graph,STATIC);
+    }
+    fgets(typebuf,255,workload);
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
@@ -120,16 +127,10 @@ int main(int argc, char *argv[])
                 gDestroyGraph(&graph);
                 return -1;
             }
-            if(ret_val!=EDGE_EXISTS){
-                CC_insertNewEdge(Connected_components,node1,node2);
-            }
         }
         else if (command == 'Q')
         {
-            if(CC_same_component(Connected_components,node1,node2))
-                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
-            else
-                ret_val=GRAPH_SEARCH_PATH_NOT_FOUND;
+            ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
             if (ret_val >= 0)
             {
                 fprintf(results, "%d\n", ret_val);
@@ -161,7 +162,6 @@ int main(int argc, char *argv[])
     }
     puts("Processing complete.");
     printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);
-    CC_destroy(Connected_components);
     gDestroyGraph(&graph);
     fclose(initial_graph);
     fclose(workload);

@@ -8,6 +8,10 @@
 #define BFS 0
 #define BIDIRECTIONAL_BFS 1
 
+#define NOTYPE -1
+#define STATIC 0
+#define DYNAMIC 1
+
 typedef struct graph* pGraph;
 typedef uint32_t graphNode;
 
@@ -20,6 +24,8 @@ rcode gDestroyGraph(pGraph *);
 
 rcode gAddEdge(pGraph, graphNode from, graphNode to);
 	// Adds the node 'from'--->'to' to the graph 'pGraph'
+
+rcode create_indexes(pGraph ,int type);
 
 int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Searches the graph 'pGraph' to find the shortest path from node 'from' to node 'to'

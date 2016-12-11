@@ -6,6 +6,8 @@
 #include "visited.h"
 #include "struct_list.h"
 #include "intlist.h"
+#include "scc.h"
+#include "CCindex.h"
 #include <assert.h>
 
 #define VISITED 0
@@ -18,6 +20,8 @@ typedef struct graph
     pvis visited;
     stphead open_list;
     phead open_intlist[2];
+    int type;
+    CC_index ccindex;
 }_graph;
 
 pGraph gCreateGraph()
@@ -32,6 +36,8 @@ pGraph gCreateGraph()
     g->open_list=NULL;
     g->open_intlist[0]=NULL;
     g->open_intlist[1]=NULL;
+    g->ccindex=NULL;
+    g->type=NOTYPE;
     if ((g->inIndex = createNodeIndex()) == NULL)
     {
         free(g);
@@ -69,8 +75,13 @@ rcode gDestroyGraph(pGraph *g)
     if(((*g)->open_intlist[1]!=NULL)){
         ds_list((*g)->open_intlist[1]);
     }
-    destroyNodeIndex((*g)->outIndex);
+    if((*g)->type==DYNAMIC){
+        CC_destroy((*g)->ccindex);
+    }
+    else if((*g)->type==STATIC){
 
+    }
+    destroyNodeIndex((*g)->outIndex);
     destroyNodeIndex((*g)->inIndex);
     free(*g);
     *g = NULL;
@@ -117,6 +128,12 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
         if (return_value) return return_value;
         return_value = add_edge(g->inIndex, to, from);
         if (return_value) return return_value;
+        if(g->type==DYNAMIC){
+            CC_insertNewEdge(g->ccindex,from,to);
+        }
+        else if(g->type==STATIC){
+            //STATIC
+        }
     }
     else{
         return EDGE_EXISTS;
@@ -174,6 +191,14 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
             // error_val not set here, so print_error() will print the error from create_hashtable()
             return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
         }
+    }
+    if(g->type==DYNAMIC){
+        if(!CC_same_component(g->ccindex,from,to)){
+            return GRAPH_SEARCH_PATH_NOT_FOUND;
+        }
+    }
+    else if(g->type==STATIC){
+        //STATIC
     }
     v_update_loop(g->visited,get_index_size(g->inIndex));
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
@@ -562,4 +587,17 @@ Index_ptr ret_outIndex(pGraph g){
 
 Index_ptr ret_inIndex(pGraph g){
     return g->inIndex;
+}
+
+
+rcode create_indexes(pGraph g,int type){
+    g->type=type;
+    if(type==DYNAMIC){
+        g->ccindex=CC_create_index(g);
+    }
+    else if(type==STATIC){
+
+    }
+    error_val=OK_SUCCESS;
+    return OK_SUCCESS;
 }

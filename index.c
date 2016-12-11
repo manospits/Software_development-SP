@@ -89,6 +89,9 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             hindex->index[i].list_node_for_next_neigbor=-1;
             hindex->index[i].node_index_for_next_neighbor=-1;
             hindex->index[i].edges=0;
+            hindex->index[i].smallest_edge=16777216;
+            hindex->index[i].biggest_edge=0;
+
         }
         hindex->size=next_size;
         if(nodeId>hindex->nodes){
