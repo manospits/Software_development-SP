@@ -11,7 +11,7 @@ typedef struct GrailIndex * Grail;
 
 Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp);
 GRAIL_ANSWER isReachableGrailIndex(Grail index, uint32_t source_node,uint32_t target_node);
-rcode destroyGrailIndex(GrailIndex * g);
+rcode destroyGrailIndex(Grail g);
 
 #endif
 
