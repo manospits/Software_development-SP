@@ -43,8 +43,8 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     }
     //ITERATIVE
     srand(time(NULL));
-    int rank=0,state=1;
-    uint32_t nodeid,parent,neighbor,**neighbors,size;
+    int rank=0 ;
+    uint32_t nodeid,parent,**neighbors=NULL,size;
     for(l=0;l<LABEL_NUMBER;l++){
         nodeid=rand()%g->gindex_size;
         parent=nodeid;
