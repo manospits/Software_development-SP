@@ -46,7 +46,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     //ITERATIVE
     srand(time(NULL));
     int rank=0 ;
-    uint32_t nodeid,parent,**neighbors=NULL,size;
+    uint32_t nodeid,parent,*neighbors=NULL,size;
     for(l=0;l<LABEL_NUMBER;l++){
         nodeid=rand() % g->gindex_size;
         parent=nodeid;
@@ -63,16 +63,16 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                     parent=peek_back(nodesp);
                     if(visited[nodeid]<visited_version){
                         visited[nodeid]=visited_version;
-                        get_component_neighbors(s,nodeid,neighbors,&size);
+                        neighbors=get_component_neighbors(s,nodeid,&size);
                         for(i=0;i<size;i++)
                         {
-                            if(visited[*neighbors[i]]<visited_version){
-                                insert_back(nodes,*neighbors[i]);
+                            if(visited[neighbors[i]]<visited_version){
+                                insert_back(nodes,neighbors[i]);
                                 insert_back(nodesp,nodeid);
                             }
                             else{
-                                if(g->gindex[*neighbors[i]].min_rank[l] < g->gindex[nodeid].min_rank[l]){
-                                    g->gindex[nodeid].min_rank[l]=g->gindex[*neighbors[i]].min_rank[l];
+                                if(g->gindex[neighbors[i]].min_rank[l] < g->gindex[nodeid].min_rank[l]){
+                                    g->gindex[nodeid].min_rank[l]=g->gindex[neighbors[i]].min_rank[l];
                                 }
                             }
                         }
