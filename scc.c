@@ -369,11 +369,11 @@ pComponent get_SCComponents(pSCC sccs)
     return sccs->components;
 }
 */
-uint32_t* get_component_neighbors(pSCC sccs, uint32_t componentId, uint32_t *number_of_neighbors)
+void get_component_neighbors(pSCC sccs, uint32_t componentId, uint32_t **neighbors, uint32_t *number_of_neighbors)
 {
-    if (sccs == NULL || componentId > sccs->components_count) return NULL;   //error
+    if (sccs == NULL || componentId > sccs->components_count) return;   //error
     *number_of_neighbors = sccs->components[componentId].neighbors_count;
-    return sccs->components[componentId].neighbor_ids;
+    if (neighbors != NULL) *neighbors = sccs->components[componentId].neighbor_ids;
 }
 
 int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)
