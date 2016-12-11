@@ -23,6 +23,7 @@ typedef struct graph
     phead open_intlist[2];
     int type;
     CC_index ccindex;
+    pSCC sccs;
 }_graph;
 
 pGraph gCreateGraph()
@@ -80,7 +81,7 @@ rcode gDestroyGraph(pGraph *g)
         CC_destroy((*g)->ccindex);
     }
     else if((*g)->type==STATIC){
-
+        destroyStronglyConnectedComponents((*g)->sccs);
     }
     destroyNodeIndex((*g)->outIndex);
     destroyNodeIndex((*g)->inIndex);
@@ -199,7 +200,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
         }
     }
     else if(g->type==STATIC){
-        //STATIC
+        //if (estimateShortestPathStronglyConnectedComponents(sccs, g, from, to) == GRAPH_SEARCH_PATH_NOT_FOUND)
     }
     v_update_loop(g->visited,get_index_size(g->inIndex));
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
@@ -647,7 +648,7 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
     if (path_found)
         return path_length[0] + path_length[1] - 1;
     else
-        return -1;
+        return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
 
 void gPrintGraph(pGraph g)
@@ -759,7 +760,12 @@ rcode create_indexes(pGraph g,int type){
         g->ccindex=CC_create_index(g);
     }
     else if(type==STATIC){
-
+        if ((g->sccs = estimateStronglyConnectedComponents(g)) == NULL)
+        {
+            print_error();
+            error_val = GRAPH_CREATE_STATIC_INDEX_FAIL;
+            return GRAPH_CREATE_STATIC_INDEX_FAIL;
+        }
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;

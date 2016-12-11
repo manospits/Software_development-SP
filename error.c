@@ -188,5 +188,9 @@ void print_error(){
             fprintf(stderr, "Error: final realloc for SCC's component array failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAPH_CREATE_STATIC_INDEX_FAIL:
+            fprintf(stderr, "Error: creating indexes for static graph failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

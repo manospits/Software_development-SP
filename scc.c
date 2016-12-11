@@ -275,6 +275,8 @@ char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
     return 0;
 }
 
+extern int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id);
+
 int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node)
 {
     if (findNodeStronglyConnectedComponentID(components, source_node) != findNodeStronglyConnectedComponentID(components, target_node))
@@ -282,9 +284,15 @@ int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph grap
     return bidirectional_bfs_inside_component(components, graph, source_node, target_node, findNodeStronglyConnectedComponentID(components, source_node));
 }
 
-void destroyStronglyConnectedComponents(pSCC components)
+void destroyStronglyConnectedComponents(pSCC sccs)
 {
-    free(components->id_belongs_to_component);
-    //delete/free components
-    free(components);
+    int i;
+    // delete node array
+    free(sccs->id_belongs_to_component);
+    // delete components
+    for (i = 0 ; i < sccs->components_count ; ++i)
+        free(sccs->components[i].included_node_ids);
+    free(sccs->components);
+    // delete original structure
+    free(sccs);
 }
