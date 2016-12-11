@@ -646,19 +646,19 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
                         }
                         // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
                     }
-                    i++;
-                    if (i == N)
+                }
+                i++;
+                if (i == N)
+                {
+                    if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                        break;
+                    if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                     {
-                        if (listnode->nextListNode == -1)   // if there are no more neighbors, break
-                            break;
-                        if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
-                        {
-                            return_value = error_val;
-                            error_val = return_value;
-                            return return_value;
-                        }
-                        i = 0;
+                        return_value = error_val;
+                        error_val = return_value;
+                        return return_value;
                     }
+                    i = 0;
                 }
             }
             if (path_found)
