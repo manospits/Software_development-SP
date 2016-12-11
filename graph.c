@@ -959,10 +959,10 @@ rcode create_indexes(pGraph g,int type){
             sum += temp;
         }
         printf("hypergraph edges: %d\n", sum);    //DEBUG*/
-        //if ((g->grail = buildGrailIndex(g->sccs)) == NULL)
+        if ((g->grail = buildGrailIndex(g->sccs)) == NULL)
         {
             //error
-            //return -1;
+            return -1;
         }
     }
     error_val=OK_SUCCESS;
