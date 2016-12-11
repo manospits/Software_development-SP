@@ -337,7 +337,7 @@ int get_number_of_components(pSCC sccs)
 void get_component_neighbors(pComponent comp, uint32_t **neighbors, int *number_of_neighbors)
 {
     if (comp == NULL || neighbors == NULL) return;
-    *number_of_neighbors = comp->neighbors_count;
+    *number_of_neighbors = comp->neighbor_ids;
     *neighbors = comp->neighbor_ids;
 }
 
