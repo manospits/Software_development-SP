@@ -1,10 +1,10 @@
 BIN=unittesting
 FINAL=spath
-SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c
+SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c scc.c utils.c
 OBJS=buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o
-FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o
-AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o
-HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h
+FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o
+AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o
+HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h
 CC=gcc
 FLAGS = -c -Wall -O2
 CHECK = -lcheck -lrt
@@ -52,6 +52,12 @@ error.o: error.c
 	$(CC) $(FLAGS) $?
 
 index.o: index.c
+	$(CC) $(FLAGS) $?
+
+scc.o: scc.c
+	$(CC) $(FLAGS) $?
+
+utils.o: utils.c
 	$(CC) $(FLAGS) $?
 
 clean:
