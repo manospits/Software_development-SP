@@ -13,6 +13,8 @@ typedef struct Component
     uint32_t included_nodes_count;
     uint32_t array_size;
     uint32_t *included_node_ids;
+    uint32_t neighbors_count;
+    uint32_t *neighbor_ids;
 }_component;
 
 typedef struct SCC
@@ -209,6 +211,8 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         flags[i].index = UINT_MAX;
         flags[i].onStack = 0;
         sccs->components[i].included_node_ids = NULL;
+        sccs->components[i].neighbors_count = 0;
+        sccs->components[i].neighbor_ids = NULL;
     }
     //create stack
     if ((stack = cr_list()) == NULL)
@@ -249,10 +253,91 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     return sccs;
 }
 
-int ret_number_of_components(pSCC sccs)
+int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
+{
+    if (sccs == NULL) return -1;
+    pBuffer temp_buffer;
+    ptr buffer_ptr_to_listnode;
+    plnode listnode;
+    uint32_t *component_flags, i, j, k;
+    if ((component_flags = calloc(sccs->components_count, sizeof(uint32_t))) == NULL)
+    {
+        //error
+    }
+    // flags is used to check whether this neighbor has already been added to current component
+    // it is initialized to zeros
+    // condition is: if flags[neighbor] == component_id + 1
+    // +1 is used because we start from 0, so we must catch this case somehow
+
+    // find neighbors:
+    for (j = 0 ; j < sccs->components_count ; ++j)
+    {
+        for (i = 0 ; i < sccs->components[j].included_nodes_count ; ++i)
+        {
+            buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), sccs->components[j].included_node_ids[i]);
+            if (buffer_ptr_to_listnode < -1)
+            {   // an error occurred
+                print_error();
+                error_val = TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
+                return TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL;
+            }
+            else if (buffer_ptr_to_listnode != -1)
+            {   // if buffer_ptr_to_listnode == -1 then node has no neighbors, so continue to the end
+                if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
+                {
+                    print_error();
+                    error_val = TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
+                    return TARJAN_REC_BUFFER_RETRIEVAL_FAIL;
+                }
+                if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+                {
+                    print_error();
+                    error_val = TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
+                    return TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL;
+                }
+                k = 0;
+                while (listnode->neighbor[k] != -1)
+                {
+                    if (sccs->id_belongs_to_component[listnode->neighbor[k]] != sccs->components[j].component_id)
+                    {   // if neighbor doesn't belong to the same component
+                        if (component_flags[sccs->id_belongs_to_component[listnode->neighbor[k]]] != sccs->components[j].component_id + 1)
+                        {   // if this neighbor hasn't been added yet
+                            component_flags[sccs->id_belongs_to_component[listnode->neighbor[k]]] = sccs->components[j].component_id + 1;
+                            //add_neighbor(&(sccs->components[j]), sccs->id_belongs_to_component[listnode->neighbor[k]]);
+                        }
+                    }
+                    // get next neighbor
+                    k++;
+                    if (i == N)
+                    {
+                        if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                            break;
+                        if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                        {
+                            print_error();
+                            error_val = TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
+                            return TARJAN_REC_LISTNODE_RETRIEVAL_FAIL;
+                        }
+                        k = 0;
+                    }
+                }
+            }
+        }
+    }
+    free(component_flags);
+    return OK_SUCCESS;
+}
+
+int get_number_of_components(pSCC sccs)
 {
     if (sccs == NULL) return -1;
     return sccs->components_count;
+}
+
+int get_number_of_component_neighbors(pComponent comp, int *number_of_neighbors)
+{
+    if (comp == NULL) return -1;
+    return comp->neighbors_count;
 }
 
 int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)

@@ -17,7 +17,11 @@ char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
 
 int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node);
 
-int ret_number_of_components(pSCC);
+int estimateSCCsNeighbors(pSCC sccs, pGraph graph);
+
+int get_number_of_components(pSCC);
+
+int get_number_of_component_neighbors(pComponent, int *);
 
 void destroyStronglyConnectedComponents(pSCC components);
 

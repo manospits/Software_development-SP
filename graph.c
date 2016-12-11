@@ -766,6 +766,10 @@ rcode create_indexes(pGraph g,int type){
             error_val = GRAPH_CREATE_STATIC_INDEX_FAIL;
             return GRAPH_CREATE_STATIC_INDEX_FAIL;
         }
+        if (estimateSCCsNeighbors(g->sccs, g) < 0)
+        {
+            //error
+        }
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
