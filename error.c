@@ -168,5 +168,25 @@ void print_error(){
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to pop top item in stack\n");
             error_val=OK_SUCCESS;
             break;
+        case TARJAN_REC_COMPONENT_INIT_ARRAY_MALLOC_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: component's initial malloc for node array failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_ADD_NODE_TO_COMPONENT_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: an error occurred while adding a new node to current component\n");
+            error_val=OK_SUCCESS;
+            break;
+        case TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: component's final realloc for node array failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case SCC_ADD_COMPONENT_REALLOC_FAIL:
+            fprintf(stderr, "Error: realloc for component's node array failed while adding a new node\n");
+            error_val=OK_SUCCESS;
+            break;
+        case SCC_FINAL_REALLOC_FAIL:
+            fprintf(stderr, "Error: final realloc for SCC's component array failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

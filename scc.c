@@ -11,6 +11,7 @@ typedef struct Component
 {
     uint32_t component_id;
     uint32_t included_nodes_count;
+    uint32_t array_size;
     uint32_t *included_node_ids;
 }_component;
 
@@ -35,18 +36,34 @@ struct ComponentCursor{
 };
 
 
+// adds node nodeId to last component
+int add_node_to_component(pSCC sccs, uint32_t nodeId)
+{
+    if (sccs->components[sccs->components_count - 1].included_nodes_count == sccs->components[sccs->components_count - 1].included_nodes_count)
+    {
+        sccs->components[sccs->components_count - 1].array_size *= 2;
+        if ((realloc(sccs->components[sccs->components_count - 1].included_node_ids, sccs->components[sccs->components_count - 1].array_size)) == NULL)
+        {
+            error_val = SCC_ADD_COMPONENT_REALLOC_FAIL;
+            return SCC_ADD_COMPONENT_REALLOC_FAIL;
+        }
+    }
+    sccs->components[sccs->components_count - 1].included_node_ids[sccs->components[sccs->components_count - 1].included_nodes_count] = nodeId;
+    sccs->id_belongs_to_component[nodeId] = sccs->components_count - 1;
+    (sccs->components[sccs->components_count - 1].included_nodes_count)++;
+    return 0;
+}
 
-
-rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_t *index, uint32_t nodeId)
+rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_t *tarjan_index_param, uint32_t nodeId)
 {
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
     int i, temp;
     rcode return_value;
-    flags[nodeId].index = *index;
-    flags[nodeId].lowlink = *index;
-    (*index)++;
+    flags[nodeId].index = *tarjan_index_param;
+    flags[nodeId].lowlink = *tarjan_index_param;
+    (*tarjan_index_param)++;
     if (insert_back(stack, nodeId) < 0)
     {
         print_error();
@@ -82,7 +99,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
         {
             if (flags[listnode->neighbor[i]].index == UINT_MAX)
             {
-                return_value = tarjan_rec(graph, sccs, stack, flags, index, listnode->neighbor[i]);
+                return_value = tarjan_rec(graph, sccs, stack, flags, tarjan_index_param, listnode->neighbor[i]);
                 if (return_value != OK_SUCCESS)
                     return return_value;
                 flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
@@ -105,10 +122,19 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
             }
         }
     }
-    // if nodeId is a root nonde, pop the stack and generate an SCC
+    // if nodeId is a root node, pop the stack and generate an SCC
     if (flags[nodeId].lowlink == flags[nodeId].index)
     {
-        // create new component
+        // initialize component
+        sccs->components[sccs->components_count].component_id = sccs->components_count;
+        sccs->components[sccs->components_count].included_nodes_count = 0;
+        sccs->components[sccs->components_count].array_size = 8;
+        if ((sccs->components[sccs->components_count].included_node_ids = malloc((sccs->components[sccs->components_count].array_size)*sizeof(uint32_t))) == NULL)
+        {
+            error_val = TARJAN_REC_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+            return TARJAN_REC_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+        }
+        (sccs->components_count)++;
         do
         {
             if ((temp = peek(stack)) < 0)
@@ -124,8 +150,18 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                 return TARJAN_REC_STACK_POP_FAIL;
             }
             flags[temp].onStack = 0;
-            // add temp to current component
-        }while(1);
+            if (add_node_to_component(sccs, temp) < 0)
+            {
+                print_error();
+                error_val = TARJAN_REC_ADD_NODE_TO_COMPONENT_FAIL;
+                return TARJAN_REC_ADD_NODE_TO_COMPONENT_FAIL;
+            }
+        }while(temp != nodeId);
+        if (realloc(sccs->components[sccs->components_count].included_node_ids, (sccs->components[sccs->components_count].included_nodes_count)*sizeof(uint32_t)) == NULL)
+        {
+            error_val = TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+            return TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+        }
     }
 
     return OK_SUCCESS;
@@ -144,12 +180,18 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         error_val = SCC_MALLOC_FAIL_BASIC_STRUCT;
         return NULL;
     }
-    sccs->components = NULL;
     sccs->components_count = 0;
     sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph));
+    if ((sccs->components = malloc((sccs->number_of_nodes)*sizeof(_component))) == NULL)
+    {
+        error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        free(sccs);
+        return NULL;
+    }
     if ((sccs->id_belongs_to_component = malloc((sccs->number_of_nodes)*sizeof(uint32_t))) == NULL)
     {
         error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        free(sccs->components);
         free(sccs);
         return NULL;
     }
@@ -157,6 +199,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     {
         error_val = SCC_MALLOC_FAIL_FLAGS_ARRAY;
         free(sccs->id_belongs_to_component);
+        free(sccs->components);
         free(sccs);
         return NULL;
     }
@@ -164,6 +207,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     {
         flags[i].index = UINT_MAX;
         flags[i].onStack = 0;
+        sccs->components[i].included_node_ids = NULL;
     }
     //create stack
     if ((stack = cr_list()) == NULL)
@@ -189,6 +233,14 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
                 error_val = SCC_TARJAN_FAIL;
                 return NULL;
             }
+    if (realloc(sccs->components, sccs->components_count*sizeof(_component)) == NULL)
+    {
+        error_val = SCC_FINAL_REALLOC_FAIL;
+        free(sccs->id_belongs_to_component);
+        if (sccs->components != NULL) free(sccs->components);
+        free(sccs);
+        return NULL;
+    }
     ds_list(stack);
     free(flags);
     return sccs;
