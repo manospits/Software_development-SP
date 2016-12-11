@@ -11,6 +11,8 @@ typedef struct Inode{
     ptr List_start;
     ptr list_node_for_next_neigbor;
     int node_index_for_next_neighbor;
+    int smallest_edge;
+    int biggest_edge;
     int edges;
 }Inode;
 
@@ -46,6 +48,8 @@ Index_ptr createNodeIndex(){
         tmp->index[i].list_node_for_next_neigbor=-1;
         tmp->index[i].node_index_for_next_neighbor=-1;
         tmp->index[i].edges=0;
+        tmp->index[i].smallest_edge=16777216;
+        tmp->index[i].biggest_edge=0;
     }
     tmp->edges=0;
     tmp->nodes=0;
@@ -148,6 +152,9 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     if(hindex->index[nodeId].List_start==-1){
         return 0;
     }
+    if(neighbor>hindex->index[nodeId].biggest_edge || neighbor <hindex->index[nodeId].smallest_edge){
+        return 0;
+    }
     ptr nextlptr=hindex->index[nodeId].List_start;
     do{
         tmplnode=getListNode(hindex->buffer,nextlptr);
@@ -202,6 +209,12 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         print_error();
         error_val=INDEX_GET_LIST_NODE_FAIL;
         return INDEX_GET_LIST_NODE_FAIL;
+    }
+    if(neighbor>hindex->index[nodeId].biggest_edge){
+        hindex->index[nodeId].biggest_edge=neighbor;
+    }
+    else if (neighbor<hindex->index[nodeId].smallest_edge) {
+        hindex->index[nodeId].smallest_edge=neighbor;
     }
     tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
     hindex->index[nodeId].node_index_for_next_neighbor++;

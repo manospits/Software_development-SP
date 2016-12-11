@@ -3,7 +3,7 @@
 #define UINDEX_INIT_SIZE 2
 #define CCINDEX_INIT_SIZE 2
 #define UPDATED_INIT_SIZE 2
-#define METRIC_VAL 0.3
+#define METRIC_VAL 0.29
 #include "error.h"
 #include <stdint.h>
 

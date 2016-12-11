@@ -42,7 +42,7 @@ CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
     Index_ptr outIndex=ret_outIndex(g);
     CC_index tmp;
-    int i,index,max_nodes=ret_biggest_node(inIndex)+1,return_value,l,state=0,last;
+    int i,index,max_nodes=ret_biggest_node(inIndex)+1,return_value,l,state=0;
     if((tmp=malloc(sizeof(struct CC)))==NULL){
         error_val=CC_MALLOC_FAIL;
         return NULL;
@@ -127,7 +127,7 @@ CC_index CC_create_index(pGraph g){
                         {    // if this node hasn't been visited yet
                             state=1;
                             tmp->ccindex[listnode->neighbor[i]]=tmp->next_component_num;
-                            last=listnode->neighbor[i];
+                            listnode->neighbor[i];
                             if ((return_value =insert_back(tmp->idlist, listnode->neighbor[i])) != OK_SUCCESS)
                             {
                                 ds_list(tmp->idlist);
@@ -158,6 +158,7 @@ CC_index CC_create_index(pGraph g){
             }
         }
     }
+    printf("Number of components before Workload : %d \n",tmp->next_component_num);
     tmp->updated_size=tmp->next_component_num;
     if((tmp->updated=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
@@ -352,7 +353,6 @@ int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
                 it=advance_iterator(c->UpdateIndex.uindex[tmp],it);
             }
         }
-        empty_list(c->idlist);
         c->check++;
         return min;
     }
@@ -381,7 +381,7 @@ rcode CC_rebuildIndexes(CC_index c){
                     it=advance_iterator(c->UpdateIndex.uindex[tmp],it);
                 }
             }
-            empty_list(c->idlist);
+            /*empty_list(c->idlist);*/
             int i=0;
             while(get_size(c->uidlist)!=0){
                 i++;
@@ -391,7 +391,7 @@ rcode CC_rebuildIndexes(CC_index c){
                 pop_front(c->uidlist);
             }
             com_num++;
-            empty_list(c->uidlist);
+            /*empty_list(c->uidlist);*/
             c->check++;
         }
         else if(c->updated[j]<c->version){

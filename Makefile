@@ -13,7 +13,7 @@ all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -o   $@ $(FOBJS)
+	$(CC) -O1 -o   $@ $(FOBJS)
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)
