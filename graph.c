@@ -205,6 +205,14 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
             return GRAPH_SEARCH_INIT_STRUCTS_FAIL;
         }
     }
+    v_update_loop(g->visited,get_index_size(g->inIndex));
+    if(type!=BFS){
+        empty_list(g->open_intlist[0]);
+        empty_list(g->open_intlist[1]);
+    }
+    else{
+         st_empty_list(g->open_list);
+    }
     if(g->type==DYNAMIC){
         if(!CC_same_component(g->ccindex,from,to)){
             return GRAPH_SEARCH_PATH_NOT_FOUND;
@@ -224,15 +232,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
             return bidirectional_bfs(g, from, to);
         }
     }
-    v_update_loop(g->visited,get_index_size(g->inIndex));
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
-    if(type!=BFS){
-        empty_list(g->open_intlist[0]);
-        empty_list(g->open_intlist[1]);
-    }
-    else{
-         st_empty_list(g->open_list);
-    }
     return return_value;
 }
 
