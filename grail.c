@@ -107,7 +107,7 @@ GRAIL_ANSWER isReachableGrailIndex(GrailIndex* g, uint32_t source_node,uint32_t 
             return 1;
         }
     }
-    return 0;
+    return 1;
 }
 
 rcode destroyGrailIndex(GrailIndex * g){
