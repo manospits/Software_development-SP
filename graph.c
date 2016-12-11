@@ -770,6 +770,8 @@ rcode create_indexes(pGraph g,int type){
         {
             //error
         }
+        uint32_t temp = 0;
+
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
