@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
             return -1;
         }
     }
-    puts("Reading complete.");
+    puts("Reading complete.");//printf("edges: %d\n", get_number_of_edges(ret_outIndex(graph)));
     puts("Building assistant structures/indexes...");
     // process workload
     fscanf(workload,"%s",typebuf);

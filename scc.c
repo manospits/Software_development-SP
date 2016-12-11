@@ -121,11 +121,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                 i = 0;
             }
         }
-    }/*
-    if (nodeId == 1466533)
-    {
-        printf("%d\n", *tarjan_index_param);
-    }*/
+    }
     // if nodeId is a root node, pop the stack and generate an SCC
     if (flags[nodeId].lowlink == flags[nodeId].index)
     {
@@ -186,7 +182,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         return NULL;
     }
     sccs->components_count = 0;
-    sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph));
+    sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph)) + 1;
     if ((sccs->components = malloc((sccs->number_of_nodes)*sizeof(_component))) == NULL)
     {
         error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
@@ -200,7 +196,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         free(sccs);
         return NULL;
     }
-    if ((flags = malloc((sccs->number_of_nodes)*sizeof(char))) == NULL)
+    if ((flags = malloc((sccs->number_of_nodes)*sizeof(scc_flags))) == NULL)
     {
         error_val = SCC_MALLOC_FAIL_FLAGS_ARRAY;
         free(sccs->id_belongs_to_component);
@@ -249,6 +245,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     }
     ds_list(stack);
     free(flags);
+    //printf("Number of sccs created: %d nodes: %d\n", sccs->components_count, ret_biggest_node(ret_outIndex(graph)));
     return sccs;
 }
 
@@ -259,6 +256,8 @@ int findNodeStronglyConnectedComponentID(pSCC sccomponents, uint32_t nodeId)
 
 void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
 {
+    if (components == NULL || cursor == NULL)
+        return; // TODO: error handling
     if (components->components_count == 0)
         cursor->component_ptr = NULL;
     else
