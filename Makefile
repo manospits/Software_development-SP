@@ -5,15 +5,16 @@ OBJS=buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o
 FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o
 AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o
 HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h
+OPT= -Ofast
 CC=gcc
-FLAGS = -c -Wall -O2
+FLAGS = -c -Wall $(OPT)
 CHECK = -lcheck -lrt
 
 all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) -O2 -o $@ $(FOBJS)
+	$(CC) $(OPT) -o $@ $(FOBJS)
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)

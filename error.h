@@ -64,5 +64,6 @@ extern int error_val;
 #define SCC_ADD_COMPONENT_REALLOC_FAIL -54
 #define SCC_FINAL_REALLOC_FAIL -55
 #define GRAPH_CREATE_STATIC_INDEX_FAIL -56
+#define GRAIL_MALLOC_FAIL -57
 
 #endif
