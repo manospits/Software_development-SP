@@ -222,7 +222,8 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
 
     // run Tarjan algorithm for all nodes
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
-        if (flags[i].index == UINT_MAX) // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
+        // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
+        if (flags[i].index == UINT_MAX) // UINT_MAX means that the node is undefined
             if (tarjan_rec(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
                 print_error();
@@ -261,12 +262,24 @@ void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor curso
 
 char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
 {
+    if (cursor->component_ptr < components->components)
+    {
+        fprintf(stderr, "out of bounds\n");
+        return 0;
+    }
+    if (cursor->component_ptr - components->components + 1 < components->components_count)
+    {
+        (cursor->component_ptr)++;
+        return 1;
+    }
     return 0;
 }
 
 int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node)
 {
-    return -1;
+    if (findNodeStronglyConnectedComponentID(components, source_node) != findNodeStronglyConnectedComponentID(components, target_node))
+        return -1;
+    return bidirectional_bfs_inside_component(components, graph, source_node, target_node, findNodeStronglyConnectedComponentID(components, source_node));
 }
 
 void destroyStronglyConnectedComponents(pSCC components)
