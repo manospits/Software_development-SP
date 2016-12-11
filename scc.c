@@ -166,6 +166,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
             error_val = TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
             return TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
         }
+        // array_size now is wrong; size now is included_nodes_count*sizeof()
     }
 
     return OK_SUCCESS;
