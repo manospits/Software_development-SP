@@ -55,6 +55,14 @@ pGraph gCreateGraph()
         error_val = GRAPH_CREATION_INDEX_MALLOC_FAIL;
         return NULL;
     }
+    if ((g->open_intlist[0] = cr_list()) == NULL)
+    {
+            return NULL;
+    }
+    if ((g->open_intlist[1] = cr_list()) == NULL)
+    {
+            return NULL;    // save error_value
+    }
     return g;
 }
 

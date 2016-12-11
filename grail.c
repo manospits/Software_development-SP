@@ -46,10 +46,9 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     //ITERATIVE
     srand(time(NULL));
     int rank=0 ;
-    puts("ok");
     uint32_t nodeid,parent,**neighbors=NULL,size;
     for(l=0;l<LABEL_NUMBER;l++){
-        nodeid=rand()%g->gindex_size;
+        nodeid=rand() % g->gindex_size;
         parent=nodeid;
         for(k=-1;k<g->gindex_size;k++){
             if(k!=-1){
@@ -59,17 +58,17 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
             if(visited[nodeid]<visited_version){
                 insert_back(nodes,nodeid);
                 insert_back(nodesp,parent);
-                puts("ok");
+
                 while(get_size(nodes)!=0){
                     nodeid=peek_back(nodes);
                     parent=peek_back(nodesp);
-                    puts("ok");
+
                     if(visited[nodeid]<visited_version){
                         get_component_neighbors(s,nodeid,neighbors,&size);
-                        puts("ok");
+
                         for(i=0;i<size;i++)
                         {
-                            puts("ok");
+
                             if(visited[*neighbors[i]]<visited_version){
                                 insert_back(nodes,*neighbors[i]);
                                 insert_back(nodesp,nodeid);
