@@ -58,17 +58,14 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
             if(visited[nodeid]<visited_version){
                 insert_back(nodes,nodeid);
                 insert_back(nodesp,parent);
-
                 while(get_size(nodes)!=0){
                     nodeid=peek_back(nodes);
                     parent=peek_back(nodesp);
-
                     if(visited[nodeid]<visited_version){
+                        visited[nodeid]=visited_version;
                         get_component_neighbors(s,nodeid,neighbors,&size);
-
                         for(i=0;i<size;i++)
                         {
-
                             if(visited[*neighbors[i]]<visited_version){
                                 insert_back(nodes,*neighbors[i]);
                                 insert_back(nodesp,nodeid);
