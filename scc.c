@@ -39,10 +39,10 @@ struct ComponentCursor{
 // adds node nodeId to last component
 int add_node_to_component(pSCC sccs, uint32_t nodeId)
 {
-    if (sccs->components[sccs->components_count - 1].included_nodes_count == sccs->components[sccs->components_count - 1].included_nodes_count)
+    if (sccs->components[sccs->components_count - 1].included_nodes_count == sccs->components[sccs->components_count - 1].array_size)
     {
         sccs->components[sccs->components_count - 1].array_size *= 2;
-        if ((realloc(sccs->components[sccs->components_count - 1].included_node_ids, sccs->components[sccs->components_count - 1].array_size)) == NULL)
+        if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].array_size)*sizeof(uint32_t))) == NULL)
         {
             error_val = SCC_ADD_COMPONENT_REALLOC_FAIL;
             return SCC_ADD_COMPONENT_REALLOC_FAIL;
@@ -121,7 +121,11 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                 i = 0;
             }
         }
-    }
+    }/*
+    if (nodeId == 1466533)
+    {
+        printf("%d\n", *tarjan_index_param);
+    }*/
     // if nodeId is a root node, pop the stack and generate an SCC
     if (flags[nodeId].lowlink == flags[nodeId].index)
     {
@@ -137,7 +141,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
         (sccs->components_count)++;
         do
         {
-            if ((temp = peek(stack)) < 0)
+            if ((temp = peek_back(stack)) < 0)
             {
                 print_error();
                 error_val = TARJAN_REC_STACK_PEEK_FAIL;
@@ -157,7 +161,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                 return TARJAN_REC_ADD_NODE_TO_COMPONENT_FAIL;
             }
         }while(temp != nodeId);
-        if (realloc(sccs->components[sccs->components_count].included_node_ids, (sccs->components[sccs->components_count].included_nodes_count)*sizeof(uint32_t)) == NULL)
+        if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].included_nodes_count)*sizeof(uint32_t))) == NULL)
         {
             error_val = TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
             return TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
@@ -234,7 +238,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
                 error_val = SCC_TARJAN_FAIL;
                 return NULL;
             }
-    if (realloc(sccs->components, sccs->components_count*sizeof(_component)) == NULL)
+    if ((sccs->components = realloc(sccs->components, sccs->components_count*sizeof(_component))) == NULL)
     {
         error_val = SCC_FINAL_REALLOC_FAIL;
         free(sccs->id_belongs_to_component);
