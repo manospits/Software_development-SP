@@ -88,6 +88,14 @@ int main(int argc, char *argv[])
     else if(strcmp(typebuf,"STATIC")==0){
         create_indexes(graph,STATIC);
     }
+    else{
+        fprintf(stderr, "Error: unrecognized graph type (neither of DYNAMIC, STATIC)\n");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        return -1;
+    }
     puts("Building complete.");
     puts("Processing workload...");
     fgets(typebuf,255,workload);
