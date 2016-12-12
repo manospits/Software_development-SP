@@ -287,7 +287,6 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
         return 0;
     }
     else{
-        c->update_queries++;
         int sizea=get_size(c->UpdateIndex.uindex[c->ccindex[nodeida]]);
         int sizeb=get_size(c->UpdateIndex.uindex[c->ccindex[nodeidb]]);
         if(sizea<sizeb){
