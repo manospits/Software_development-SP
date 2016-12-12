@@ -223,7 +223,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
         {   // nodes belong in same component
             return estimateShortestPathStronglyConnectedComponents(g->sccs, g, from, to);
         }
-        else if (isReachableGrailIndex(g->grail, from, to) == 0)
+        else if (isReachableGrailIndex(g->grail,g->sccs, from, to) == 0)
         {   // grail told us that there is no path
             return GRAPH_SEARCH_PATH_NOT_FOUND;
         }

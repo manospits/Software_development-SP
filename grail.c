@@ -18,7 +18,6 @@ typedef struct GrailIndex{
 }GrailIndex;
 
 Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
-    puts("ok");
     Grail g;
     int *visited;
     int visited_version=1;
@@ -95,7 +94,6 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
         visited_version++;
     }
     free(visited);
-    puts("ok");
     return g;
 }
 

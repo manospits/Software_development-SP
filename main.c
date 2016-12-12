@@ -80,7 +80,14 @@ int main(int argc, char *argv[])
     }
     puts("Reading complete.");
     puts("Building assistant structures/indexes...");
-    fscanf(workload,"%s",typebuf);
+    if(fscanf(workload,"%s",typebuf)==EOF){
+        fprintf(stderr,"Error reading type in workload file\n");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        return -1;
+    }
     if(strcmp(typebuf,"DYNAMIC")==0){
         create_indexes( graph,DYNAMIC);
     }
@@ -97,7 +104,14 @@ int main(int argc, char *argv[])
     }
     puts("Building complete.");
     puts("Processing workload...");
-    fgets(typebuf,255,workload);
+    if(fgets(typebuf,255,workload)==NULL){
+        fprintf(stderr,"Error reading in workload file\n");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        return -1;
+    }
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
