@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #ifndef N
-#define N 10 //array size in nodes
+#define N 20 //array size in nodes
 #endif
 
 typedef int ptr;

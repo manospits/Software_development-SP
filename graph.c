@@ -460,7 +460,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         error_val = return_value;
                         return return_value;
                     }
-                    grandchildren[current] += get_node_number_of_edges(g->outIndex, listnode->neighbor[i]);
+                    grandchildren[current] += get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]);
                 }
                 else if (return_value > 0)
                 {

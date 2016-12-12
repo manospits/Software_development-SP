@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#define INIT_SIZE 10
+#define INIT_SIZE 20000
 
 typedef struct Buffer{
     char *buffer;
