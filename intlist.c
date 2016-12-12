@@ -57,7 +57,7 @@ rcode empty_list(phead list_to_empty){
 }
 
 rcode insert_back(phead listh,uint32_t data){
-    /*puts("insert_back");*/
+
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;

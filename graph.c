@@ -214,7 +214,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
          st_empty_list(g->open_list);
     }
     if(g->type==DYNAMIC){
-        if(!CC_same_component(g->ccindex,from,to)){
+        if(!CC_same_component_2(g->ccindex,from,to)){
             return GRAPH_SEARCH_PATH_NOT_FOUND;
         }
     }
@@ -986,4 +986,10 @@ rcode create_indexes(pGraph g,int type){
     }
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
+}
+
+void rebuild(pGraph g){
+    if(g->type==DYNAMIC){
+        check_rebuild(g->ccindex);
+    }
 }

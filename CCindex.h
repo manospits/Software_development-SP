@@ -3,7 +3,7 @@
 #define UINDEX_INIT_SIZE 2
 #define CCINDEX_INIT_SIZE 2
 #define UPDATED_INIT_SIZE 2
-#define METRIC_VAL 0.31
+#define METRIC_VAL 0.4
 #include "error.h"
 #include <stdint.h>
 #include "graph.h"
@@ -15,6 +15,8 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb);
 int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid);
 rcode CC_rebuildIndexes(CC_index c);
 rcode CC_destroy(CC_index c);
+rcode check_rebuild(CC_index c);
 int CC_same_component(CC_index c, uint32_t a, uint32_t b);
+int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb);
 void print_max(CC_index);
 #endif

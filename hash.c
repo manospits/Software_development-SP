@@ -13,10 +13,9 @@ typedef struct bucket {
 }bucket ;
 
 typedef struct hash_info {
-    phead bins[HASHTABLE_SIZE];                //array of lists
+    phead bins[3];                //array of lists
     int size;                   //hash_table size
     int (*h)(void *,void*);
-    int type;
     phead accessed_bins;
 }hash_info;
 
@@ -58,6 +57,21 @@ rcode h_insert(phash a,uint32_t data){
     return stat;
 }
 
+int h_get_size(phash a,uint32_t data){
+    if(a==NULL){
+        error_val=NULL_HASH;
+        return -1;
+    }
+    int pos=a->h((void*) &data,(void *)&(a->size)),stat;
+    if(a->bins[pos]==NULL){
+        return 0;
+    }
+    stat= get_size(a->bins[pos]);
+    error_val=stat;
+    return stat;
+
+}
+
 int in_hash(phash a,uint32_t data){
     if(a==NULL){
         error_val=NULL_HASH;
@@ -67,8 +81,7 @@ int in_hash(phash a,uint32_t data){
     if(a->bins[pos]==NULL){
         return 0;
     }
-    if(a->type==0)
-        stat= in(a->bins[pos],data);
+    stat= in(a->bins[pos],data);
     error_val=stat;
     return stat;
 }

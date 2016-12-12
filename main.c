@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file>\nExiting...\n");
         return -1;
     }
-    int node1, node2, ret_val;
+    int node1, node2, ret_val,type;
     unsigned long i;
     FILE *initial_graph, *workload, *results;
     char command;
@@ -90,9 +90,11 @@ int main(int argc, char *argv[])
     }
     if(strcmp(typebuf,"DYNAMIC")==0){
         create_indexes( graph,DYNAMIC);
+        type=DYNAMIC;
     }
     else if(strcmp(typebuf,"STATIC")==0){
         create_indexes(graph,STATIC);
+        type=STATIC;
     }
     else{
         fprintf(stderr, "Error: unrecognized graph type (neither of DYNAMIC, STATIC). Exiting...\n");
@@ -112,6 +114,7 @@ int main(int argc, char *argv[])
         gDestroyGraph(&graph);
         return -1;
     }
+    int count=1000;
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
@@ -120,8 +123,10 @@ int main(int argc, char *argv[])
             break;
         if (command == 'F')
         {
-            // if it's the last F, exit
-            if (fgetc(workload) == EOF)
+            if(type==DYNAMIC){
+                rebuild(graph);
+            }
+            if (fgets(typebuf,255,workload) ==NULL)
                 break;
             else    // take the '\n' and continue
                 continue;
@@ -136,7 +141,11 @@ int main(int argc, char *argv[])
             gDestroyGraph(&graph);
             return -1;
         }
-        //printf("%c %d %d\n", command, node1, node2); // DEBUG
+        if(--count==0){
+            /*printf("%ld \n",i);*/
+            count=1000;
+        }
+        /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
         if (command == 'A')
         {
             ret_val = gAddEdge(graph, node1, node2);
