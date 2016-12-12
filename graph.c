@@ -732,6 +732,50 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                 error_val = return_value;
                 return return_value;
             }
+            //check if we found a connection
+            // check if the two nodes (from-to) are directly connected
+            return_value = v_visited(g->visited, temp_node);
+            if (return_value < 0)
+            {
+                error_val = return_value;
+                return return_value;
+            }
+            else if (!return_value)
+            {    // if this node hasn't been visited yet
+                if (current == 0)
+                {
+                    //if ()
+                }
+                else //current == 1
+                {
+                    //
+                }
+            }
+            else if (return_value > 0)
+            {
+                return_value = v_ret_tag(g->visited, temp_node);
+                if (return_value < 0)
+                {
+                    error_val = return_value;
+                    return return_value;
+                }
+                if (return_value == 1-current)
+                {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
+                    // then the two bfss have just met so a path has been found
+                    if ((return_value = v_ret_expanded(g->visited, temp_node)) < 0)
+                    {
+                        error_val = return_value;
+                        return return_value;
+                    }
+                    if (return_value == VISITED)
+                        path_length[1-current]++;
+                    path_found = 1;
+                    break;
+                }
+
+            }
+            assert(return_value == 1);
+            // end check
             return_value =v_set_expanded(g->visited, temp_node, EXPANDED);
             buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
             if (buffer_ptr_to_listnode == -1)
@@ -758,11 +802,6 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
             i = 0;
             while (listnode->neighbor[i] != -1)
             {
-                // check if the two nodes (from-to) are directly connected
-                if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
-                {    // the two nodes are direct neighbors, so the path is 1
-                    return 1;
-                }
                 return_value = v_visited(g->visited, listnode->neighbor[i]);
                 if (return_value < 0)
                 {
@@ -771,14 +810,6 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                 }
                 else if (!return_value)
                 {    // if this node hasn't been visited yet
-                    if (current == 0)
-                    {
-                        //if ()
-                    }
-                    else //current == 1
-                    {
-                        //
-                    }
                     if ((return_value = insert_back(g->open_intlist[current], listnode->neighbor[i])) != OK_SUCCESS)
                     {
                         error_val = return_value;
@@ -791,29 +822,7 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                     }
                     grandchildren[current] += get_node_number_of_edges(g->outIndex, listnode->neighbor[i]);
                 }
-                else if (return_value > 0)
-                {
-                    return_value = v_ret_tag(g->visited, listnode->neighbor[i]);
-                    if (return_value < 0)
-                    {
-                        error_val = return_value;
-                        return return_value;
-                    }
-                    if (return_value == 1-current)
-                    {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
-                        // then the two bfss have just met so a path has been found
-                        if ((return_value = v_ret_expanded(g->visited, listnode->neighbor[i])) < 0)
-                        {
-                            error_val = return_value;
-                            return return_value;
-                        }
-                        if (return_value == VISITED)
-                            path_length[1-current]++;
-                        path_found = 1;
-                        break;
-                    }
-                    // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
-                }
+                //else if (return_value > 0) if node has been visited, do nothing
                 i++;
                 if (i == N)
                 {
