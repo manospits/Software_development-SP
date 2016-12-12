@@ -100,8 +100,12 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
 }
 
 
-GRAIL_ANSWER isReachableGrailIndex(GrailIndex* g, uint32_t source_node,uint32_t target_node){
+GRAIL_ANSWER isReachableGrailIndex(pSCC s, uint32_t source_node,uint32_t target_node){
     int i;
+    uint32_t t_node;
+    uint32_t s_node;
+    s_node=findNodeStronglyConnectedComponentID(s, source_node);
+    t_node=findNodeStronglyConnectedComponentID(s, target_node);
     for(i=0;i<LABEL_NUMBER;i++){
         if(g->gindex[target_node].min_rank[i] >= g->gindex[source_node].min_rank[i] && g->gindex[target_node].rank[i] <= g->gindex[source_node].rank[i]){
             return 1;
