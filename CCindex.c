@@ -314,6 +314,8 @@ int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2){
             data=get_iterator_data(c->UpdateIndex.uindex[tmp],it);
             if(c->marked[data]<c->check){
                 if(data==c->ccindex[nodeid2]){
+                    c->check++;
+                    empty_list(c->idlist);
                     return 1;
                 }
                 c->marked[data]=c->check;
