@@ -355,11 +355,12 @@ int bfs(pGraph g, graphNode from, graphNode to)
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
     static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
-    static char path_found = 0;
+    static char path_found ;
     static graphNode temp_node;
     static pBuffer temp_buffer;
     static ptr buffer_ptr_to_listnode;
     static plnode listnode;
+    path_found=0;
     if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
     {
         error_val = return_value;
