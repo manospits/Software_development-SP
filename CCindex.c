@@ -330,14 +330,14 @@ int CC_checkifcompsmeetbi(CC_index c,uint32_t nodeid,uint32_t nodeid2){
     if(c->ccindex[nodeid]==-1){
         return -1;
     }
-    phead list[2];
+    static phead list[2];
+    static int current=0,tmp,data;
+    static iterator it;
     list[0]=get_alist(c->lists);
     list[1]=get_alist(c->lists);
     c->update_queries++;
     insert_back(list[0],c->ccindex[nodeid]);
     insert_back(list[1],c->ccindex[nodeid2]);
-    int current=0,tmp,data;
-    iterator it;
     while(get_size(c->idlist)!=0){
         tmp=peek(list[current]);
         pop_front(list[current]);
@@ -359,7 +359,7 @@ int CC_checkifcompsmeetbi(CC_index c,uint32_t nodeid,uint32_t nodeid2){
 }
 
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
-    int m,a,b;
+    static int m,a,b;
     c->queries++;
     if((m=(c->ccindex[nodeidb]==c->ccindex[nodeida]))){
         return 1;

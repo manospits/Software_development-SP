@@ -354,12 +354,12 @@ int bfs(pGraph g, graphNode from, graphNode to)
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
-    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
-    char path_found = 0;
-    graphNode temp_node;
-    pBuffer temp_buffer;
-    ptr buffer_ptr_to_listnode;
-    plnode listnode;
+    static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
+    static char path_found = 0;
+    static graphNode temp_node;
+    static pBuffer temp_buffer;
+    static ptr buffer_ptr_to_listnode;
+    static plnode listnode;
     if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
     {
         error_val = return_value;
@@ -435,7 +435,9 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                 return return_value;
             }
             i = 0;
-            while (listnode->neighbor[i] != -1)
+            static int k,edges;
+            edges=get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
+            for(k=0;k<edges;k++)
             {
                 // check if the two nodes (from-to) are directly connected
                 if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
