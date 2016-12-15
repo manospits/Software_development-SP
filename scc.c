@@ -288,6 +288,7 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
     if ((component_flags = calloc(sccs->components_count, sizeof(uint32_t))) == NULL)
     {
         //error
+        return -1;
     }
     // flags is used to check whether this neighbor has already been added to current component
     // it is initialized to zeros
