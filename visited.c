@@ -52,10 +52,12 @@ rcode v_mark(pvis a,uint32_t data,int tag,int expanded){
 }
 
 int v_visited(pvis a,uint32_t data){
-    if(data >= a->size ){
-        //TODO
+    if (a->nodes[data].mark==a->loop_count){
+        return 1 ;
     }
-    return (a->nodes[data].mark==a->loop_count)? 1 : 0;
+    else{
+        return 0;
+        }
 }
 
 rcode v_update_loop(pvis a,uint32_t size){

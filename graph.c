@@ -355,12 +355,10 @@ int bfs(pGraph g, graphNode from, graphNode to)
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
     static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
-    static char path_found ;
     static graphNode temp_node;
     static pBuffer temp_buffer;
     static ptr buffer_ptr_to_listnode;
     static plnode listnode;
-    path_found=0;
     if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
     {
         error_val = return_value;
@@ -483,8 +481,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         }
                         if (return_value == VISITED)
                             path_length[1-current]++;
-                        path_found = 1;
-                        break;
+                        return path_length[0]+path_length[1]-1;
                     }
                     // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
                 }
@@ -502,16 +499,9 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     i = 0;
                 }
             }
-            if (path_found)
-                break;
         }
-        if (path_found)
-            break;
     }
-    if (path_found)
-        return path_length[0] + path_length[1] - 1;
-    else
-        return GRAPH_SEARCH_PATH_NOT_FOUND;
+    return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
 
 int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id)
