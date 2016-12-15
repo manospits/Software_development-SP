@@ -737,7 +737,123 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                 return return_value;
             }
             //check if we found a connection
+            // check if the two nodes (from-to) are directly connected
+            if (path_length[current] == 1 && current == 0 && temp_node == to)
+            {    // the two nodes are direct neighbors, so the path is 1
+                return 1;
+            }
+            return_value = v_visited(g->visited, temp_node);
+            if (return_value < 0)
+            {
+                error_val = return_value;
+                return return_value;
+            }
+            //else if (!return_value)
+            //{   // node not visited yet
             //
+            //}
+            assert(!return_value);  //we can't expand a node not visited yet
+            // return_value > 0
+            //node already visited
+            return_value = v_ret_tag(g->visited, listnode->neighbor[i]);
+            if (return_value < 0)
+            {
+                error_val = return_value;
+                //error
+                return return_value;
+            }
+            if (return_value == 1-current)
+            {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
+                // then the two bfss have just met so a path has been found
+                if ((return_value = v_ret_expanded(g->visited, listnode->neighbor[i])) < 0)
+                {
+                    error_val = return_value;
+                    //error
+                    return return_value;
+                }
+                if (return_value == VISITED)    // TODO: THIS SHOULD NEVER HAPPEN
+                    path_length[1-current]++;
+                path_found = 1;
+                break;
+            }
+            if ((return_value =v_set_expanded(g->visited, temp_node, EXPANDED)) < 0)
+            {
+                error_val = return_value;
+                //error
+                return return_value;
+            }
+            buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
+            if (buffer_ptr_to_listnode == -1)
+            {   // node has no neighbors
+                continue;
+            }
+            else if (buffer_ptr_to_listnode < 0)
+            {   // an error occurred
+                error_val = buffer_ptr_to_listnode;
+                //error
+                return buffer_ptr_to_listnode;
+            }
+            if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
+            {
+                return_value = error_val;
+                error_val = return_value;
+                //error
+                return return_value;
+            }
+            if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+            {
+                return_value = error_val;
+                error_val = return_value;
+                //error
+                return return_value;
+            }
+            i = 0;
+            while (listnode->neighbor[i] != -1)
+            {
+                return_value = v_visited(g->visited, listnode->neighbor[i]);
+                if (return_value < 0)
+                {
+                    error_val = return_value;
+                    //error
+                    return return_value;
+                }
+                else if (!return_value)
+                {    // if this node hasn't been visited yet, insert it to the list
+                    if ((return_value = insert_back(g->open_intlist[current], listnode->neighbor[i])) != OK_SUCCESS)
+                    {
+                        error_val = return_value;
+                        //error
+                        return return_value;
+                    }
+                    if ((return_value = v_mark(g->visited, listnode->neighbor[i], current, VISITED)) < 0)
+                    {
+                        error_val = return_value;
+                        //error
+                        return return_value;
+                    }
+                    grandchildren[current] += get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]);
+                }
+                else if (return_value > 0)
+                {
+                    //
+                }
+                i++;
+                if (i == N)
+                {
+                    if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                        break;
+                    if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                    {
+                        return_value = error_val;
+                        error_val = return_value;
+                        //error
+                        return return_value;
+                    }
+                    i = 0;
+                }
+            }
+            if (path_found)
+                break;
         }
         if (path_found)
             break;
