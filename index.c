@@ -9,11 +9,11 @@
 
 typedef struct Inode{
     ptr List_start;
+    int edges;
     ptr list_node_for_next_neigbor;
     int node_index_for_next_neighbor;
     int smallest_edge;
     int biggest_edge;
-    int edges;
 }Inode;
 
 typedef struct NodeIndex{

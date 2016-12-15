@@ -5,15 +5,11 @@
 #include <string.h>
 #include <stdint.h>
 
-typedef struct node {
-    uint32_t data;
-} node;
-
 typedef struct head{
+    uint32_t *array_queue;
     long int size;
     int front;
     int elements;
-    node *array_queue;
 }head;
 
 phead cr_list(){
@@ -26,7 +22,7 @@ phead cr_list(){
     tmphead->size=QUEUE_INIT_SIZE;
     tmphead->front=0;
     tmphead->elements=0;
-    if((tmphead->array_queue=malloc(QUEUE_INIT_SIZE*sizeof(struct node)))==NULL){
+    if((tmphead->array_queue=malloc(QUEUE_INIT_SIZE*sizeof(uint32_t)))==NULL){
         error_val=(LIST_CR_MALLOC);
         return NULL;
     }
@@ -65,9 +61,9 @@ rcode insert_back(phead listh,uint32_t data){
     int pos,newsize;
     if(listh->elements+1>listh->size){
         newsize=listh->size*2;
-        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct node));
+        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(uint32_t));
         if(listh->front!=0){
-            memcpy(&(listh->array_queue[newsize-(listh->size-listh->front)]),&(listh->array_queue[listh->front]),(listh->size-listh->front)*sizeof(struct node));
+            memcpy(&(listh->array_queue[newsize-(listh->size-listh->front)]),&(listh->array_queue[listh->front]),(listh->size-listh->front)*sizeof(uint32_t));
             listh->front=newsize-(listh->size-listh->front);
         }
         listh->size=newsize;
@@ -75,7 +71,7 @@ rcode insert_back(phead listh,uint32_t data){
     pos=(listh->front+listh->elements)%listh->size;
     /*if(listh->front==pos)*/
         /*printf("front %d pos %d, %ld %d\n",listh->front,pos,listh->size,listh->elements);*/
-    listh->array_queue[pos].data=data;
+    listh->array_queue[pos]=data;
     listh->elements++;
     /*puts("insert_back_ok");*/
     return OK_SUCCESS;
@@ -125,7 +121,7 @@ int peek(const phead listh){
         return NULL_LIST;
     }
     error_val=OK_SUCCESS;
-    return listh->array_queue[listh->front].data;
+    return listh->array_queue[listh->front];
 }
 
 int peek_back(const phead listh){
@@ -135,14 +131,14 @@ int peek_back(const phead listh){
     }
     error_val=OK_SUCCESS;
     int pos=(listh->front+listh->elements-1)%listh->size;
-    return listh->array_queue[pos].data;
+    return listh->array_queue[pos];
 }
 iterator ret_iterator(const phead listh){
     return listh->front;
 }
 
 int get_iterator_data(const phead listh,iterator it){
-    return listh->array_queue[it].data;
+    return listh->array_queue[it];
 }
 
 int advance_iterator(const phead listh,iterator it){
@@ -157,7 +153,7 @@ int advance_iterator(const phead listh,iterator it){
 int in(const phead listh,uint32_t data){
     int i,pos=listh->front;
     for(i=0;i<listh->elements;i++){
-        if(listh->array_queue[pos].data==data){
+        if(listh->array_queue[pos]==data){
             return 1;
         }
         pos++;
