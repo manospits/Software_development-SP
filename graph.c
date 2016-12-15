@@ -20,12 +20,12 @@ typedef struct graph
     Index_ptr inIndex;
     Index_ptr outIndex;
     pvis visited;
-    stphead open_list;
     phead open_intlist[2];
-    int type;
     CC_index ccindex;
     pSCC sccs;
     Grail grail;
+    stphead open_list;
+    int type;
 }_graph;
 
 pGraph gCreateGraph()
@@ -392,7 +392,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
         if ((get_size(g->open_intlist[1-current]) + grandchildren[1-current]) <= (get_size(g->open_intlist[current]) + grandchildren[current]))
             current = 1-current;
         grandchildren[current] = 0;
-        path_length[current]++;
+        ++path_length[current];
         if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
         {
             error_val = number_of_nodes;
