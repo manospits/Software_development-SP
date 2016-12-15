@@ -9,7 +9,6 @@
 
 typedef struct Inode{
     ptr List_start;
-    int edges;
     ptr list_node_for_next_neigbor;
     int node_index_for_next_neighbor;
     int smallest_edge;
@@ -19,6 +18,7 @@ typedef struct Inode{
 typedef struct NodeIndex{
     Inode *index;
     pBuffer buffer;
+    int *nedges;
     int size;
     int edges;
     int nodes;
@@ -37,6 +37,11 @@ Index_ptr createNodeIndex(){
         free(tmp);
         return NULL;
     }
+    if((tmp->nedges=malloc(sizeof(int)*INDEX_INIT_SIZE))==NULL){
+        error_val=INDEX_STRUCT_MALLOC_INNER_FAIL;
+        free(tmp);
+        return NULL;
+    }
     if((tmp->buffer=createBuffer())==NULL){
         free(tmp);
         print_error();
@@ -47,9 +52,9 @@ Index_ptr createNodeIndex(){
         tmp->index[i].List_start=-1;
         tmp->index[i].list_node_for_next_neigbor=-1;
         tmp->index[i].node_index_for_next_neighbor=-1;
-        tmp->index[i].edges=0;
         tmp->index[i].smallest_edge=16777216;
         tmp->index[i].biggest_edge=0;
+        tmp->nedges[i]=0;
     }
     tmp->edges=0;
     tmp->nodes=0;
@@ -84,13 +89,17 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             error_val=INDEX_REALLOC_FAIL;
             return INDEX_REALLOC_FAIL;
         }
+        if((hindex->nedges=realloc(hindex->nedges,next_size*sizeof(int)))==NULL){
+            error_val=INDEX_REALLOC_FAIL;
+            return INDEX_REALLOC_FAIL;
+        }
         for(i=prev_size;i<next_size;i++){
             hindex->index[i].List_start=-1;
             hindex->index[i].list_node_for_next_neigbor=-1;
             hindex->index[i].node_index_for_next_neighbor=-1;
-            hindex->index[i].edges=0;
             hindex->index[i].smallest_edge=16777216;
             hindex->index[i].biggest_edge=0;
+            hindex->nedges[i]=0;
 
         }
         hindex->size=next_size;
@@ -133,7 +142,7 @@ int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId){
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
     error_val=OK_SUCCESS;
-    return hindex->index[nodeId].edges;
+    return hindex->nedges[nodeId];
 
 }
 
@@ -243,7 +252,7 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     }
     error_val=OK_SUCCESS;
     hindex->edges++;
-    hindex->index[nodeId].edges++;
+    hindex->nedges[nodeId]++;
     return OK_SUCCESS;
 }
 
