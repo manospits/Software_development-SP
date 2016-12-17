@@ -11,8 +11,8 @@ typedef struct visited_node{
 
 typedef struct visited_head{
     visited_node * nodes;
-    uint32_t size;
     uint32_t loop_count;
+    uint32_t size;
 }visited_head;
 
 pvis create_visited(int size){
