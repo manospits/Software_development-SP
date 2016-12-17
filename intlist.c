@@ -92,6 +92,20 @@ rcode pop_front(phead listh){
     return OK_SUCCESS;
 }
 
+uint32_t peek_pop_front(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL_LIST;
+    }
+    if(listh->elements < 1){
+        error_val=EMPTY_LIST;
+        return EMPTY_LIST;
+    }
+    listh->front=(listh->front+1)%listh->size;
+    listh->elements--;
+    error_val=OK_SUCCESS;
+    return listh->array_queue[(listh->front-1)%listh->size];
+}
 rcode pop_back(phead listh){
     if(listh==NULL){
         error_val=NULL_LIST;
@@ -113,6 +127,15 @@ int get_size(phead listh){
     }
     error_val=OK_SUCCESS;
     return listh->elements;
+}
+
+int* get_sizep(phead listh){
+    if(listh==NULL){
+        error_val=NULL_LIST;
+        return NULL;
+    }
+    error_val=OK_SUCCESS;
+    return &listh->elements;
 }
 
 int peek(const phead listh){

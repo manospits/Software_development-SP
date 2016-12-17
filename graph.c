@@ -359,6 +359,9 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     static pBuffer temp_buffer;
     static ptr buffer_ptr_to_listnode;
     static plnode listnode;
+    static int *list_size[2];
+    list_size[0]=get_sizep(g->open_intlist[0]);
+    list_size[1]=get_sizep(g->open_intlist[1]);
     if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
     {
         error_val = return_value;
@@ -384,31 +387,22 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     grandchildren[0] = 0;
     grandchildren[1] = 0;
     current = 1;
-    while(get_size(g->open_intlist[0]) > 0 && get_size(g->open_intlist[1]) > 0)
+    while((*list_size[0]) > 0 && (*list_size[1]) > 0)
     {
         // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
         // This prevents the extreme case where every node in the path has only 1 child, and if "<" was used only the first bfs would expand nodes continuously,
         // while the other bfs wouldn't have entered its first node in "visited", so the two bfss wouldn't be able to meet
-        if ((get_size(g->open_intlist[1-current]) + grandchildren[1-current]) <= (get_size(g->open_intlist[current]) + grandchildren[current]))
+        if (((*list_size[1-current]) + grandchildren[1-current]) <= (*list_size[current] + grandchildren[current]))
             current = 1-current;
         grandchildren[current] = 0;
         ++path_length[current];
-        if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
-        {
-            error_val = number_of_nodes;
-            return number_of_nodes;
-        }
+        number_of_nodes = *list_size[current];
         for (n = 0 ; n < number_of_nodes ; ++n)
         {
-            if ((temp_node = peek(g->open_intlist[current])) < 0)
+            if ((temp_node = peek_pop_front(g->open_intlist[current])) < 0)
             {
                 error_val = temp_node;
                 return temp_node;
-            }
-            if ((return_value = pop_front(g->open_intlist[current])) < 0)
-            {
-                error_val = return_value;
-                return return_value;
             }
             return_value =v_set_expanded(g->visited, temp_node, EXPANDED);
             buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
