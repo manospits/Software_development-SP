@@ -192,5 +192,45 @@ void print_error(){
             fprintf(stderr, "Error: creating indexes for static graph failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAPH_BFS_FAIL_GET_SCC_ID:
+            fprintf(stderr, "Error (BFS): retrieving node's Strongly Connected Component ID failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_INSERT_TO_QUEUE:
+            fprintf(stderr, "Error (BFS): inserting node to stack failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE:
+            fprintf(stderr, "Error (BFS): inserting node to hashtable failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_GET_QUEUE_SIZE:
+            fprintf(stderr, "Error (BFS): retrieving stack size failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_QUEUE_POP:
+            fprintf(stderr, "Error (BFS): stack pop() failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_GET_LIST_HEAD:
+            fprintf(stderr, "Error (BFS): retrieving listnode pointer failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_GET_BUFFER:
+            fprintf(stderr, "Error (BFS): retrieving buffer failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_GET_LISTNODE:
+            fprintf(stderr, "Error (BFS): retrieving listnode failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_CHECK_VISITED:
+            fprintf(stderr, "Error (BFS): checking if node is in hashtable failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_BFS_FAIL_CHECK_BFS_TAG:
+            fprintf(stderr, "Error (BFS): retrieving BFS tag from hastable failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }
