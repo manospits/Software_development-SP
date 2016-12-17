@@ -137,6 +137,23 @@ int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId){
 
 }
 
+int* get_node_number_of_edges_2(const Index_ptr hindex,uint32_t nodeId){
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return NULL;
+    }
+    if(nodeId<0){
+        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        return NULL;
+    }
+    if(nodeId>hindex->size){
+        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        return NULL;
+    }
+    error_val=OK_SUCCESS;
+    return &hindex->index[nodeId].edges;
+
+}
 int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
     int i;
@@ -285,6 +302,7 @@ int get_number_of_edges(const Index_ptr hindex){
     error_val=OK_SUCCESS;
     return hindex->edges;
 }
+
 
 int ret_biggest_node(const Index_ptr hindex){
     return hindex->nodes;

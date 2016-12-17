@@ -35,6 +35,8 @@ int get_index_size(const Index_ptr);
     //returns index size
 
 int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId);
+
+int* get_node_number_of_edges_2(const Index_ptr hindex,uint32_t nodeId);
     //returns number of edges a node has
 
 

@@ -134,7 +134,12 @@ int peek_back(const phead listh){
     return listh->array_queue[pos];
 }
 iterator ret_iterator(const phead listh){
-    return listh->front;
+    if(listh->size==0){
+        return -1;
+    }
+    else{
+        return listh->front;
+    }
 }
 
 int get_iterator_data(const phead listh,iterator it){

@@ -384,6 +384,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     grandchildren[0] = 0;
     grandchildren[1] = 0;
     current = 1;
+    int *nei_count;
     while(get_size(g->open_intlist[0]) > 0 && get_size(g->open_intlist[1]) > 0)
     {
         // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
@@ -461,7 +462,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         error_val = return_value;
                         return return_value;
                     }
-                    grandchildren[current] += get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]);
+                    grandchildren[current]+=*(get_node_number_of_edges_2((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]));
                 }
                 else if (return_value > 0)
                 {
