@@ -158,6 +158,7 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
 
 int bfs(pGraph g, graphNode from, graphNode to);
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to);
+int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to);
 
 int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
 {
@@ -229,7 +230,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
         }
         else    // MAYBE
         {   // we are not sure; we must search
-            return bidirectional_bfs(g, from, to);
+            return bidirectional_bfs_grail(g, from, to);
         }
     }
     (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to)));
