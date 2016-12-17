@@ -354,30 +354,34 @@ int bfs(pGraph g, graphNode from, graphNode to)
 
 int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 {    // 0 is for out-Index, 1 is for in-Index
-    static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
+    static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current, k, edges;
     static graphNode temp_node;
     static pBuffer temp_buffer;
     static ptr buffer_ptr_to_listnode;
     static plnode listnode;
-    if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
+    if (insert_back(g->open_intlist[0], from) != OK_SUCCESS)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
     }
-    if ((return_value = v_mark(g->visited, from, 0, VISITED)) < 0)
+    if (v_mark(g->visited, from, 0, VISITED) < 0)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
     }
-    if ((return_value = insert_back(g->open_intlist[1], to)) != OK_SUCCESS)
+    if (insert_back(g->open_intlist[1], to) != OK_SUCCESS)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
     }
-    if ((return_value = v_mark(g->visited, to, 1, VISITED)) < 0)
+    if (v_mark(g->visited, to, 1, VISITED) < 0)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
     }
     path_length[0] = 0;
     path_length[1] = 0;
@@ -395,20 +399,23 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
         ++path_length[current];
         if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
         {
-            error_val = number_of_nodes;
-            return number_of_nodes;
+            print_error();
+            error_val = GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
+            return GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
         }
         for (n = 0 ; n < number_of_nodes ; ++n)
         {
             if ((temp_node = peek(g->open_intlist[current])) < 0)
             {
-                error_val = temp_node;
-                return temp_node;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_QUEUE_PEEK;
+                return GRAPH_BFS_FAIL_QUEUE_PEEK;
             }
-            if ((return_value = pop_front(g->open_intlist[current])) < 0)
+            if (pop_front(g->open_intlist[current]) < 0)
             {
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_QUEUE_POP;
+                return GRAPH_BFS_FAIL_QUEUE_POP;
             }
             return_value =v_set_expanded(g->visited, temp_node, EXPANDED);
             buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
@@ -418,25 +425,25 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
             }
             else if (buffer_ptr_to_listnode < 0)
             {   // an error occurred
-                error_val = buffer_ptr_to_listnode;
-                return buffer_ptr_to_listnode;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_LIST_HEAD;
+                return GRAPH_BFS_FAIL_GET_LIST_HEAD;
             }
             if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
             {
-                return_value = error_val;
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_BUFFER;
+                return GRAPH_BFS_FAIL_GET_BUFFER;
             }
             if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
             {
-                return_value = error_val;
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
+                return GRAPH_BFS_FAIL_GET_LISTNODE;
             }
             i = 0;
-            static int k,edges;
-            edges=get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
-            for(k=0;k<edges;k++)
+            edges = get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
+            for(k = 0 ; k < edges ; k++)
             {
                 // check if the two nodes (from-to) are directly connected
                 if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
@@ -446,20 +453,23 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                 return_value = v_visited(g->visited, listnode->neighbor[i]);
                 if (return_value < 0)
                 {
-                    error_val = return_value;
-                    return return_value;
+                    print_error();
+                    error_val = GRAPH_BFS_FAIL_CHECK_VISITED;
+                    return GRAPH_BFS_FAIL_CHECK_VISITED;
                 }
                 else if (!return_value)
                 {    // if this node hasn't been visited yet, insert it to the list
-                    if ((return_value = insert_back(g->open_intlist[current], listnode->neighbor[i])) != OK_SUCCESS)
+                    if (insert_back(g->open_intlist[current], listnode->neighbor[i]) != OK_SUCCESS)
                     {
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
                     }
-                    if ((return_value = v_mark(g->visited, listnode->neighbor[i], current, VISITED)) < 0)
+                    if (v_mark(g->visited, listnode->neighbor[i], current, VISITED) < 0)
                     {
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                     }
                     grandchildren[current]+=*(get_node_number_of_edges_2((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]));
                 }
@@ -468,20 +478,16 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                     return_value = v_ret_tag(g->visited, listnode->neighbor[i]);
                     if (return_value < 0)
                     {
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_CHECK_BFS_TAG;
+                        return GRAPH_BFS_FAIL_CHECK_BFS_TAG;
                     }
                     if (return_value == 1-current)
                     {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
                         // then the two bfss have just met so a path has been found
-                        if ((return_value = v_ret_expanded(g->visited, listnode->neighbor[i])) < 0)
-                        {
-                            error_val = return_value;
-                            return return_value;
-                        }
-                        if (return_value == VISITED)
+                        if (v_ret_expanded(g->visited, listnode->neighbor[i]) == VISITED)
                             path_length[1-current]++;
-                        return path_length[0]+path_length[1]-1;
+                        return path_length[0] + path_length[1] - 1;
                     }
                     // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
                 }
@@ -492,9 +498,9 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                         break;
                     if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                     {
-                        return_value = error_val;
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
+                        return GRAPH_BFS_FAIL_GET_LISTNODE;
                     }
                     i = 0;
                 }
@@ -506,31 +512,34 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
 
 int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id)
 {   // 0 is for out-Index, 1 is for in-Index
-    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current;
-    char path_found = 0;
+    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current, k, edges;
     graphNode temp_node;
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
-    if ((return_value = insert_back(g->open_intlist[0], from)) != OK_SUCCESS)
+    if (insert_back(g->open_intlist[0], from) != OK_SUCCESS)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
     }
-    if ((return_value = v_mark(g->visited, from, 0, VISITED)) < 0)
+    if (v_mark(g->visited, from, 0, VISITED) < 0)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
     }
-    if ((return_value = insert_back(g->open_intlist[1], to)) != OK_SUCCESS)
+    if (insert_back(g->open_intlist[1], to) != OK_SUCCESS)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
     }
-    if ((return_value = v_mark(g->visited, to, 1, VISITED)) < 0)
+    if (v_mark(g->visited, to, 1, VISITED) < 0)
     {
-        error_val = return_value;
-        return return_value;
+        print_error();
+        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
     }
     path_length[0] = 0;
     path_length[1] = 0;
@@ -545,23 +554,26 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
         if ((get_size(g->open_intlist[1-current]) + grandchildren[1-current]) <= (get_size(g->open_intlist[current]) + grandchildren[current]))
             current = 1-current;
         grandchildren[current] = 0;
-        path_length[current]++;
+        ++path_length[current];
         if ((number_of_nodes = get_size(g->open_intlist[current])) < 0)
         {
-            error_val = number_of_nodes;
-            return number_of_nodes;
+            print_error();
+            error_val = GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
+            return GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
         }
         for (n = 0 ; n < number_of_nodes ; ++n)
         {
             if ((temp_node = peek(g->open_intlist[current])) < 0)
             {
-                error_val = temp_node;
-                return temp_node;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_QUEUE_PEEK;
+                return GRAPH_BFS_FAIL_QUEUE_PEEK;
             }
-            if ((return_value = pop_front(g->open_intlist[current])) < 0)
+            if (pop_front(g->open_intlist[current]) < 0)
             {
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_QUEUE_POP;
+                return GRAPH_BFS_FAIL_QUEUE_POP;
             }
             return_value =v_set_expanded(g->visited, temp_node, EXPANDED);
             buffer_ptr_to_listnode = getListHead((current == 0 ? g->outIndex : g->inIndex), temp_node);
@@ -571,23 +583,25 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
             }
             else if (buffer_ptr_to_listnode < 0)
             {   // an error occurred
-                error_val = buffer_ptr_to_listnode;
-                return buffer_ptr_to_listnode;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_LIST_HEAD;
+                return GRAPH_BFS_FAIL_GET_LIST_HEAD;
             }
             if ((temp_buffer = return_buffer((current == 0 ? g->outIndex : g->inIndex))) == NULL)
             {
-                return_value = error_val;
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_BUFFER;
+                return GRAPH_BFS_FAIL_GET_BUFFER;
             }
             if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
             {
-                return_value = error_val;
-                error_val = return_value;
-                return return_value;
+                print_error();
+                error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
+                return GRAPH_BFS_FAIL_GET_LISTNODE;
             }
             i = 0;
-            while (listnode->neighbor[i] != -1)
+            edges = get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
+            for(k = 0 ; k < edges ; k++)
             {
                 if (findNodeStronglyConnectedComponentID(components, listnode->neighbor[i]) == component_id)
                 {
@@ -599,20 +613,23 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
                     return_value = v_visited(g->visited, listnode->neighbor[i]);
                     if (return_value < 0)
                     {
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_CHECK_VISITED;
+                        return GRAPH_BFS_FAIL_CHECK_VISITED;
                     }
                     else if (!return_value)
                     {    // if this node hasn't been visited yet, insert it to the list
-                        if ((return_value = insert_back(g->open_intlist[current], listnode->neighbor[i])) != OK_SUCCESS)
+                        if (insert_back(g->open_intlist[current], listnode->neighbor[i]) != OK_SUCCESS)
                         {
-                            error_val = return_value;
-                            return return_value;
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                            return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
                         }
-                        if ((return_value = v_mark(g->visited, listnode->neighbor[i], current, VISITED)) < 0)
+                        if (v_mark(g->visited, listnode->neighbor[i], current, VISITED) < 0)
                         {
-                            error_val = return_value;
-                            return return_value;
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                            return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                         }
                         grandchildren[current] += get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]);
                     }
@@ -621,21 +638,16 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
                         return_value = v_ret_tag(g->visited, listnode->neighbor[i]);
                         if (return_value < 0)
                         {
-                            error_val = return_value;
-                            return return_value;
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_CHECK_BFS_TAG;
+                            return GRAPH_BFS_FAIL_CHECK_BFS_TAG;
                         }
                         if (return_value == 1-current)
                         {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
                             // then the two bfss have just met so a path has been found
-                            if ((return_value = v_ret_expanded(g->visited, listnode->neighbor[i])) < 0)
-                            {
-                                error_val = return_value;
-                                return return_value;
-                            }
-                            if (return_value == VISITED)
+                            if (v_ret_expanded(g->visited, listnode->neighbor[i]) == VISITED)
                                 path_length[1-current]++;
-                            path_found = 1;
-                            break;
+                            return path_length[0] + path_length[1] - 1;
                         }
                         // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
                     }
@@ -647,23 +659,16 @@ int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from,
                         break;
                     if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                     {
-                        return_value = error_val;
-                        error_val = return_value;
-                        return return_value;
+                        print_error();
+                        error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
+                        return GRAPH_BFS_FAIL_GET_LISTNODE;
                     }
                     i = 0;
                 }
             }
-            if (path_found)
-                break;
         }
-        if (path_found)
-            break;
     }
-    if (path_found)
-        return path_length[0] + path_length[1] - 1;
-    else
-        return GRAPH_SEARCH_PATH_NOT_FOUND;
+    return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
 /*
 int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
@@ -885,13 +890,13 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
         error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
         return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
     }
-    if ((return_value = insert_back(g->open_intlist[1], to)) != OK_SUCCESS)
+    if (insert_back(g->open_intlist[1], to) != OK_SUCCESS)
     {
         print_error();
         error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
         return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
     }
-    if ((return_value = v_mark(g->visited, to, 1, VISITED)) < 0)
+    if (v_mark(g->visited, to, 1, VISITED) < 0)
     {
         print_error();
         error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
@@ -922,8 +927,8 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
             if ((temp_node = peek(g->open_intlist[current])) < 0)
             {
                 print_error();
-                error_val = GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
-                return GRAPH_BFS_FAIL_GET_QUEUE_SIZE;
+                error_val = GRAPH_BFS_FAIL_QUEUE_PEEK;
+                return GRAPH_BFS_FAIL_QUEUE_PEEK;
             }
             if (pop_front(g->open_intlist[current]) < 0)
             {
@@ -956,8 +961,8 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                 return GRAPH_BFS_FAIL_GET_LISTNODE;
             }
             i = 0;
-            edges=get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
-            for(k=0;k<edges;k++)
+            edges = get_node_number_of_edges((current == 0 ? g->outIndex : g->inIndex),temp_node);
+            for(k = 0 ; k < edges ; k++)
             {
                 // check if the two nodes (from-to) are directly connected
                 if (path_length[current] == 1 && current == 0 && listnode->neighbor[i] == to)
@@ -1004,7 +1009,7 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                         // then the two bfss have just met so a path has been found
                         if (v_ret_expanded(g->visited, listnode->neighbor[i]) == VISITED)
                             path_length[1-current]++;
-                        return path_length[0]+path_length[1]-1;
+                        return path_length[0] + path_length[1] - 1;
                     }
                     // if return value (=tag) == current, then the node has already been visited by this bfs, so it doesn't enter the open list again
                 }

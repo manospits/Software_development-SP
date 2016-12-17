@@ -212,6 +212,10 @@ void print_error(){
             fprintf(stderr, "Error (BFS): stack pop() failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAPH_BFS_FAIL_QUEUE_PEEK:
+            fprintf(stderr, "Error (BFS): stack peek() failed\n");
+            error_val=OK_SUCCESS;
+            break;
         case GRAPH_BFS_FAIL_GET_LIST_HEAD:
             fprintf(stderr, "Error (BFS): retrieving listnode pointer failed\n");
             error_val=OK_SUCCESS;
