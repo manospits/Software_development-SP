@@ -63,6 +63,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     ptr buffer_ptr_to_listnode;
     plnode listnode;
     int i, temp_node;
+    char continue_flag;
     if (insert_back(stack, nodeId) < 0)
     {
         print_error();
@@ -84,6 +85,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     temp_node = nodeId;
     while (get_size(stack) > 0)
     {
+        continue_flag = 0;
         if ((temp_node = peek_back(stack)) < 0)
         {
             print_error();
@@ -132,7 +134,8 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                         return TARJAN_STACK_INSERT_FAIL;
                     }
                     flags[listnode->neighbor[i]].parent = temp_node;
-                    continue;
+                    continue_flag = 1;
+                    break;
                 }
                 else if (flags[listnode->neighbor[i]].onStack)
                     flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].index);
@@ -151,6 +154,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     i = 0;
                 }
             }
+            if (continue_flag) continue;
             //
             //flags[flags[temp_node].parent].lowlink = min(flags[flags[temp_node].parent].lowlink, flags[temp_node].lowlink);
             // add node to current component
