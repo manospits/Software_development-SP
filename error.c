@@ -188,8 +188,16 @@ void print_error(){
             fprintf(stderr, "Error: final realloc for SCC's component array failed\n");
             error_val=OK_SUCCESS;
             break;
-        case GRAPH_CREATE_STATIC_INDEX_FAIL:
-            fprintf(stderr, "Error: creating indexes for static graph failed\n");
+        case GRAPH_CREATE_STATIC_INDEX_SCCS_FAIL:
+            fprintf(stderr, "Error: estimating Strongly Connected Components for static graph failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL:
+            fprintf(stderr, "Error: estimating Strongly Connected Components' neighbors for static graph failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_CREATE_STATIC_INDEX_GRAIL_FAIL:
+            fprintf(stderr, "Error: creating grail index for static graph failed\n");
             error_val=OK_SUCCESS;
             break;
         case GRAPH_BFS_FAIL_GET_SCC_ID:

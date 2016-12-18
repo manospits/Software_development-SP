@@ -89,11 +89,29 @@ int main(int argc, char *argv[])
         return -1;
     }
     if(strcmp(typebuf,"DYNAMIC")==0){
-        create_indexes( graph,DYNAMIC);
+        if (create_indexes(graph,DYNAMIC) < 0)
+        {
+            print_error();
+            fprintf(stderr,"Error creating assistant structures/indexes for dynamic graph\n");
+            fclose(initial_graph);
+            fclose(workload);
+            fclose(results);
+            gDestroyGraph(&graph);
+            return -1;
+        }
         type=DYNAMIC;
     }
     else if(strcmp(typebuf,"STATIC")==0){
-        create_indexes(graph,STATIC);
+        if (create_indexes(graph,STATIC) < 0)
+        {
+            print_error();
+            fprintf(stderr,"Error creating assistant structures/indexes for static graph\n");
+            fclose(initial_graph);
+            fclose(workload);
+            fclose(results);
+            gDestroyGraph(&graph);
+            return -1;
+        }
         type=STATIC;
     }
     else{

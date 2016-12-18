@@ -1139,19 +1139,24 @@ Index_ptr ret_inIndex(pGraph g){
 rcode create_indexes(pGraph g,int type){
     g->type=type;
     if(type==DYNAMIC){
-        g->ccindex=CC_create_index(g);
+        if ((g->ccindex=CC_create_index(g)) == NULL)
+        {
+            //error
+            return -1;
+        }
     }
     else if(type==STATIC){
         if ((g->sccs = estimateStronglyConnectedComponents(g)) == NULL)
         {
             print_error();
-            error_val = GRAPH_CREATE_STATIC_INDEX_FAIL;
-            return GRAPH_CREATE_STATIC_INDEX_FAIL;
+            error_val = GRAPH_CREATE_STATIC_INDEX_SCCS_FAIL;
+            return GRAPH_CREATE_STATIC_INDEX_SCCS_FAIL;
         }
         if (estimateSCCsNeighbors(g->sccs, g) < 0)
         {
-            //error
-            return -1;
+            print_error();
+            error_val = GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL;
+            return GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL;
         }/*
         uint32_t i, sum = 0, temp;
         for (i = 0 ; i < get_number_of_components(g->sccs) ; ++i)
@@ -1162,8 +1167,9 @@ rcode create_indexes(pGraph g,int type){
         printf("hypergraph edges: %d\n", sum);    //DEBUG*/
         if ((g->grail = buildGrailIndex(g->sccs,g->open_intlist[0],g->open_intlist[1])) == NULL)
         {
-            //error
-            return -1;
+            print_error();
+            error_val = GRAPH_CREATE_STATIC_INDEX_GRAIL_FAIL;
+            return GRAPH_CREATE_STATIC_INDEX_GRAIL_FAIL;
         }
         empty_list(g->open_intlist[0]);
         empty_list(g->open_intlist[1]);
