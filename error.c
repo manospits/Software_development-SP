@@ -144,39 +144,39 @@ void print_error(){
             fprintf(stderr, "Error: An error occurred during stack creation for Tarjan\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_STACK_INSERT_FAIL:
+        case TARJAN_STACK_INSERT_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to add a node to stack\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_BUFFER_POINTER_RETRIEVAL_FAIL:
+        case TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve buffer pointer\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_BUFFER_RETRIEVAL_FAIL:
+        case TARJAN_BUFFER_RETRIEVAL_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve buffer\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_INIT_LISTNODE_RETRIEVAL_FAIL:
-            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve initial listnode\n");
+        case TARJAN_LISTNODE_RETRIEVAL_FAIL:
+            fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to retrieve listnode\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_STACK_PEEK_FAIL:
+        case TARJAN_STACK_PEEK_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to peek top item in stack\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_STACK_POP_FAIL:
+        case TARJAN_STACK_POP_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: failed to pop top item in stack\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_COMPONENT_INIT_ARRAY_MALLOC_FAIL:
+        case TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: component's initial malloc for node array failed\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_ADD_NODE_TO_COMPONENT_FAIL:
+        case TARJAN_ADD_NODE_TO_COMPONENT_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: an error occurred while adding a new node to current component\n");
             error_val=OK_SUCCESS;
             break;
-        case TARJAN_REC_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL:
+        case TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL:
             fprintf(stderr, "Error: An error occurred during Tarjan (recursive) execution: component's final realloc for node array failed\n");
             error_val=OK_SUCCESS;
             break;
