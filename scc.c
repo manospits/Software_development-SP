@@ -107,7 +107,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                 flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
             }
             else if (flags[listnode->neighbor[i]].onStack == 1)
-                flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
+                flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].index);
             // get next neighbor
             i++;
             if (i == N)
