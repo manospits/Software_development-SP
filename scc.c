@@ -206,10 +206,11 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         free(sccs);
         return NULL;
     }
+    //initialize structures
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
     {
-        flags[i].index = UINT_MAX;
         flags[i].onStack = 0;
+        flags[i].index = UINT_MAX;
         sccs->components[i].included_node_ids = NULL;
         sccs->components[i].neighbors_count = 0;
         sccs->components[i].neighbor_ids = NULL;
@@ -228,7 +229,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     // run Tarjan algorithm for all nodes
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
         // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
-        if (flags[i].index == UINT_MAX) // UINT_MAX means that the node is undefined
+        if (flags[i].index == UINT_MAX) // UINT_MAX means that the node is undefined - could be replaced with special field, but this way uses less memory
             if (tarjan_rec(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
                 print_error();
