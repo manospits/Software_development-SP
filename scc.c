@@ -368,7 +368,7 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     for (i = 0 ; i < sccs->number_of_nodes ; ++i)
         // UINT_MAX == ~0 >> 2 <---- TODO: CHECK TO SEE IF IT SPEEDS UP
         if (flags[i].index == UINT_MAX) // UINT_MAX means that the node is undefined - could be replaced with special field, but this way uses less memory
-            if (tarjan_rec(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
+            if (tarjan_iter(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
                 print_error();
                 free(flags);

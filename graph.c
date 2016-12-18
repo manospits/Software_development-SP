@@ -1157,14 +1157,15 @@ rcode create_indexes(pGraph g,int type){
             print_error();
             error_val = GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL;
             return GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL;
-        }/*
+        }
+        printf("SCCs %d\n", get_number_of_components(g->sccs));
         uint32_t i, sum = 0, temp;
         for (i = 0 ; i < get_number_of_components(g->sccs) ; ++i)
         {
             get_component_neighbors(g->sccs, i, NULL, &temp);
             sum += temp;
         }
-        printf("hypergraph edges: %d\n", sum);    //DEBUG*/
+        printf("hypergraph edges: %d\n", sum);    //DEBUG
         if ((g->grail = buildGrailIndex(g->sccs,g->open_intlist[0],g->open_intlist[1])) == NULL)
         {
             print_error();
