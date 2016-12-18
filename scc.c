@@ -30,6 +30,7 @@ typedef struct scc_flags
     char onStack;
     uint32_t index;     // index == UINT_MAX indicates index is undefined
     uint32_t lowlink;
+    uint32_t parent;
 } scc_flags;
 
 struct ComponentCursor{
@@ -61,8 +62,134 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
-    int i, temp;
-
+    int i, temp_node;
+    if (insert_back(stack, nodeId) < 0)
+    {
+        print_error();
+        error_val = TARJAN_STACK_INSERT_FAIL;
+        return TARJAN_STACK_INSERT_FAIL;
+    }
+    flags[nodeId].parent = nodeId;
+    // initialize first component (at least one component will be created)
+    sccs->components[sccs->components_count].component_id = sccs->components_count;
+    sccs->components[sccs->components_count].included_nodes_count = 0;
+    sccs->components[sccs->components_count].array_size = 8;
+    if ((sccs->components[sccs->components_count].included_node_ids = malloc((sccs->components[sccs->components_count].array_size)*sizeof(uint32_t))) == NULL)
+    {
+        error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+        return TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+    }
+    (sccs->components_count)++;
+    // begin the iterative process
+    temp_node = nodeId;
+    while (get_size(stack) > 0)
+    {
+        if ((temp_node = peek_back(stack)) < 0)
+        {
+            print_error();
+            //error_val
+            return -1;
+        }
+        if (flags[temp_node].index == UINT_MAX)
+        {   // if node gets visited for the 1st time
+            flags[temp_node].index = *tarjan_index_param;
+            flags[temp_node].lowlink = *tarjan_index_param;
+            flags[temp_node].onStack = 1;
+            (*tarjan_index_param)++;
+        }
+        // check node's neighbors
+        buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), nodeId);
+        if (buffer_ptr_to_listnode < -1)
+        {   // an error occurred
+            print_error();
+            error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+            return TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+        }
+        // switch following 'if' with 'else if' to see if it improves performance
+        if (buffer_ptr_to_listnode != -1)
+        {   // if buffer_ptr_to_listnode == -1 then node has no neighbors, so continue to the end
+            if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
+            {
+                print_error();
+                error_val = TARJAN_BUFFER_RETRIEVAL_FAIL;
+                return TARJAN_BUFFER_RETRIEVAL_FAIL;
+            }
+            if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+            {
+                print_error();
+                error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                return TARJAN_LISTNODE_RETRIEVAL_FAIL;
+            }
+            i = 0;
+            while (listnode->neighbor[i] != -1)
+            {   // for each neighbor do
+                if (flags[listnode->neighbor[i]].index == UINT_MAX)
+                {   // index is undefined -> neighbor not visited yet
+                    if (insert_back(stack, listnode->neighbor[i]) < 0)
+                    {
+                        print_error();
+                        error_val = TARJAN_STACK_INSERT_FAIL;
+                        return TARJAN_STACK_INSERT_FAIL;
+                    }
+                    flags[listnode->neighbor[i]].parent = temp_node;
+                    continue;
+                }
+                else if (flags[listnode->neighbor[i]].onStack)
+                    flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].index);
+                // get next neighbor
+                i++;
+                if (i == N)
+                {
+                    if (listnode->nextListNode == -1)   // if there are no more neighbors, break
+                        break;
+                    if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                    {
+                        print_error();
+                        error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                        return TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                    }
+                    i = 0;
+                }
+            }
+            //
+            //flags[flags[temp_node].parent].lowlink = min(flags[flags[temp_node].parent].lowlink, flags[temp_node].lowlink);
+            // add node to current component
+            if (add_node_to_component(sccs, temp_node) < 0)
+            {
+                print_error();
+                error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+                return TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+            }
+            // check if we have finished adding to the component all the nodes that belong there
+            if (flags[temp_node].lowlink == flags[temp_node].index && flags[temp_node].parent != temp_node)
+            {   // if lowlink == index, then current component is finished and a new component must be created for the next nodes to enter.
+                // However, if the bottom of the stack has been reached (temp_node == parent), then there are no more nodes, so a new component must not be created.
+                //finalize previous component
+                if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].included_nodes_count)*sizeof(uint32_t))) == NULL)
+                {
+                    error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+                    return TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+                }
+                // ATTENTION: array_size field now is wrong; size now is included_nodes_count*sizeof()
+                // initialize new component
+                sccs->components[sccs->components_count].component_id = sccs->components_count;
+                sccs->components[sccs->components_count].included_nodes_count = 0;
+                sccs->components[sccs->components_count].array_size = 8;
+                if ((sccs->components[sccs->components_count].included_node_ids = malloc((sccs->components[sccs->components_count].array_size)*sizeof(uint32_t))) == NULL)
+                {
+                    error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+                    return TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+                }
+                (sccs->components_count)++;
+            }
+            if (pop_back(stack) < 0)
+            {
+                print_error();
+                error_val = TARJAN_STACK_POP_FAIL;
+                return TARJAN_STACK_POP_FAIL;
+            }
+        }
+    }
 
     return OK_SUCCESS;
 }
@@ -117,7 +244,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                     return return_value;
                 flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].lowlink);
             }
-            else if (flags[listnode->neighbor[i]].onStack == 1)
+            else if (flags[listnode->neighbor[i]].onStack)
                 flags[nodeId].lowlink = min(flags[nodeId].lowlink, flags[listnode->neighbor[i]].index);
             // get next neighbor
             i++;
@@ -175,7 +302,7 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
             error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
             return TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
         }
-        // array_size now is wrong; size now is included_nodes_count*sizeof()
+        // ATTENTION: array_size field now is wrong; size now is included_nodes_count*sizeof()
     }
 
     return OK_SUCCESS;
