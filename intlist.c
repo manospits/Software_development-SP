@@ -68,7 +68,7 @@ rcode insert_back(phead listh,uint32_t data){
         }
         listh->size=newsize;
     }
-    pos=(listh->front+listh->elements)%listh->size;
+    pos=(listh->front+listh->elements < listh->size ) ? listh->front+listh->elements : listh->front+listh->elements-listh->size;
     /*if(listh->front==pos)*/
         /*printf("front %d pos %d, %ld %d\n",listh->front,pos,listh->size,listh->elements);*/
     listh->array_queue[pos]=data;
@@ -86,7 +86,7 @@ rcode pop_front(phead listh){
         error_val=EMPTY_LIST;
         return EMPTY_LIST;
     }
-    listh->front=(listh->front+1)%listh->size;
+    listh->front=(listh->front+1 <listh->size) ? listh->front+1 : 0;
     listh->elements--;
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
@@ -101,10 +101,12 @@ uint32_t peek_pop_front(phead listh){
         error_val=EMPTY_LIST;
         return EMPTY_LIST;
     }
-    listh->front=(listh->front+1)%listh->size;
+    static uint32_t tmp;
+    tmp=listh->array_queue[listh->front];
+    listh->front=(listh->front+1 <listh->size) ? listh->front+1 : 0;
     listh->elements--;
     error_val=OK_SUCCESS;
-    return listh->array_queue[(listh->front-1)%listh->size];
+    return tmp;
 }
 rcode pop_back(phead listh){
     if(listh==NULL){
@@ -153,7 +155,7 @@ int peek_back(const phead listh){
         return NULL_LIST;
     }
     error_val=OK_SUCCESS;
-    int pos=(listh->front+listh->elements-1)%listh->size;
+    int pos=(listh->front+listh->elements-1 <listh->size)? listh->front+listh->elements -1 : listh->front+listh->elements-1 -listh->size;
     return listh->array_queue[pos];
 }
 iterator ret_iterator(const phead listh){
