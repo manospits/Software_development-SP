@@ -388,7 +388,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     pBuffer temp_buffer;
     ptr buffer_ptr_to_listnode;
     plnode listnode;
-    uint32_t i, temp_node, temp_node_for_scc_creation, recursive_top;
+    uint32_t i, temp_node_for_scc_creation, recursive_top;
     char continue_flag;
     if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
     {   // temp buffer is retrieved outside of main loop; no point in extracting the same info every time, we do it once since temp_buffer value won't change
@@ -430,15 +430,15 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
         }
     }
     // begin the iterative process
-    temp_node = nodeId;
+    recursive_top = nodeId;
     while (get_size(stack) > 0)
     {
         //printf("%d\n", get_size(stack));  //DEBUG
         continue_flag = 0;
-        listnode = flags[temp_node].listnode;
+        listnode = flags[recursive_top].listnode;
         if (listnode != NULL)
         {
-            i = flags[temp_node].next_child;
+            i = flags[recursive_top].next_child;
             // check node's neighbors
             while (listnode->neighbor[i] != -1)
             {   // for each neighbor do
@@ -453,7 +453,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     flags[listnode->neighbor[i]].onStack = 1;
                     flags[listnode->neighbor[i]].index = *tarjan_index_param;
                     flags[listnode->neighbor[i]].lowlink = *tarjan_index_param;
-                    flags[listnode->neighbor[i]].parent = temp_node;
+                    flags[listnode->neighbor[i]].parent = recursive_top;
                     flags[listnode->neighbor[i]].next_child = 0;
                     (*tarjan_index_param)++;
                     // initialize bookkeeping data (listnode, next_child)
@@ -481,26 +481,26 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     if (i == N - 1)
                     {   // neighbor is the last in this listnode
                         if (listnode->nextListNode == -1)
-                            flags[temp_node].listnode = NULL;
-                        else if ((flags[temp_node].listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                            flags[recursive_top].listnode = NULL;
+                        else if ((flags[recursive_top].listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                         {
                             print_error();
                             error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
                             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
                         }
-                        flags[temp_node].next_child = 0;
+                        flags[recursive_top].next_child = 0;
                     }
                     else
                     {
-                        flags[temp_node].listnode = listnode;
-                        flags[temp_node].next_child = i + 1;
+                        flags[recursive_top].listnode = listnode;
+                        flags[recursive_top].next_child = i + 1;
                     }
-                    temp_node = listnode->neighbor[i];
+                    recursive_top = listnode->neighbor[i];
                     continue_flag = 1;
                     break;
                 }
                 else if (flags[listnode->neighbor[i]].onStack)
-                    flags[temp_node].lowlink = min(flags[temp_node].lowlink, flags[listnode->neighbor[i]].index);
+                    flags[recursive_top].lowlink = min(flags[recursive_top].lowlink, flags[listnode->neighbor[i]].index);
                 // get next neighbor
                 i++;
                 if (i == N)
@@ -519,12 +519,12 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
             if (continue_flag)
                 continue;
             else    // node's neighbors finished
-                flags[temp_node].listnode = NULL;
+                flags[recursive_top].listnode = NULL;
         }
         // update parent's lowlink
-        flags[flags[temp_node].parent].lowlink = min(flags[flags[temp_node].parent].lowlink, flags[temp_node].lowlink);
-        // if temp_node is a root node, pop the stack and generate an SCC
-        if (flags[temp_node].lowlink == flags[temp_node].index)
+        flags[flags[recursive_top].parent].lowlink = min(flags[flags[recursive_top].parent].lowlink, flags[recursive_top].lowlink);
+        // if recursive_top is a root node, pop the stack and generate an SCC
+        if (flags[recursive_top].lowlink == flags[recursive_top].index)
         {
             // initialize component
             sccs->components[sccs->components_count].component_id = sccs->components_count;
@@ -557,7 +557,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
                     return TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
                 }
-            }while(temp_node_for_scc_creation != temp_node);
+            }while(temp_node_for_scc_creation != recursive_top);
             if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].included_nodes_count)*sizeof(uint32_t))) == NULL)
             {
                 error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
@@ -565,7 +565,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
             }
             // ATTENTION: array_size field now is wrong; size now is included_nodes_count*sizeof()
         }
-        temp_node = flags[temp_node].parent;
+        recursive_top = flags[recursive_top].parent;
     }
 
     return OK_SUCCESS;
