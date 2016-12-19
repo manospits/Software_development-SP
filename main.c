@@ -10,13 +10,25 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef VERBOSE_MODE
+    if (argc != 3 && argc != 4)
+    {
+        fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file> <OPTIONAL: \"`wc -l <workload file>`\" >\nExiting...\n");
+        return -1;
+    }
+#else
     if (argc != 3)
     {
         fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file>\nExiting...\n");
         return -1;
     }
+#endif // VERBOSE_MODE
     int node1, node2, ret_val,type;
     unsigned long i;
+#ifdef VERBOSE_MODE
+    unsigned long lines = 0;
+    if (argc == 4) lines = strtoul(argv[3], NULL, 10);
+#endif // VERBOSE_MODE
     FILE *initial_graph, *workload, *results;
     char command;
     pGraph graph = gCreateGraph();
@@ -133,6 +145,9 @@ int main(int argc, char *argv[])
         return -1;
     }
     int count=1000;
+#ifdef VERBOSE_MODE
+    if (lines) {printf("0%%");fflush(stdout);}
+#endif // VERBOSE_MODE
     for (i = 1 ; !feof(workload) ; ++i)
     {
         command = fgetc(workload);
@@ -209,7 +224,19 @@ int main(int argc, char *argv[])
             gDestroyGraph(&graph);
             return -1;
         }
+#ifdef VERBOSE_MODE
+        if (lines)
+        {
+            printf("\b\b");
+            if ((i*100)/lines > 9) printf("\b");
+            printf("%lu%%", (i*100)/lines);
+            fflush(stdout);
+        }
+#endif // VERBOSE_MODE
     }
+#ifdef VERBOSE_MODE
+    if ((i-1)/lines != 1)printf("\b\b\b100%%\n");
+#endif // VERBOSE_MODE
     puts("Processing complete.");
     printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);
     gDestroyGraph(&graph);
