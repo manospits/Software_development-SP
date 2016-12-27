@@ -244,5 +244,21 @@ void print_error(){
             fprintf(stderr, "Error (BFS): retrieving BFS tag from hastable failed\n");
             error_val=OK_SUCCESS;
             break;
+        case JOBSCHEDULER_INIT_INVALID_NUM_OF_THREADS:
+            fprintf(stderr, "Error creating Job Scheduler: non-positive number of threads provided\n");
+            error_val=OK_SUCCESS;
+            break;
+        case JOBSCHEDULER_INIT_INITIAL_MALLOC_FAIL:
+            fprintf(stderr, "Error creating Job Scheduler: malloc for basic struct failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL:
+            fprintf(stderr, "Error creating Job Scheduler: malloc for thread pool failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case JOBSCHEDULER_INIT_PTHREAD_CREATE_FAIL:
+            fprintf(stderr, "Error creating Job Scheduler: creating a thread failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

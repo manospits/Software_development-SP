@@ -1,12 +1,12 @@
-BIN=unittesting
-FINAL=spath
-SOURCES=buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c scc.c utils.c grail.c queries.c
-OBJS=buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o queries.o
-FOBJS=buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o
-AOBJS=buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o grail.o hash.o queries.o
-HEADERS=buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h CCindex.h grail.h queries.h
-OPT= -Ofast
-CC=gcc
+BIN = unittesting
+FINAL = spath
+SOURCES = buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c scc.c utils.c grail.c queries.c
+OBJS = buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o queries.o
+FOBJS = buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o
+AOBJS = buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o grail.o hash.o queries.o
+HEADERS = buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h CCindex.h grail.h queries.h
+OPT = -Ofast
+CC = gcc
 FLAGS = -c -Wall $(OPT)
 CHECK = -lcheck -lrt
 
@@ -14,7 +14,7 @@ all : $(FINAL) $(BIN)
 
 
 $(FINAL) : $(FOBJS)
-	$(CC) $(OPT) -o $@ $(FOBJS)
+	$(CC) $(OPT) -o $@ $(FOBJS) -pthread
 
 $(BIN): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CHECK)
@@ -66,6 +66,9 @@ utils.o: utils.c
 
 clean:
 	rm -f $(AOBJS) $(BIN) $(FINAL)
+
+no_exe_clean:
+	rm -f $(AOBJS)
 
 count:
 	wc $(SOURCES) $(HEADERS)
