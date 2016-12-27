@@ -10,9 +10,9 @@ typedef struct qhead{
     int front;
     int elements;
     querie *array_queue;
-}sthead;
+}qhead;
 
-qphead st_cr_list(){
+qphead q_cr_list(){
     qphead tmphead;
     tmphead=malloc(sizeof(struct qhead));
     if(tmphead==NULL){
