@@ -52,7 +52,7 @@ rcode q_empty_list(qphead list_to_empty){
     return OK_SUCCESS;
 }
 
-rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t nodeb){
+rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t nodeb,long unsigned int version){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -71,6 +71,7 @@ rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t node
     listh->array_queue[pos].querie_id=querie_id;
     listh->array_queue[pos].nodea=nodea;
     listh->array_queue[pos].nodeb=nodeb;
+    listh->array_queue[pos].version=version;
     listh->elements++;
     return OK_SUCCESS;
 }

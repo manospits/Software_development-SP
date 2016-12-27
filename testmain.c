@@ -82,11 +82,12 @@ START_TEST(queries)
     for(i=0;i<3;i++){
         fail_unless((list=q_cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(q_insert_back(list,j,j,i)==OK_SUCCESS);
+            fail_unless(q_insert_back(list,j,j,i,i)==OK_SUCCESS);
             fail_unless((tmp=q_peek_back(list))!=NULL);
             fail_unless(tmp->querie_id==j);
             fail_unless(tmp->nodea==j);
             fail_unless(tmp->nodeb==i);
+            fail_unless(tmp->version==i);
         }
         fail_unless(q_get_size(list)==1000);
         fail_unless(q_ds_list(list)==OK_SUCCESS);
@@ -98,7 +99,7 @@ END_TEST
 
 START_TEST(test_serial)
 {
-#line 77
+#line 78
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -123,7 +124,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 97
+#line 98
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
