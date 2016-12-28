@@ -260,5 +260,13 @@ void print_error(){
             fprintf(stderr, "Error creating Job Scheduler: creating a thread failed\n");
             error_val=OK_SUCCESS;
             break;
+        case JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL:
+            fprintf(stderr, "Error creating Job Scheduler: creating queue failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL:
+            fprintf(stderr, "Error (Job Scheduler): submitting new job (inserting to queue) failed\n");
+            error_val=OK_SUCCESS;
+            break;
     }
 }

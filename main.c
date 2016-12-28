@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
     if (argc == 4) lines = strtoul(argv[3], NULL, 10);
 #endif // VERBOSE_MODE
     FILE *initial_graph, *workload, *results;
-	struct thread_params params;
     char command;
     pJobScheduler scheduler;
     pGraph graph = gCreateGraph();
@@ -43,7 +42,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "An error occurred during graph creation.\nExiting...\n");
         return -1;
     }
-    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, &params)) == NULL);
+    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph)) == NULL);
     {
         print_error();
         fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");

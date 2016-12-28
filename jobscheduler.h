@@ -30,11 +30,11 @@ struct Job
 
 pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, struct thread_params *params);
 
-void submit_job(pJobScheduler sch, Job* j);
+void submit_job(pJobScheduler sch, uint32_t query_id, uint32_t from, uint32_t to, long unsigned int version);
 
 void execute_all_jobs(pJobScheduler);
 
-void wait_all_tasks_finish(pJobScheduler); //waits all submitted tasks to finish
+void wait_all_tasks_finish(pJobScheduler, int num_of_threads); //waits all submitted tasks to finish
 
 void destroy_scheduler(pJobScheduler);
 
