@@ -8,6 +8,7 @@
 #line 1 "testmain.check"
 #include "intlist.h"
 #include "struct_list.h"
+#include "queries.h"
 #include "index.h"
 #include "error.h"
 #include <stdio.h>
@@ -19,7 +20,7 @@ int hash_function(void *data,void *size)
 
 START_TEST(intlist)
 {
-#line 13
+#line 14
     phead list;
     int i,j,k;
     for(i=0;i<3;i++){
@@ -45,7 +46,7 @@ END_TEST
 
 START_TEST(struct_list)
 {
-#line 34
+#line 35
     stphead list;
     int i,j,k;
     for(i=0;i<3;i++){
@@ -72,9 +73,33 @@ START_TEST(struct_list)
 }
 END_TEST
 
+START_TEST(queries)
+{
+#line 59
+    qphead list;
+    int i,j;
+    querie *tmp;
+    for(i=0;i<3;i++){
+        fail_unless((list=q_cr_list())!=NULL);
+        for(j=0;j<1000;j++){
+            fail_unless(q_insert_back(list,j,j,i,i)==OK_SUCCESS);
+            fail_unless((tmp=q_peek_back(list))!=NULL);
+            fail_unless(tmp->querie_id==j);
+            fail_unless(tmp->nodea==j);
+            fail_unless(tmp->nodeb==i);
+            fail_unless(tmp->version==i);
+        }
+        fail_unless(q_get_size(list)==1000);
+        fail_unless(q_ds_list(list)==OK_SUCCESS);
+    }
+    puts("testing queries finished");
+
+}
+END_TEST
+
 START_TEST(test_serial)
 {
-#line 58
+#line 78
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -99,7 +124,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 78
+#line 98
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -136,6 +161,7 @@ int main(void)
     suite_add_tcase(s1, tc1_1);
     tcase_add_test(tc1_1, intlist);
     tcase_add_test(tc1_1, struct_list);
+    tcase_add_test(tc1_1, queries);
     tcase_add_test(tc1_1, test_serial);
     tcase_add_test(tc1_1, test_step10);
 

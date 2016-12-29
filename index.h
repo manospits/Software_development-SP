@@ -25,6 +25,9 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor);
 rcode add_edge(const Index_ptr,uint32_t nodeId,uint32_t neighbor);
     //OK_SUCCESS if edge is added or negative value in case of error
 
+rcode add_edge_t(const Index_ptr,uint32_t nodeId,uint32_t neighbor,uint32_t version);
+    //OK_SUCCESS if edge is added or negative value in case of error
+
 rcode destroyNodeIndex(const Index_ptr);
     //returns OK_SUCCESS if there is no error negative value else
 
