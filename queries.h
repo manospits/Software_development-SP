@@ -4,14 +4,14 @@
 #include "error.h"
 #include <stdint.h>
 
-typedef struct querie{
-    uint32_t querie_id;
+typedef struct query{
+    long unsigned int version;
+    uint32_t query_id;
     uint32_t nodea;
     uint32_t nodeb;
-    long unsigned int version;
-}querie;
+}query;
 
-typedef struct querie * qpnode;
+typedef struct query * qpnode;
 typedef struct qhead * qphead;
 
 //CREATION
@@ -21,7 +21,7 @@ qphead q_cr_list();
 rcode q_ds_list(qphead list_to_destroy);
 rcode q_empty_list(qphead list_to_empty);
 //MODIFY
-rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t nodeb,long unsigned int version);          //inserts node in back
+rcode q_insert_back(qphead listh,uint32_t query_id,uint32_t nodea,uint32_t nodeb,long unsigned int version);          //inserts node in back
 rcode q_pop_front(qphead listh);                         //deletes first node in list
 
 //ACCESS

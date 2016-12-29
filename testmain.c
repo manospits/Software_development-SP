@@ -75,13 +75,13 @@ START_TEST(queries)
 #line 56
     qphead list;
     int i,j;
-    querie *tmp;
+    query *tmp;
     for(i=0;i<3;i++){
         fail_unless((list=q_cr_list())!=NULL);
         for(j=0;j<1000;j++){
             fail_unless(q_insert_back(list,j,j,i,i)==OK_SUCCESS);
             fail_unless((tmp=q_peek_back(list))!=NULL);
-            fail_unless(tmp->querie_id==j);
+            fail_unless(tmp->query_id==j);
             fail_unless(tmp->nodea==j);
             fail_unless(tmp->nodeb==i);
             fail_unless(tmp->version==i);

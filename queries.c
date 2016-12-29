@@ -9,7 +9,7 @@ typedef struct qhead{
     int size;
     int front;
     int elements;
-    querie *array_queue;
+    query *array_queue;
 }qhead;
 
 qphead q_cr_list(){
@@ -22,7 +22,7 @@ qphead q_cr_list(){
     tmphead->size=QLIST_INIT_SIZE;
     tmphead->front=0;
     tmphead->elements=0;
-    if((tmphead->array_queue=malloc(QLIST_INIT_SIZE*sizeof(struct querie)))==NULL){
+    if((tmphead->array_queue=malloc(QLIST_INIT_SIZE*sizeof(struct query)))==NULL){
         error_val=(LIST_CR_MALLOC);
         return NULL;
     }
@@ -52,7 +52,7 @@ rcode q_empty_list(qphead list_to_empty){
     return OK_SUCCESS;
 }
 
-rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t nodeb,long unsigned int version){
+rcode q_insert_back(qphead listh,uint32_t query_id,uint32_t nodea,uint32_t nodeb,long unsigned int version){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -60,15 +60,15 @@ rcode q_insert_back(qphead listh,uint32_t querie_id,uint32_t nodea,uint32_t node
     int pos,newsize;
     if(listh->elements+1>listh->size){
         newsize=listh->size*2;
-        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct querie));
+        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct query));
         if(listh->front!=0){
-            memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct querie));
+            memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct query));
             listh->front=newsize-(listh->size-listh->front);
         }
         listh->size=newsize;
     }
     pos=(listh->front+listh->elements < listh->size ) ? listh->front+listh->elements : listh->front+listh->elements-listh->size;
-    listh->array_queue[pos].querie_id=querie_id;
+    listh->array_queue[pos].query_id=query_id;
     listh->array_queue[pos].nodea=nodea;
     listh->array_queue[pos].nodeb=nodeb;
     listh->array_queue[pos].version=version;
