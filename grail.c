@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 typedef struct Gnode{
@@ -21,7 +22,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     Grail g;
     int *visited;
     int visited_version=1;
-    int i,k,l;
+    int i,k,l,posa,posb;
     if((g=malloc(sizeof(GrailIndex)))==NULL){
         error_val=GRAIL_MALLOC_FAIL;
         return NULL;
@@ -45,7 +46,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     //ITERATIVE
     srand(time(NULL));
     uint32_t rank=0 ;
-    uint32_t nodeid,parent,*neighbors,size;
+    uint32_t nodeid,parent,*neighbors,size,*neighbors_copy=NULL,neighbors_copy_size=0,temp;
     for(l=0;l<LABEL_NUMBER;l++){
         nodeid=rand() % g->gindex_size;
         parent=nodeid;
@@ -63,15 +64,45 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                     if(visited[nodeid]<visited_version){
                         visited[nodeid]=visited_version;
                         get_component_neighbors(s,nodeid,&neighbors,&size);
+                        if(neighbors_copy==NULL){
+                            int size_n=2;
+                            while(size_n<size){
+                                size_n<<=1;
+                            }
+                            if((neighbors_copy=malloc(size_n*sizeof(uint32_t)))==NULL){
+                                error_val=GRAIL_MALLOC_FAIL;
+                                return NULL;
+                            }
+                            neighbors_copy_size=size_n;
+                        }
+                        else if(neighbors_copy_size<size){
+                            int size_n=neighbors_copy_size;
+                            while(size_n<size){
+                                size_n<<=1;
+                            }
+                            if((neighbors_copy=realloc(neighbors_copy,size_n*sizeof(uint32_t)))==NULL){
+                                error_val=GRAIL_MALLOC_FAIL;
+                                return NULL;
+                            }
+                            neighbors_copy_size=size_n;
+                        }
+                        memcpy(neighbors_copy,neighbors,size*sizeof(uint32_t));
+                        for(i=0;i<size/2;i++){
+                            posa=rand()%size;
+                            posb=rand()%size;
+                            temp=neighbors_copy[posa];
+                            neighbors_copy[posa]=neighbors_copy[posb];
+                            neighbors_copy[posb]=temp;
+                        }
                         for(i=0;i<size;i++)
                         {
-                            if(visited[neighbors[i]]<visited_version){
-                                insert_back(nodes,neighbors[i]);
+                            if(visited[neighbors_copy[i]]<visited_version){
+                                insert_back(nodes,neighbors_copy[i]);
                                 insert_back(nodesp,nodeid);
                             }
                             else{
-                                if(g->gindex[neighbors[i]].min_rank[l] < g->gindex[nodeid].min_rank[l]){
-                                    g->gindex[nodeid].min_rank[l]=g->gindex[neighbors[i]].min_rank[l];
+                                if(g->gindex[neighbors_copy[i]].min_rank[l] < g->gindex[nodeid].min_rank[l]){
+                                    g->gindex[nodeid].min_rank[l]=g->gindex[neighbors_copy[i]].min_rank[l];
                                 }
                             }
                         }

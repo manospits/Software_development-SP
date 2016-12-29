@@ -4,7 +4,7 @@
 #include "scc.h"
 #include "intlist.h"
 #include "error.h"
-#define LABEL_NUMBER 10
+#define LABEL_NUMBER 5
 
 typedef char GRAIL_ANSWER;
 typedef struct GrailIndex * Grail;

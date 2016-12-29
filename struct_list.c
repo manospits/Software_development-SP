@@ -6,11 +6,6 @@
 #include <string.h>
 #include <stdint.h>
 
-typedef struct stnode {
-    uint32_t data;
-    uint32_t tag;
-} stnode;
-
 typedef struct sthead{
     int size;
     int front;
