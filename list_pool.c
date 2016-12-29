@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include "list_pool.h"
-#include "intlist.h"
+#include "struct_list.h"
 #include "error.h"
 
 typedef struct list_pool{
-    phead* lists;
+    stphead* lists;
     int nextavailable;
     int size;
 }list_pool;
@@ -24,12 +24,12 @@ lpool create_listpool(){
         return NULL;
     }
     for(i=0;i<LPOOL_INIT_SIZE;i++){
-        l->lists[i]=cr_list();
+        l->lists[i]=st_cr_list();
     }
     return l;
 }
 
-phead get_alist(lpool l){
+stphead get_alist(lpool l){
     if(l->nextavailable==l->size){
         if((l->lists=realloc(l->lists,l->size*2*sizeof(phead)))==NULL){
             error_val= LP_REALLOC_FAIL;
@@ -37,7 +37,7 @@ phead get_alist(lpool l){
         }
         int i;
         for(i=l->size;i<l->size*2;i++){
-            l->lists[i]=cr_list();
+            l->lists[i]=st_cr_list();
         }
         l->size*=2;
     }
@@ -47,7 +47,7 @@ phead get_alist(lpool l){
 rcode empty_lists(lpool l){
     int i;
     for(i=0;i<l->nextavailable;i++){
-        empty_list(l->lists[i]);
+        st_empty_list(l->lists[i]);
     }
     l->nextavailable=0;
     error_val=OK_SUCCESS;
@@ -57,7 +57,7 @@ rcode empty_lists(lpool l){
 rcode ds_pool(lpool l){
     int i;
     for(i=0;i<l->size;i++){
-       ds_list(l->lists[i]);
+       st_ds_list(l->lists[i]);
     }
     free(l->lists);
     free(l);

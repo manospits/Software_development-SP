@@ -221,6 +221,7 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         return INDEX_GET_LIST_NODE_FAIL;
     }
     tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
+    tmplnode->edgeProperty[hindex->index[nodeId].node_index_for_next_neighbor]=0;
     hindex->index[nodeId].node_index_for_next_neighbor++;
     if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;

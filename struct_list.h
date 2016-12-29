@@ -5,6 +5,11 @@
 #include <stdint.h>
 #include "intlist.h"
 
+typedef struct stnode {
+    uint32_t data;
+    uint32_t tag;
+} stnode;
+
 typedef struct stnode * stpnode;
 typedef struct sthead * stphead;
 
