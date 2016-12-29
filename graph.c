@@ -979,21 +979,43 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                 }
                 else if (!return_value)
                 {    // if this node hasn't been visited yet
-                    if ((current == 0 && (findNodeStronglyConnectedComponentID(g->sccs, listnode->neighbor[i]) == scc_to)) || (current == 1 && findNodeStronglyConnectedComponentID(g->sccs, listnode->neighbor[i]) == scc_from) || (isReachableGrailIndex(g->grail, g->sccs, listnode->neighbor[i], to) != 0))
+                    if (!current)
                     {
-                        if (insert_back(g->open_intlist[current], listnode->neighbor[i]) != OK_SUCCESS)
+                        if ((findNodeStronglyConnectedComponentID(g->sccs, listnode->neighbor[i]) == scc_to) || (isReachableGrailIndex(g->grail, g->sccs, listnode->neighbor[i], to) != 0))
                         {
-                            print_error();
-                            error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
-                            return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                            if (insert_back(g->open_intlist[current], listnode->neighbor[i]) != OK_SUCCESS)
+                            {
+                                print_error();
+                                error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                                return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                            }
+                            if (v_mark(g->visited, listnode->neighbor[i], current, VISITED) < 0)
+                            {
+                                print_error();
+                                error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                                return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                            }
+                            grandchildren[current]+=*(get_node_number_of_edges_2((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]));
                         }
-                        if (v_mark(g->visited, listnode->neighbor[i], current, VISITED) < 0)
+                    }
+                    else    //current == 1
+                    {
+                        if ((findNodeStronglyConnectedComponentID(g->sccs, listnode->neighbor[i]) == scc_from) || (isReachableGrailIndex(g->grail, g->sccs, from, listnode->neighbor[i]) != 0))
                         {
-                            print_error();
-                            error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
-                            return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                            if (insert_back(g->open_intlist[current], listnode->neighbor[i]) != OK_SUCCESS)
+                            {
+                                print_error();
+                                error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                                return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                            }
+                            if (v_mark(g->visited, listnode->neighbor[i], current, VISITED) < 0)
+                            {
+                                print_error();
+                                error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                                return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                            }
+                            grandchildren[current]+=*(get_node_number_of_edges_2((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]));
                         }
-                        grandchildren[current]+=*(get_node_number_of_edges_2((current == 0 ? g->outIndex : g->inIndex), listnode->neighbor[i]));
                     }
                 }
                 else if (return_value > 0)
