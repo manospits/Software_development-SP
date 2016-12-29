@@ -6,8 +6,8 @@
 #include <stdint.h>
 
 typedef struct head{
-    uint32_t *array_queue;
     long int size;
+    uint32_t *array_queue;
     int front;
     int elements;
 }head;

@@ -27,6 +27,7 @@ typedef struct cc_extras{
 }cc_extras;
 
 typedef struct CC{
+    double metric;
     ccindex_record *ccindex; //CCindex
     UpdateIndex UpdateIndex;
     lpool lists;
@@ -44,7 +45,6 @@ typedef struct CC{
     int version;
     int check;
     int checkrebuild;
-    double metric;
     uint32_t metricVal;
 } CC;
 
