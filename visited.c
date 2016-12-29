@@ -11,8 +11,8 @@ typedef struct visited_node{
 
 typedef struct visited_head{
     visited_node * nodes;
-    uint32_t loop_count;
     uint32_t size;
+    uint32_t loop_count;
 }visited_head;
 
 pvis create_visited(int size){
@@ -41,7 +41,9 @@ pvis create_visited(int size){
 }
 
 rcode v_mark(pvis a,uint32_t data,int tag,int expanded){
-
+    if(data >= a->size || (tag !=1&&tag!=0)||(expanded!=0&&expanded!=1)){
+        //TODO
+    }
     a->nodes[data].mark=a->loop_count;
     a->nodes[data].tag=tag;
     a->nodes[data].expanded=expanded;
