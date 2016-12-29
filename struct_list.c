@@ -1,5 +1,6 @@
 #include "error.h"
 #include "struct_list.h"
+#include "intlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +9,6 @@
 typedef struct stnode {
     uint32_t data;
     uint32_t tag;
-    int expanded;
 } stnode;
 
 typedef struct sthead{
@@ -58,7 +58,7 @@ rcode st_empty_list(stphead list_to_empty){
     return OK_SUCCESS;
 }
 
-rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag,int expanded){
+rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
         error_val=NULL_LIST;
         return NULL_LIST;
@@ -76,7 +76,6 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag,int expanded){
     pos=(listh->front+listh->elements)%listh->size;
     listh->array_queue[pos].data=data;
     listh->array_queue[pos].tag=data;
-    listh->array_queue[pos].expanded=expanded;
     listh->elements++;
     return OK_SUCCESS;
 }
@@ -141,41 +140,6 @@ int st_get_tag(const stphead listh,uint32_t data){
     return NODE_MISSING;
 }
 
-int st_get_expanded(const stphead listh,uint32_t data){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    int i,pos;
-    for(i=0;i<listh->elements;i++){
-        pos=(listh->front+i)%listh->size;
-        if(listh->array_queue[pos].data==data){
-            error_val=OK_SUCCESS;
-            return listh->array_queue[pos].expanded;
-        }
-    }
-    error_val=NODE_MISSING;
-    return NODE_MISSING;
-}
-
-rcode st_set_expanded(const stphead listh,uint32_t data,int expanded){
-    if(listh==NULL){
-        error_val=NULL_LIST;
-        return NULL_LIST;
-    }
-    int i,pos;
-    for(i=0;i<listh->elements;i++){
-        pos=(listh->front+i)%listh->size;
-        if(listh->array_queue[pos].data==data){
-            error_val=OK_SUCCESS;
-            listh->array_queue[pos].expanded=expanded;
-            return OK_SUCCESS;
-        }
-    }
-    error_val=NODE_MISSING;
-    return NODE_MISSING;
-}
-
 int st_in(const stphead listh,uint32_t data){
     int i,pos=listh->front;
     for(i=0;i<listh->elements;i++){
@@ -188,4 +152,26 @@ int st_in(const stphead listh,uint32_t data){
         }
     }
     return 0;
+}
+
+iterator st_ret_iterator(const stphead listh){
+    if(listh->size==0){
+        return -1;
+    }
+    else{
+        return listh->front;
+    }
+}
+
+stpnode st_get_iterator_data(const stphead listh,iterator it){
+    return &listh->array_queue[it];
+}
+
+int st_advance_iterator(const stphead listh,iterator it){
+    if(it==(listh->front+listh->elements-1)%listh->size){
+        return -1;
+    }
+    else{
+        return (it+1)%listh->size;
+    }
 }

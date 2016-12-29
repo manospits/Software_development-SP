@@ -248,6 +248,67 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     return OK_SUCCESS;
 }
 
+rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint32_t version){
+    plnode tmplnode;
+    if(hindex==NULL){
+        error_val=INDEX_NULL_HEAD;
+        return INDEX_NULL_HEAD;
+    }
+    if(nodeId<0||neighbor<0){
+        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        return INDEX_INSERT_NEGATIVE_NODEID;
+    }
+    if(nodeId>hindex->size){
+        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        return INDEX_NODE_ID_OUT_BOUNDS;
+    }
+    //List doesn't exist
+    if(hindex->index[nodeId].List_start==-1){
+        ptr tmpptr;
+        if((tmpptr=allocNewNode(hindex->buffer))<0){
+            print_error();
+            error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+            return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+        }
+        hindex->index[nodeId].List_start=tmpptr;
+        hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
+        hindex->index[nodeId].node_index_for_next_neighbor=0;
+    }
+    tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
+    if(tmplnode==NULL){
+        print_error();
+        error_val=INDEX_GET_LIST_NODE_FAIL;
+        return INDEX_GET_LIST_NODE_FAIL;
+    }
+    tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
+    tmplnode->edgeProperty[hindex->index[nodeId].node_index_for_next_neighbor]=version;
+    hindex->index[nodeId].node_index_for_next_neighbor++;
+    if(hindex->index[nodeId].node_index_for_next_neighbor==N){
+        ptr tmpptr;
+        if((tmpptr=allocNewNode(hindex->buffer))<0){
+            print_error();
+            error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+            return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+        }
+        //changing nextptr in list's last node
+        tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
+        if(tmplnode==NULL){
+            print_error();
+            error_val=INDEX_GET_LIST_NODE_FAIL;
+            return INDEX_GET_LIST_NODE_FAIL;
+        }
+        tmplnode->nextListNode=tmpptr;
+        //changing index ptr to last node
+        hindex->index[nodeId].list_node_for_next_neigbor=tmpptr;
+        //changing position in inner array in list node to 0
+        hindex->index[nodeId].node_index_for_next_neighbor=0;
+    }
+    error_val=OK_SUCCESS;
+    hindex->edges++;
+    hindex->index[nodeId].edges++;
+    return OK_SUCCESS;
+}
+
 rcode destroyNodeIndex(const Index_ptr hindex){
     if(hindex==NULL){
         error_val=INDEX_NULL_HEAD;

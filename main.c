@@ -174,45 +174,25 @@ int main(int argc, char *argv[])
 #ifdef VERBOSE_MODE
     if (lines) {printf("0%%");fflush(stdout);}
 #endif // VERBOSE_MODE
-    for (i = 1 ; !feof(workload) ; ++i)
-    {
-        command = fgetc(workload);
-        //printf("check: '%c'\n", command); // DEBUG
-        if (command == EOF)
-            break;
-        if (command == 'F')
+    if(type==DYNAMIC){
+        for (i = 1 ; !feof(workload) ; ++i)
         {
-            if(type==DYNAMIC){
-                rebuild(graph);
-            }
-            if (fgets(typebuf, 255, workload) == NULL)
+            command = fgetc(workload);
+            //printf("check: '%c'\n", command); // DEBUG
+            if (command == EOF)
                 break;
-            else    // take the '\n' and continue
-                continue;
-        }
-        ungetc(command, workload);
-        if (fscanf(workload, "%c %d %d\n", &command, &node1, &node2) != 3)
-        {
-            fprintf(stderr, "Error reading workload file: did not read a character and two integers from line %lu\nExiting...\n", i);
-            fclose(initial_graph);
-            fclose(workload);
-            fclose(results);
-            destroy_scheduler(scheduler);
-            gDestroyGraph(&graph);
-            return -1;
-        }
-        if(--count==0){
-            /*printf("%ld \n",i);*/
-            count=1000;
-        }
-        /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
-        if (command == 'A')
-        {
-            ret_val = gAddEdge(graph, node1, node2);
-            if (ret_val < 0)
+            if (command == 'F')
             {
-                print_error();
-                fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                rebuild(graph);
+                if (fgets(typebuf, 255, workload) == NULL)
+                    break;
+                else    // take the '\n' and continue
+                    continue;
+            }
+            ungetc(command, workload);
+            if (fscanf(workload, "%c %d %d\n", &command, &node1, &node2) != 3)
+            {
+                fprintf(stderr, "Error reading workload file: did not read a character and two integers from line %lu\nExiting...\n", i);
                 fclose(initial_graph);
                 fclose(workload);
                 fclose(results);
@@ -220,22 +200,52 @@ int main(int argc, char *argv[])
                 gDestroyGraph(&graph);
                 return -1;
             }
-        }
-        else if (command == 'Q')
-        {
-            ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
-            if (ret_val >= 0)
-            {
-                fprintf(results, "%d\n", ret_val);
+            if(--count==0){
+                /*printf("%ld \n",i);*/
+                count=1000;
             }
-            else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
+            /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
+            if (command == 'A')
             {
-                fprintf(results, "-1\n");
+                ret_val = gAddEdge(graph, node1, node2);
+                if (ret_val < 0)
+                {
+                    print_error();
+                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                    fclose(initial_graph);
+                    fclose(workload);
+                    fclose(results);
+                    destroy_scheduler(scheduler);
+                    gDestroyGraph(&graph);
+                    return -1;
+                }
             }
-            else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
+            else if (command == 'Q')
             {
-                print_error();
-                fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
+                if (ret_val >= 0)
+                {
+                    fprintf(results, "%d\n", ret_val);
+                }
+                else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
+                {
+                    fprintf(results, "-1\n");
+                }
+                else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
+                {
+                    print_error();
+                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                    fclose(initial_graph);
+                    fclose(workload);
+                    fclose(results);
+                    destroy_scheduler(scheduler);
+                    gDestroyGraph(&graph);
+                    return -1;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Error reading workload file: command '%c' not recognized (line %lu)\nExiting...\n", command, i);
                 fclose(initial_graph);
                 fclose(workload);
                 fclose(results);
@@ -243,26 +253,106 @@ int main(int argc, char *argv[])
                 gDestroyGraph(&graph);
                 return -1;
             }
-        }
-        else
-        {
-            fprintf(stderr, "Error reading workload file: command '%c' not recognized (line %lu)\nExiting...\n", command, i);
-            fclose(initial_graph);
-            fclose(workload);
-            fclose(results);
-            destroy_scheduler(scheduler);
-            gDestroyGraph(&graph);
-            return -1;
-        }
 #ifdef VERBOSE_MODE
-        if (lines)
-        {
-            printf("\b\b");
-            if ((i*100)/lines > 9) printf("\b");
-            printf("%lu%%", (i*100)/lines);
-            fflush(stdout);
-        }
+            if (lines)
+            {
+                printf("\b\b");
+                if ((i*100)/lines > 9) printf("\b");
+                printf("%lu%%", (i*100)/lines);
+                fflush(stdout);
+            }
 #endif // VERBOSE_MODE
+        }
+    }
+    else if(type==STATIC){
+        for (i = 1 ; !feof(workload) ; ++i)
+        {
+            command = fgetc(workload);
+            //printf("check: '%c'\n", command); // DEBUG
+            if (command == EOF)
+                break;
+            if (command == 'F')
+            {
+                if (fgets(typebuf, 255, workload) == NULL)
+                    break;
+                else    // take the '\n' and continue
+                    continue;
+            }
+            ungetc(command, workload);
+            if (fscanf(workload, "%c %d %d\n", &command, &node1, &node2) != 3)
+            {
+                fprintf(stderr, "Error reading workload file: did not read a character and two integers from line %lu\nExiting...\n", i);
+                fclose(initial_graph);
+                fclose(workload);
+                fclose(results);
+                destroy_scheduler(scheduler);
+                gDestroyGraph(&graph);
+                return -1;
+            }
+            if(--count==0){
+                /*printf("%ld \n",i);*/
+                count=1000;
+            }
+            /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
+            if (command == 'A')
+            {
+                ret_val = gAddEdge(graph, node1, node2);
+                if (ret_val < 0)
+                {
+                    print_error();
+                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                    fclose(initial_graph);
+                    fclose(workload);
+                    fclose(results);
+                    destroy_scheduler(scheduler);
+                    gDestroyGraph(&graph);
+                    return -1;
+                }
+            }
+            else if (command == 'Q')
+            {
+                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
+                if (ret_val >= 0)
+                {
+                    fprintf(results, "%d\n", ret_val);
+                }
+                else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
+                {
+                    fprintf(results, "-1\n");
+                }
+                else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
+                {
+                    print_error();
+                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                    fclose(initial_graph);
+                    fclose(workload);
+                    fclose(results);
+                    destroy_scheduler(scheduler);
+                    gDestroyGraph(&graph);
+                    return -1;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "Error reading workload file: command '%c' not recognized (line %lu)\nExiting...\n", command, i);
+                fclose(initial_graph);
+                fclose(workload);
+                fclose(results);
+                destroy_scheduler(scheduler);
+                gDestroyGraph(&graph);
+                return -1;
+            }
+#ifdef VERBOSE_MODE
+            if (lines)
+            {
+                printf("\b\b");
+                if ((i*100)/lines > 9) printf("\b");
+                printf("%lu%%", (i*100)/lines);
+                fflush(stdout);
+            }
+#endif // VERBOSE_MODE
+        }
+
     }
 #ifdef VERBOSE_MODE
     if ((i-1)/lines != 1)printf("\b\b\b100%%\n");

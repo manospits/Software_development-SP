@@ -55,7 +55,7 @@ int v_visited(pvis a,uint32_t data){
     }
     else{
         return 0;
-        }
+    }
 }
 
 rcode v_update_loop(pvis a,uint32_t size){
