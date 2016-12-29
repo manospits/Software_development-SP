@@ -19,26 +19,33 @@ typedef struct ccindex_record{
     uint32_t version;
 }ccindex_record;
 
+typedef struct cc_extras{
+    int updated;
+    int marked;
+    int markedrebuild;
+    int vals;
+}cc_extras;
+
 typedef struct CC{
     ccindex_record *ccindex; //CCindex
+    UpdateIndex UpdateIndex;
+    lpool lists;
+    phead idlist;
+    phead uidlist;
     int *updated; //
     int *marked; //
     int *markedrebuild;
     int *vals; //
-    UpdateIndex UpdateIndex;
-    uint32_t metricVal;
     int index_size;
     int updated_size;
     int next_component_num;
     int update_queries;
     int queries;
-    double metric;
     int version;
-    phead idlist;
-    phead uidlist;
-    lpool lists;
     int check;
     int checkrebuild;
+    double metric;
+    uint32_t metricVal;
 } CC;
 
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
