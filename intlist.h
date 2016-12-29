@@ -30,7 +30,7 @@ uint32_t peek_pop_front(const phead listh);                 //returns list's fir
 int peek_back(const phead listh);                 //returns list's first int
 iterator ret_iterator(const phead listh);
 int get_iterator_data(const phead listh,iterator it);
-int advance_iterator(const phead listh,iterator it);
+iterator advance_iterator(const phead listh,iterator it);
 
 
 #endif

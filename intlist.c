@@ -7,6 +7,7 @@
 
 typedef struct head{
     long int size;
+    long int it_rem;
     uint32_t *array_queue;
     int front;
     int elements;
@@ -164,6 +165,7 @@ iterator ret_iterator(const phead listh){
         return -1;
     }
     else{
+        listh->it_rem=(listh->front+listh->elements-1 <listh->size)? listh->front+listh->elements -1 : listh->front+listh->elements-1 -listh->size;
         return listh->front;
     }
 }
@@ -173,11 +175,11 @@ int get_iterator_data(const phead listh,iterator it){
 }
 
 int advance_iterator(const phead listh,iterator it){
-    if(it==(listh->front+listh->elements-1)%listh->size){
+    if(listh->it_rem==it){
         return -1;
     }
     else{
-        return (it+1)%listh->size;
+        return (it+1 <listh->size) ? it+1 : 0;
     }
 }
 

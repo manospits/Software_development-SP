@@ -37,12 +37,14 @@ typedef struct CC{
     int *marked; //
     int *markedrebuild;
     int *vals; //
+    int version;
     int index_size;
     int updated_size;
     int next_component_num;
     int update_queries;
+    int total_update_queries;
+    int total_queries;
     int queries;
-    int version;
     int check;
     int checkrebuild;
     uint32_t metricVal;
@@ -74,6 +76,8 @@ CC_index CC_create_index(pGraph g){
     tmp->check=0;
     tmp->checkrebuild=0;
     tmp->update_queries=0;
+    tmp->total_update_queries=0;
+    tmp->total_queries=0;
     tmp->queries=0;
     tmp->metric= 0;
     tmp->index_size = max_nodes;
@@ -213,6 +217,7 @@ CC_index CC_create_index(pGraph g){
 }
 
 rcode CC_destroy(CC_index c){
+    printf("Total queries %d \nUpdated queries %d\n",c->total_queries,c->total_update_queries);
     ds_list(c->idlist);
     ds_list(c->uidlist);
     ds_pool(c->lists);
@@ -374,7 +379,9 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
 rcode check_rebuild(CC_index c){
     if(c->metric>METRIC_VAL){
         CC_rebuildIndexes(c);
+        c->total_queries+=c->queries;
         c->queries=0;
+        c->total_update_queries+=c->update_queries;
         c->update_queries=0;
     }
     return OK_SUCCESS;
