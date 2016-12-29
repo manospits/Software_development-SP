@@ -124,6 +124,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
         }
         visited_version++;
     }
+    free(neighbors_copy);
     free(visited);
     return g;
 }
