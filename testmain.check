@@ -37,16 +37,13 @@ int hash_function(void *data,void *size)
     for(i=0;i<3;i++){
         fail_unless((list=st_cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(st_insert_back(list,j,j,i)==OK_SUCCESS);
+            fail_unless(st_insert_back(list,j,j)==OK_SUCCESS);
             fail_unless(st_peek_back(list)==j);
         }
         fail_unless(st_get_size(list)==1000);
         for(k=0;k<1100;k++){
             if(k<1000){
                 fail_unless(st_in(list,k));
-                fail_unless(st_get_expanded(list,k)==i);
-                fail_unless(st_set_expanded(list,k,i+1)==OK_SUCCESS);
-                fail_unless(st_get_expanded(list,k)==i+1);
             }
             else{
                 fail_unless(!st_in(list,k));

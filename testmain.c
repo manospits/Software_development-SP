@@ -52,16 +52,13 @@ START_TEST(struct_list)
     for(i=0;i<3;i++){
         fail_unless((list=st_cr_list())!=NULL);
         for(j=0;j<1000;j++){
-            fail_unless(st_insert_back(list,j,j,i)==OK_SUCCESS);
+            fail_unless(st_insert_back(list,j,j)==OK_SUCCESS);
             fail_unless(st_peek_back(list)==j);
         }
         fail_unless(st_get_size(list)==1000);
         for(k=0;k<1100;k++){
             if(k<1000){
                 fail_unless(st_in(list,k));
-                fail_unless(st_get_expanded(list,k)==i);
-                fail_unless(st_set_expanded(list,k,i+1)==OK_SUCCESS);
-                fail_unless(st_get_expanded(list,k)==i+1);
             }
             else{
                 fail_unless(!st_in(list,k));
@@ -75,7 +72,7 @@ END_TEST
 
 START_TEST(queries)
 {
-#line 59
+#line 56
     qphead list;
     int i,j;
     querie *tmp;
@@ -99,7 +96,7 @@ END_TEST
 
 START_TEST(test_serial)
 {
-#line 78
+#line 75
     Index_ptr index;
     int i,j;
     fail_unless((index=createNodeIndex())!=NULL);
@@ -124,7 +121,7 @@ END_TEST
 
 START_TEST(test_step10)
 {
-#line 98
+#line 95
     Index_ptr index;
     int i,j,start;
     fail_unless((index=createNodeIndex())!=NULL);
