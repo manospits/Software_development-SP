@@ -138,10 +138,13 @@ GRAIL_ANSWER isReachableGrailIndex(GrailIndex* g,pSCC s, uint32_t source_node,ui
     t_node=findNodeStronglyConnectedComponentID(s, target_node);
     for(i=0;i<LABEL_NUMBER;i++){
         if(g->gindex[t_node].min_rank[i] >= g->gindex[s_node].min_rank[i] && g->gindex[t_node].rank[i] <= g->gindex[s_node].rank[i]){
-            return 1;
+            continue;
+        }
+        else{
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 rcode destroyGrailIndex(GrailIndex * g){

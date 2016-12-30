@@ -1001,7 +1001,7 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                                 error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                                 return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                             }
-                            grandchildren[current_bfs]+=*(get_node_number_of_edges_2((current_bfs == 0 ? g->outIndex : g->inIndex), current_neighbor));
+                            grandchildren[current_bfs]+=*(get_node_number_of_edges_2(g->outIndex, current_neighbor));
                         }
                     }
                     else    //current_bfs == 1
@@ -1020,7 +1020,7 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
                                 error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                                 return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
                             }
-                            grandchildren[current_bfs]+=*(get_node_number_of_edges_2((current_bfs == 0 ? g->outIndex : g->inIndex), current_neighbor));
+                            grandchildren[current_bfs]+=*(get_node_number_of_edges_2(g->inIndex, current_neighbor));
                         }
                     }
                 }
