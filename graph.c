@@ -358,7 +358,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, k, edges;
     static uint32_t current_neighbor;
     static graphNode temp_node;
-    static pBuffer temp_buffer;
+    static pBuffer temp_buffer[2];
     static ptr buffer_ptr_to_listnode;
     static plnode listnode;
     if (insert_back(g->open_intlist[0], from) != OK_SUCCESS)
@@ -390,6 +390,19 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
     grandchildren[0] = 0;
     grandchildren[1] = 0;
     current_bfs = 1;
+    if ((temp_buffer[0] = return_buffer(g->outIndex )) == NULL)
+    {
+        print_error();
+        error_val = GRAPH_BFS_FAIL_GET_BUFFER;
+        return GRAPH_BFS_FAIL_GET_BUFFER;
+    }
+    if ((temp_buffer[1] = return_buffer(g->inIndex )) == NULL)
+    {
+        print_error();
+        error_val = GRAPH_BFS_FAIL_GET_BUFFER;
+        return GRAPH_BFS_FAIL_GET_BUFFER;
+    }
+
     while(get_size(g->open_intlist[0]) > 0 && get_size(g->open_intlist[1]) > 0)
     {
         // "<=" used instead of "<", so that if in first bfs only 1 child node is added, then the other bfs will run and push its own starting node.
@@ -431,13 +444,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                 error_val = GRAPH_BFS_FAIL_GET_LIST_HEAD;
                 return GRAPH_BFS_FAIL_GET_LIST_HEAD;
             }
-            if ((temp_buffer = return_buffer((current_bfs == 0 ? g->outIndex : g->inIndex))) == NULL)
-            {
-                print_error();
-                error_val = GRAPH_BFS_FAIL_GET_BUFFER;
-                return GRAPH_BFS_FAIL_GET_BUFFER;
-            }
-            if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
+            if ((listnode = getListNode(temp_buffer[current_bfs], buffer_ptr_to_listnode)) == NULL)
             {
                 print_error();
                 error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
@@ -499,7 +506,7 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to)
                 {
                     if (listnode->nextListNode == -1)   // if there are no more neighbors, break
                         break;
-                    if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
+                    if ((listnode = getListNode(temp_buffer[current_bfs], listnode->nextListNode)) == NULL)
                     {
                         print_error();
                         error_val = GRAPH_BFS_FAIL_GET_LISTNODE;
