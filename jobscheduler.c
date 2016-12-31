@@ -2,6 +2,8 @@
 #include "error.h"
 #include "queries.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
 
 struct JobScheduler
 {
@@ -53,7 +55,7 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph)
         return NULL;
     }
     // initialize queue
-    if ((qphead = q_cr_list()) == NULL)
+    if ((newJS->queue = q_cr_list()) == NULL)
     {
         print_error();
         error_val = JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL;
@@ -68,8 +70,8 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph)
     // initialize thread parameters
     params.graph = graph;
     params.scheduler = newJS;
-    pthread_mutex_init(params.mtx);
-    pthread_cond_init(params.cond);
+    pthread_mutex_init(&params.mtx, NULL);
+    pthread_cond_init(&params.cond, NULL);
     params.count = 0;
     // create threads
     for (i = 0 ; i < execution_threads ; ++i)
@@ -97,7 +99,6 @@ void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint3
     {
         print_error();
         error_val = JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
-        return JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
     }
 }
 
@@ -110,7 +111,7 @@ void wait_all_tasks_finish(pJobScheduler scheduler, int num_of_threads)
 {
     pthread_mutex_lock(&scheduler->sync_mtx);
     while (scheduler->finished_threads != num_of_threads)
-        pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx)
+        pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
     pthread_mutex_unlock(&scheduler->sync_mtx);
 }
 

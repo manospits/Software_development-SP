@@ -1,7 +1,6 @@
 #ifndef _JOBSCHEDULER_H_
 #define _JOBSCHEDULER_H_
 
-#include <pthread.h>
 #include <stdint.h>
 #include "graph.h"
 
@@ -28,7 +27,7 @@ struct Job
     uint32_t to;
 };
 
-pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, struct thread_params *params);
+pJobScheduler initialize_scheduler(int execution_threads, pGraph graph);
 
 void submit_job(pJobScheduler sch, uint32_t query_id, uint32_t from, uint32_t to, long unsigned int version);
 
