@@ -87,7 +87,7 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                             neighbors_copy_size=size_n;
                         }
                         memcpy(neighbors_copy,neighbors,size*sizeof(uint32_t));
-                        for(i=0;i<size/2;i++){
+                        for(i=0;i<size;i++){
                             posa=rand()%size;
                             posb=rand()%size;
                             temp=neighbors_copy[posa];
