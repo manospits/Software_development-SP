@@ -5,8 +5,9 @@
 #define UPDATED_INIT_SIZE 2
 #define METRIC_VAL 0.005
 #include "error.h"
-#include <stdint.h>
 #include "graph.h"
+#include "intlist.h"
+#include <stdint.h>
 
 typedef struct CC *CC_index;
 
