@@ -70,7 +70,7 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
     }
     pos=(listh->front+listh->elements)%listh->size;
     listh->array_queue[pos].data=data;
-    listh->array_queue[pos].tag=data;
+    listh->array_queue[pos].tag=tag;
     listh->elements++;
     return OK_SUCCESS;
 }

@@ -386,38 +386,6 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
     }
 }
 
-int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2){
-    static stpnode tmpnode;
-    if(c->ccindex[nodeid].cc==-1){
-        return -1;
-    }
-    c->update_queries++;
-    insert_back(c->idlist,c->ccindex[nodeid].cc);
-    while(get_size(c->idlist)!=0){
-        int tmp = peek_back(c->idlist),data;
-        pop_back(c->idlist);
-        iterator it;
-        it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-        while(it!=-1){
-            /*printf("%d\n",data);*/
-            tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-            data=tmpnode->data;
-            if(c->marked[data]<c->check){
-                if(data==c->ccindex[nodeid2].cc){
-                    c->check++;
-                    empty_list(c->idlist);
-                    return 1;
-                }
-                c->marked[data]=c->check;
-                insert_back(c->idlist,data);
-            }
-            it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-        }
-    }
-    c->check++;
-    return 0;
-}
-
 int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist){//using external list as this is a thread function
     static stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
@@ -468,14 +436,14 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet(c,nodeidb,nodeida);
+                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,0,c->idlist);
             }
             else{
-                return CC_checkifcompsmeet(c,nodeida,nodeidb);
+                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,0,c->idlist);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet(c,nodeidb,nodeida);
+            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,0,c->idlist);
         }
     }
     return -1;
