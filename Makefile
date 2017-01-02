@@ -1,12 +1,12 @@
 BIN = unittesting
 PFINAL = pspath
 FINAL = spath
-SOURCES = buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c scc.c utils.c grail.c queries.c
+SOURCES = buffer.c error.c testmain.c index.c intlist.c struct_list.c graph.c hash.c main.c visited.c CCindex.c list_pool.c scc.c utils.c grail.c queries.c jobscheduler.o
 OBJS = buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o queries.o
-PFOBJS = buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o
+PFOBJS = buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o jobscheduler.o
 FOBJS = buffer.o error.o main_part2_20161227.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o
-AOBJS = buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o grail.o hash.o queries.o main_part2_20161227.o
-HEADERS = buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h CCindex.h grail.h queries.h
+AOBJS = buffer.o error.o main.o testmain.o index.o intlist.o struct_list.o graph.o list_pool.o visited.o CCindex.o scc.o utils.o grail.o hash.o queries.o main_part2_20161227.o jobscheduler.o
+HEADERS = buffer.h error.h index.h intlist.h struct_list.h hash.h graph.h visited.h list_pool.h scc.h utils.h CCindex.h grail.h queries.h jobscheduler.h
 OPT = -Ofast
 CC = gcc
 FLAGS = -c -Wall $(OPT)
@@ -31,6 +31,9 @@ main.o: main.c
 	$(CC) $(FLAGS) $?
 
 main_part2_20161227.o: main_part2_20161227.c
+	$(CC) $(FLAGS) $?
+
+jobscheduler.o: jobscheduler.c
 	$(CC) $(FLAGS) $?
 
 grail.o: grail.c
