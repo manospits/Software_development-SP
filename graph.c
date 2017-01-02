@@ -237,6 +237,46 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
     return return_value;
 }
 
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to,phead *lists,pvis visited,int version)//version will be used only for dynamic graphs
+{
+    int return_value;
+    if (g == NULL)
+    {
+        error_val = GRAPH_NULL_POINTER_PROVIDED;
+        return GRAPH_NULL_POINTER_PROVIDED;
+    }
+    if (from == to)
+    {
+        error_val = OK_SUCCESS;
+        return OK_SUCCESS;
+    }
+    v_update_loop(visited,get_index_size(g->inIndex));
+    empty_list(g->open_intlist[0]);
+    empty_list(g->open_intlist[1]);
+    if(g->type==DYNAMIC){
+        if(!CC_same_component_2_t(g->ccindex,from,to,version,lists[0])){
+            return GRAPH_SEARCH_PATH_NOT_FOUND;
+        }
+    }
+    else if(g->type==STATIC){
+        //TODO change to thread safe functions
+        if (findNodeStronglyConnectedComponentID(g->sccs, from) == findNodeStronglyConnectedComponentID(g->sccs, to))
+        {   // nodes belong in same component
+            return estimateShortestPathStronglyConnectedComponents(g->sccs, g, from, to);
+        }
+        else if (isReachableGrailIndex(g->grail,g->sccs, from, to) == 0)
+        {   // grail told us that there is no path
+            return GRAPH_SEARCH_PATH_NOT_FOUND;
+        }
+        else    // MAYBE
+        {   // we are not sure; we must search
+            return bidirectional_bfs_grail(g, from, to);
+        }
+    }
+    return_value=bidirectional_bfs(g, from, to,g->open_intlist,g->visited);
+    return return_value;
+}
+
 int bfs(pGraph g, graphNode from, graphNode to)
 {
     int i, return_value, temp_node_tag;

@@ -1,8 +1,10 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
 #include "index.h"
-#include <stdint.h>
 #include "error.h"
+#include "intlist.h"
+#include "visited.h"
+#include <stdint.h>
 
 #define EDGE_EXISTS 666
 #define BFS 0
@@ -31,6 +33,10 @@ int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Searches the graph 'pGraph' to find the shortest path from node 'from' to node 'to'
 	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 	// 'type' is the type of search, defined above
+
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to,phead *lists,pvis visited,int version);
+    //Is the thread safe version of the above function,
+    //needs 2 intlists for CC/bidirectional searches ,version will be used only for dynamic graphs
 
 int calculate_hashtable_size(pGraph g);
 
