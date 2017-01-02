@@ -163,7 +163,7 @@ stpnode st_get_iterator_data(const stphead listh,iterator it){
 }
 
 int st_advance_iterator(const stphead listh,iterator it){
-    if(it==(listh->front+listh->elements-1)%listh->size){
+    if(it==((listh->front+listh->elements-1 <listh->size)? listh->front+listh->elements -1 : listh->front+listh->elements-1 -listh->size)){
         return -1;
     }
     else{

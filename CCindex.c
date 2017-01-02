@@ -218,7 +218,7 @@ CC_index CC_create_index(pGraph g){
 }
 
 rcode CC_destroy(CC_index c){
-    printf("Total queries %d \nUpdated queries %d\n",c->total_queries,c->total_update_queries);
+    printf("Total queries %d \nUpdated queries %d\n",c->total_queries+c->queries,c->total_update_queries+c->update_queries);
     ds_list(c->idlist);
     ds_list(c->uidlist);
     ds_pool(c->lists);
@@ -418,16 +418,16 @@ int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2){
     return 0;
 }
 
-int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version){
+int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist){//using external list as this is a thread function
     static stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
     }
     c->update_queries++;
-    insert_back(c->idlist,c->ccindex[nodeid].cc);
-    while(get_size(c->idlist)!=0){
-        int tmp = peek_back(c->idlist),data;
-        pop_back(c->idlist);
+    insert_back(idlist,c->ccindex[nodeid].cc);
+    while(get_size(idlist)!=0){
+        int tmp = peek_back(idlist),data;
+        pop_back(idlist);
         iterator it;
         it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
         while(it!=-1){
@@ -438,11 +438,11 @@ int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t v
                 if(c->marked[data]<c->check){
                     if(data==c->ccindex[nodeid2].cc){
                         c->check++;
-                        empty_list(c->idlist);
+                        empty_list(idlist);
                         return 1;
                     }
                     c->marked[data]=c->check;
-                    insert_back(c->idlist,data);
+                    insert_back(idlist,data);
                 }
             }
             it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
@@ -481,7 +481,7 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
     return -1;
 }
 
-int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version){
+int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist){
     static int m,a,b;
     c->queries++;
     if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc)) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)){
@@ -498,14 +498,14 @@ int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet(c,nodeidb,nodeida);
+                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist);
             }
             else{
-                return CC_checkifcompsmeet(c,nodeida,nodeidb);
+                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet(c,nodeidb,nodeida);
+            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist);
         }
     }
     return -1;
