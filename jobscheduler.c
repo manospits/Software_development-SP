@@ -23,13 +23,14 @@ struct thread_params
     pJobScheduler scheduler;
     pGraph graph;
     int count;
+    int **result_array;
     pthread_mutex_t mtx;
     pthread_cond_t cond;
 };
 
 void * worker_thread_function(void *params);
 
-pJobScheduler initialize_scheduler(int execution_threads, pGraph graph)
+pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **result_array)
 {
     // a sanity check
     if (execution_threads <= 0)
@@ -69,11 +70,12 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph)
     pthread_mutex_init(&(newJS->sync_mtx), NULL);
     pthread_cond_init(&(newJS->sync_cond), NULL);
     // initialize thread parameters
-    params.graph = graph;
     params.scheduler = newJS;
+    params.graph = graph;
+    params.count = 0;
+    params.result_array = result_array;
     pthread_mutex_init(&params.mtx, NULL);
     pthread_cond_init(&params.cond, NULL);
-    params.count = 0;
     // create threads
     for (i = 0 ; i < execution_threads ; ++i)
 	{
@@ -108,10 +110,10 @@ void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint3
 
 void execute_all_jobs(pJobScheduler scheduler)
 {
-    if (scheduler != NULL) pthread_cond_signal(&scheduler->cond_empty_queue);
+    if (scheduler != NULL) pthread_cond_broadcast(&scheduler->cond_empty_queue);
 }
 
-void wait_all_tasks_finish(pJobScheduler scheduler, int num_of_threads)
+void wait_all_tasks_finish(pJobScheduler scheduler, uint32_t num_of_threads)
 {
     if (scheduler != NULL)
     {
@@ -119,16 +121,22 @@ void wait_all_tasks_finish(pJobScheduler scheduler, int num_of_threads)
         while (scheduler->finished_threads != num_of_threads)
             pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
         pthread_mutex_unlock(&scheduler->sync_mtx);
+        scheduler->finished_threads = 0;
     }
-    scheduler->finished_threads = 0;
 }
 
 void destroy_scheduler(pJobScheduler scheduler)
 {
     if (scheduler != NULL)
     {
+        int i;
         // send signal to terminate threads
+        for (i = 0 ; i < scheduler->number_of_threads ; ++i)
+            submit_job(scheduler, 0, 0, 0, 0);
+        execute_all_jobs(scheduler);
         // wait for threads to join
+        for (i = 0 ; i < scheduler->number_of_threads ; ++i)
+            pthread_join(scheduler->thread_pool[i], NULL);
         pthread_mutex_destroy(&(scheduler->mtx_for_queue));
         pthread_cond_destroy(&(scheduler->cond_empty_queue));
         q_ds_list(scheduler->queue);
@@ -139,9 +147,11 @@ void destroy_scheduler(pJobScheduler scheduler)
 
 void * worker_thread_function(void *params)
 {
+    int **result_array;
     // read thread parameters
     pGraph graph = ((struct thread_params *)params)->graph;
     pJobScheduler scheduler = ((struct thread_params *)params)->scheduler;
+    result_array = ((struct thread_params *)params)->result_array;
     pthread_mutex_lock(&((struct thread_params *)params)->mtx);
     ((struct thread_params *)params)->count++;
     pthread_cond_signal(&((struct thread_params *)params)->cond);
@@ -149,6 +159,26 @@ void * worker_thread_function(void *params)
     // other declarations/initializations
     qpnode temp;
     int result;
+    phead open_list[2];
+    pvis visited;
+    if ((open_list[0] = cr_list()) == NULL)
+    {
+        print_error();
+        fprintf(stderr, "Error creating list inside thread\n");
+        exit(-1);
+    }
+    if ((open_list[1] = cr_list()) == NULL)
+    {
+        print_error();
+        fprintf(stderr, "Error creating list inside thread\n");
+        exit(-1);
+    }
+    if ((visited = create_visited(get_index_size(ret_inIndex(graph)))) == NULL)
+    {
+        print_error();
+        fprintf(stderr, "Error creating list inside thread\n");
+        exit(-1);
+    }
     // main routine:
     while(1)
     {
@@ -167,14 +197,26 @@ void * worker_thread_function(void *params)
         // check if job signals thread to exit
         if (!temp->version) break;
         // otherwise, execute the query
-        result = gFindShortestPath(graph, temp->nodea, temp->nodeb, BIDIRECTIONAL_BFS);
+        result = gFindShortestPath_t(graph, temp->nodea, temp->nodeb, open_list, visited, temp->version);
         // output the result to the appropriate position in the array
-        //
+        if (result > 0)
+            (*result_array)[temp->query_id] = result;
+        else if (result == GRAPH_SEARCH_PATH_NOT_FOUND)
+            (*result_array)[temp->query_id] = -1;
+        else
+        {
+            print_error();
+            fprintf(stderr, "An error occurred during graph search. Exiting...\n");
+            exit(-1);
+        }
         // job processing finished, inform the scheduler
         pthread_mutex_lock(&scheduler->sync_mtx);
         scheduler->finished_threads++;
         pthread_cond_signal(&scheduler->sync_cond);
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }
+    ds_list(open_list[0]);
+    ds_list(open_list[1]);
+    v_ds_visited(visited);
     pthread_exit(NULL);
 }

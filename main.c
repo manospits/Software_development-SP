@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file>\nExiting...\n");
         return -1;
     }
-    int node1, node2, ret_val,type;
+    int node1, node2, ret_val, type, query_counter = 0, **results_array, results_array_size = 0, j;
     unsigned long i;
 #ifdef VERBOSE_MODE
     unsigned long lines = 0, current_percentage = 0;
@@ -28,19 +28,25 @@ int main(int argc, char *argv[])
     pJobScheduler scheduler = NULL;
     pGraph graph = gCreateGraph();
     char typebuf[256];
+    if ((results_array = malloc(sizeof(int *))) == NULL)
+    {
+        fprintf(stderr, "Error: malloc failed\n");
+        return -1;
+    }
+    *results_array = NULL;
     if (graph == NULL)
     {
         print_error();
         fprintf(stderr, "An error occurred during graph creation.\nExiting...\n");
         return -1;
-    }/*
-    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph)) == NULL);
+    }
+    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array)) == NULL)
     {
         print_error();
         fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
         gDestroyGraph(&graph);
         exit(-1);
-    }*/
+    }
     if ((initial_graph = fopen(argv[1], "r")) == NULL)
     {
         fprintf(stderr, "Error opening initial graph file '%s'\nExiting...\n", argv[1]);
@@ -177,7 +183,7 @@ int main(int argc, char *argv[])
     for (; !feof(workload) ;) if (fgetc(workload) == '\n') lines++;
     //printf("lines: %lu\n", lines);    //DEBUG
     fsetpos(workload, &start);
-    printf("%lu%%", current_percentage);
+    printf("%lu%%", current_percentage);fflush(stdout);
 #endif // VERBOSE_MODE
     if(type==DYNAMIC){
         for (i = 1 ; !feof(workload) ; ++i)
@@ -189,6 +195,18 @@ int main(int argc, char *argv[])
             if (command == 'F')
             {
                 rebuild(graph);
+                if (query_counter > results_array_size)
+                {
+                    results_array_size = query_counter;
+                    if (*results_array != NULL) free(*results_array);
+                    *results_array = malloc(results_array_size*sizeof(int));
+                }
+                execute_all_jobs(scheduler);
+                wait_all_tasks_finish(scheduler, query_counter);
+                // output the results
+                for (j = 0 ; j < query_counter ; ++j)
+                    fprintf(results, "%d\n", (*results_array)[j]);
+                query_counter = 0;
                 if (fgets(typebuf, 255, workload) == NULL)
                     break;
                 else    // take the '\n' and continue
@@ -223,26 +241,8 @@ int main(int argc, char *argv[])
             }
             else if (command == 'Q')
             {
-                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
-                if (ret_val >= 0)
-                {
-                    fprintf(results, "%d\n", ret_val);
-                }
-                else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
-                {
-                    fprintf(results, "-1\n");
-                }
-                else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
-                {
-                    print_error();
-                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
-                    fclose(initial_graph);
-                    fclose(workload);
-                    fclose(results);
-                    destroy_scheduler(scheduler);
-                    gDestroyGraph(&graph);
-                    return -1;
-                }
+                query_counter++;
+                submit_job(scheduler, query_counter-1, node1, node2, i);    // we pass query_counter -1 as argument, so that the thread will place the result in the correct position in the array
             }
             else
             {
@@ -278,6 +278,18 @@ int main(int argc, char *argv[])
                 break;
             if (command == 'F')
             {
+                if (query_counter > results_array_size)
+                {
+                    results_array_size = query_counter;
+                    if (*results_array != NULL) free(*results_array);
+                    *results_array = malloc(results_array_size*sizeof(int));
+                }
+                execute_all_jobs(scheduler);
+                wait_all_tasks_finish(scheduler, query_counter);
+                // output the results
+                for (j = 0 ; j < query_counter ; ++j)
+                    fprintf(results, "%d\n", (*results_array)[j]);
+                query_counter = 0;
                 if (fgets(typebuf, 255, workload) == NULL)
                     break;
                 else    // take the '\n' and continue
@@ -297,19 +309,12 @@ int main(int argc, char *argv[])
             /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
             if (command == 'Q')
             {
-                ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
-                if (ret_val >= 0)
-                {
-                    fprintf(results, "%d\n", ret_val);
-                }
-                else if (ret_val == GRAPH_SEARCH_PATH_NOT_FOUND)
-                {
-                    fprintf(results, "-1\n");
-                }
-                else // ret_val < 0, an error occurred (not GRAPH_SEARCH_PATH_NOT_FOUND)
+                query_counter++;
+                submit_job(scheduler, query_counter-1, node1, node2, 1);    // we pass query_counter -1 as argument, so that the thread will place the result in the correct position in the array
+                if (error_val)
                 {
                     print_error();
-                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
+                    fprintf(stderr, "Error submitting a new job to scheduler (line %lu)\nExiting...\n", i);
                     fclose(initial_graph);
                     fclose(workload);
                     fclose(results);
@@ -319,7 +324,7 @@ int main(int argc, char *argv[])
                 }
             }
             else
-            {
+            {   // unrecognized command
                 fprintf(stderr, "Error reading workload file: command '%c' not recognized (line %lu)\nExiting...\n", command, i);
                 fclose(initial_graph);
                 fclose(workload);
@@ -356,7 +361,10 @@ int main(int argc, char *argv[])
 #endif // VERBOSE_MODE
     puts("Processing complete.");
     printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);
+    // signal threads to exit
     destroy_scheduler(scheduler);
+    free(*results_array);
+    free(results_array);
     gDestroyGraph(&graph);
     fclose(initial_graph);
     fclose(workload);

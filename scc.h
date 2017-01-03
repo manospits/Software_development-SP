@@ -2,6 +2,8 @@
 #define _SCC_H_
 #include "error.h"
 #include "graph.h"
+#include "visited.h"
+#include "intlist.h"
 
 typedef struct SCC* pSCC;
 typedef struct Component* pComponent;
@@ -15,7 +17,7 @@ void iterateStronglyConnectedComponentID(pSCC components, pComponentCursor curso
 
 char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor);
 
-int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node);
+int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node, phead *open_list, pvis visited);
 
 int estimateSCCsNeighbors(pSCC sccs, pGraph graph);
 

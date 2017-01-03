@@ -925,13 +925,13 @@ char next_StronglyConnectedComponentID(pSCC components, pComponentCursor cursor)
     return 0;
 }
 
-extern int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id);
+extern int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id, phead *open_list, pvis visited);
 
-int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node)
+int estimateShortestPathStronglyConnectedComponents(pSCC components, pGraph graph, uint32_t source_node, uint32_t target_node, phead *open_list, pvis visited)
 {
     /*if (findNodeStronglyConnectedComponentID(components, source_node) != findNodeStronglyConnectedComponentID(components, target_node))
         return -1;*/
-    return bidirectional_bfs_inside_component(components, graph, source_node, target_node, findNodeStronglyConnectedComponentID(components, source_node));
+    return bidirectional_bfs_inside_component(components, graph, source_node, target_node, findNodeStronglyConnectedComponentID(components, source_node), open_list, visited);
 }
 
 void destroyStronglyConnectedComponents(pSCC sccs)
