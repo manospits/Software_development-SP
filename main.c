@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     int node1, node2, ret_val,type;
     unsigned long i;
 #ifdef VERBOSE_MODE
-    unsigned long lines = 0;
+    unsigned long lines = 0, current_percentage = 0;
     if (argc == 4) lines = strtoul(argv[3], NULL, 10);
 #endif // VERBOSE_MODE
     FILE *initial_graph, *workload, *results;
@@ -41,14 +41,14 @@ int main(int argc, char *argv[])
         print_error();
         fprintf(stderr, "An error occurred during graph creation.\nExiting...\n");
         return -1;
-    }
+    }/*
     if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph)) == NULL);
     {
         print_error();
         fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
         gDestroyGraph(&graph);
         exit(-1);
-    }
+    }*/
     if ((initial_graph = fopen(argv[1], "r")) == NULL)
     {
         fprintf(stderr, "Error opening initial graph file '%s'\nExiting...\n", argv[1]);
@@ -256,10 +256,14 @@ int main(int argc, char *argv[])
 #ifdef VERBOSE_MODE
             if (lines)
             {
-                printf("\b\b");
-                if ((i*100)/lines > 9) printf("\b");
-                printf("%lu%%", (i*100)/lines);
-                fflush(stdout);
+                if ((i*100)/lines > current_percentage)
+                {
+                    current_percentage = (i*100)/lines;
+                    printf("\b\b");
+                    if (current_percentage > 9) printf("\b");
+                    printf("%lu%%", current_percentage);
+                    fflush(stdout);
+                }
             }
 #endif // VERBOSE_MODE
         }
@@ -345,10 +349,14 @@ int main(int argc, char *argv[])
 #ifdef VERBOSE_MODE
             if (lines)
             {
-                printf("\b\b");
-                if ((i*100)/lines > 9) printf("\b");
-                printf("%lu%%", (i*100)/lines);
-                fflush(stdout);
+                if ((i*100)/lines > current_percentage)
+                {
+                    current_percentage = (i*100)/lines;
+                    printf("\b\b");
+                    if (current_percentage > 9) printf("\b");
+                    printf("%lu%%", (i*100)/lines);
+                    fflush(stdout);
+                }
             }
 #endif // VERBOSE_MODE
         }
