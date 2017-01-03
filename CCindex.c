@@ -387,7 +387,7 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
 }
 
 int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist){//using external list as this is a thread function
-    static stpnode tmpnode;
+    stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
     }
@@ -420,7 +420,7 @@ int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t v
     return 0;
 }
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
-    static int m,a,b;
+    int m,a,b;
     c->queries++;
     if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc))){
         return 1;
@@ -450,7 +450,7 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
 }
 
 int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist){
-    static int m,a,b;
+    int m,a,b;
     c->queries++;
     if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc)) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)){
         return 1;
@@ -503,7 +503,7 @@ int CC_same_component(CC_index c, uint32_t a, uint32_t b){
 
 int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
     int a,b;
-    static stpnode tmpnode;
+    stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
     }

@@ -101,7 +101,7 @@ uint32_t peek_pop_front(phead listh){
         error_val=EMPTY_LIST;
         return EMPTY_LIST;
     }
-    static uint32_t tmp;
+    uint32_t tmp;
     tmp=listh->array_queue[listh->front];
     listh->front=(listh->front+1 <listh->size) ? listh->front+1 : 0;
     listh->elements--;

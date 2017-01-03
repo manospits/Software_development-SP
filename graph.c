@@ -562,12 +562,12 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, 
 
 int bidirectional_bfs_inside_component(pSCC components, pGraph g, uint32_t from, uint32_t to, uint32_t component_id, phead open_list[2], pvis visited)
 {   // 0 is for out-Index, 1 is for in-Index
-    static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, k, edges;
-    static uint32_t current_neighbor;
-    static graphNode temp_node;
-    static pBuffer temp_buffer;
-    static ptr buffer_ptr_to_listnode;
-    static plnode listnode;
+    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, k, edges;
+    uint32_t current_neighbor;
+    graphNode temp_node;
+    pBuffer temp_buffer;
+    ptr buffer_ptr_to_listnode;
+    plnode listnode;
     if (insert_back(open_list[0], from) != OK_SUCCESS)
     {
         print_error();
@@ -913,12 +913,12 @@ int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to)
 */
 int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to, phead open_list[2], pvis visited)
 {    // 0 is for out-Index, 1 is for in-Index
-    static int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, scc_from, scc_to, k, edges;
-    static uint32_t current_neighbor;
-    static graphNode temp_node;
-    static pBuffer temp_buffer;
-    static ptr buffer_ptr_to_listnode;
-    static plnode listnode;
+    int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, scc_from, scc_to, k, edges;
+    uint32_t current_neighbor;
+    graphNode temp_node;
+    pBuffer temp_buffer;
+    ptr buffer_ptr_to_listnode;
+    plnode listnode;
     if ((scc_from = findNodeStronglyConnectedComponentID(g->sccs, from)) < 0)
     {
         print_error();
