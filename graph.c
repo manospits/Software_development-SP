@@ -144,9 +144,6 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
         if(g->type==DYNAMIC){
             CC_insertNewEdge(g->ccindex,from,to);
         }
-        else if(g->type==STATIC){
-            //STATIC
-        }
     }
     else{
         return EDGE_EXISTS;

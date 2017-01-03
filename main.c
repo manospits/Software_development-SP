@@ -283,7 +283,9 @@ int main(int argc, char *argv[])
                     *results_array = malloc(results_array_size*sizeof(int));
                 }
                 execute_all_jobs(scheduler);
+                /*puts("waiting");*/
                 wait_all_tasks_finish(scheduler, query_counter);
+                /*puts("finished");*/
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
                     fprintf(results, "%d\n", (*results_array)[j]);

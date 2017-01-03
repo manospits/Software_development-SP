@@ -10,6 +10,7 @@ struct JobScheduler
 {
     int number_of_threads;
     int finished_threads;
+    int execution;
 	pthread_t *thread_pool;
     qphead queue;
 	pthread_mutex_t mtx_for_queue;
@@ -86,6 +87,7 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
 			return NULL;
 		}
 	}
+    newJS->execution=0;
 	// wait for all threads to take their parameters
 	pthread_mutex_lock(&params.mtx);
 	while (params.count != execution_threads)
@@ -110,18 +112,22 @@ void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint3
 
 void execute_all_jobs(pJobScheduler scheduler)
 {
+    /*printf("execution started , queue size %d \n",q_get_size(scheduler->queue));*/
+    scheduler->execution=1;
     if (scheduler != NULL) pthread_cond_broadcast(&scheduler->cond_empty_queue);
 }
 
 void wait_all_tasks_finish(pJobScheduler scheduler, uint32_t num_of_threads)
 {
+    /*printf("waiting for %d threads\n",num_of_threads);*/
     if (scheduler != NULL)
     {
         pthread_mutex_lock(&scheduler->sync_mtx);
         while (scheduler->finished_threads != num_of_threads)
             pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
-        pthread_mutex_unlock(&scheduler->sync_mtx);
         scheduler->finished_threads = 0;
+        scheduler->execution = 0;
+        pthread_mutex_unlock(&scheduler->sync_mtx);
     }
 }
 
@@ -184,7 +190,7 @@ void * worker_thread_function(void *params)
     {
         // wait to get an item from the queue
         pthread_mutex_lock(&scheduler->mtx_for_queue);
-        while (!q_get_size(scheduler->queue))
+        while (!q_get_size(scheduler->queue) ||!scheduler->execution)
         {
             pthread_cond_wait(&scheduler->cond_empty_queue, &scheduler->mtx_for_queue);
         }
@@ -195,9 +201,11 @@ void * worker_thread_function(void *params)
         pthread_mutex_unlock(&scheduler->mtx_for_queue);
         // process job
         // check if job signals thread to exit
-        if (!temp->version) break;
+        if (!temp->version)break;
         // otherwise, execute the query
+        /*printf("asked:%d \n", temp->query_id);*/
         result = gFindShortestPath_t(graph, temp->nodea, temp->nodeb, open_list, visited, temp->version);
+        /*printf("query:%d finished\n", temp->query_id);*/
         // output the result to the appropriate position in the array
         if (result > 0)
             (*result_array)[temp->query_id] = result;
