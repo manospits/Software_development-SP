@@ -234,7 +234,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
     return return_value;
 }
 
-int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, unsigned long int version)//version will be used only for dynamic graphs
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version)//version will be used only for dynamic graphs
 {
     int return_value;
     if (g == NULL)

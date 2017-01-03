@@ -207,12 +207,13 @@ void * worker_thread_function(void *params)
         result = gFindShortestPath_t(graph, temp->nodea, temp->nodeb, open_list, visited, temp->version);
         /*printf("query:%d finished\n", temp->query_id);*/
         // output the result to the appropriate position in the array
-        if (result > 0)
+        if (result >= 0)
             (*result_array)[temp->query_id] = result;
         else if (result == GRAPH_SEARCH_PATH_NOT_FOUND)
             (*result_array)[temp->query_id] = -1;
         else
         {
+            printf("%d\n",result);
             print_error();
             fprintf(stderr, "An error occurred during graph search. Exiting...\n");
             exit(-1);

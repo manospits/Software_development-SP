@@ -8,7 +8,7 @@
 #include "jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define THREAD_POOL_SIZE 10
+#define THREAD_POOL_SIZE 4
 
 int main(int argc, char *argv[])
 {

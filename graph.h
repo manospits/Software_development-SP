@@ -34,7 +34,7 @@ int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 	// 'type' is the type of search, defined above
 
-int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, unsigned long int version);
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version);
     // Is the thread safe version of the above function,
     // Needs 2 intlists for CC/bidirectional searches ,version will be used only for dynamic graphs
 
