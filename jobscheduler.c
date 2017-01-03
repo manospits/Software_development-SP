@@ -2,6 +2,7 @@
 #include "error.h"
 #include "queries.h"
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
 
@@ -95,35 +96,44 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph)
 
 void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint32_t to, long unsigned int version)
 {
-    if (q_insert_back(scheduler->queue, query_id, from, to, version))
+    if (scheduler != NULL)
     {
-        print_error();
-        error_val = JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
+        if (q_insert_back(scheduler->queue, query_id, from, to, version))
+        {
+            print_error();
+            error_val = JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
+        }
     }
 }
 
 void execute_all_jobs(pJobScheduler scheduler)
 {
-    pthread_cond_signal(&scheduler->cond_empty_queue);
+    if (scheduler != NULL) pthread_cond_signal(&scheduler->cond_empty_queue);
 }
 
 void wait_all_tasks_finish(pJobScheduler scheduler, int num_of_threads)
 {
-    pthread_mutex_lock(&scheduler->sync_mtx);
-    while (scheduler->finished_threads != num_of_threads)
-        pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
-    pthread_mutex_unlock(&scheduler->sync_mtx);
+    if (scheduler != NULL)
+    {
+        pthread_mutex_lock(&scheduler->sync_mtx);
+        while (scheduler->finished_threads != num_of_threads)
+            pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
+        pthread_mutex_unlock(&scheduler->sync_mtx);
+    }
 }
 
 void destroy_scheduler(pJobScheduler scheduler)
 {
-    // send signal to terminate threads
-    // wait for threads to join
-    pthread_mutex_destroy(&(scheduler->mtx_for_queue));
-    pthread_cond_destroy(&(scheduler->cond_empty_queue));
-    q_ds_list(scheduler->queue);
-    free(scheduler->thread_pool);
-    free(scheduler);
+    if (scheduler != NULL)
+    {
+        // send signal to terminate threads
+        // wait for threads to join
+        pthread_mutex_destroy(&(scheduler->mtx_for_queue));
+        pthread_cond_destroy(&(scheduler->cond_empty_queue));
+        q_ds_list(scheduler->queue);
+        free(scheduler->thread_pool);
+        free(scheduler);
+    }
 }
 
 void * worker_thread_function(void *params)

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 #endif // VERBOSE_MODE
     FILE *initial_graph, *workload, *results;
     char command;
-    pJobScheduler scheduler;
+    pJobScheduler scheduler = NULL;
     pGraph graph = gCreateGraph();
     char typebuf[256];
     if (graph == NULL)
