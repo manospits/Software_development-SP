@@ -170,7 +170,6 @@ int main(int argc, char *argv[])
         gDestroyGraph(&graph);
         return -1;
     }
-    int count=1000;
 #ifdef VERBOSE_MODE
     if (lines) {printf("0%%");fflush(stdout);}
 #endif // VERBOSE_MODE
@@ -199,10 +198,6 @@ int main(int argc, char *argv[])
                 destroy_scheduler(scheduler);
                 gDestroyGraph(&graph);
                 return -1;
-            }
-            if(--count==0){
-                /*printf("%ld \n",i);*/
-                count=1000;
             }
             /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
             if (command == 'A')
@@ -293,27 +288,8 @@ int main(int argc, char *argv[])
                 gDestroyGraph(&graph);
                 return -1;
             }
-            if(--count==0){
-                /*printf("%ld \n",i);*/
-                count=1000;
-            }
             /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
-            if (command == 'A')
-            {
-                ret_val = gAddEdge(graph, node1, node2);
-                if (ret_val < 0)
-                {
-                    print_error();
-                    fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
-                    fclose(initial_graph);
-                    fclose(workload);
-                    fclose(results);
-                    destroy_scheduler(scheduler);
-                    gDestroyGraph(&graph);
-                    return -1;
-                }
-            }
-            else if (command == 'Q')
+            if (command == 'Q')
             {
                 ret_val = gFindShortestPath(graph, node1, node2, BIDIRECTIONAL_BFS);
                 if (ret_val >= 0)

@@ -58,7 +58,7 @@ int add_node_to_component(pSCC sccs, uint32_t nodeId)
     (sccs->components[sccs->components_count - 1].included_nodes_count)++;
     return 0;
 }
-
+/*
 rcode tarjan_iter_old(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_t *tarjan_index_param, uint32_t nodeId)
 {
     pBuffer temp_buffer;
@@ -382,7 +382,7 @@ rcode tarjan_iter_fast_but_fail(pGraph graph, pSCC sccs, phead stack, scc_flags 
 
     return OK_SUCCESS;
 }
-
+*/
 rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_t *tarjan_index_param, uint32_t nodeId)
 {
     pBuffer temp_buffer;
