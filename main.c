@@ -40,17 +40,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "An error occurred during graph creation.\nExiting...\n");
         return -1;
     }
-    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array)) == NULL)
-    {
-        print_error();
-        fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
-        gDestroyGraph(&graph);
-        exit(-1);
-    }
     if ((initial_graph = fopen(argv[1], "r")) == NULL)
     {
         fprintf(stderr, "Error opening initial graph file '%s'\nExiting...\n", argv[1]);
-        destroy_scheduler(scheduler);
         gDestroyGraph(&graph);
         return -1;
     }
@@ -58,7 +50,6 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr, "Error opening workload file '%s'\nExiting...\n", argv[2]);
         fclose(initial_graph);
-        destroy_scheduler(scheduler);
         gDestroyGraph(&graph);
         return -1;
     }
@@ -67,7 +58,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error opening (or creating) results file '%s'\nExiting...\n", OUTPUT_FILE_NAME);
         fclose(initial_graph);
         fclose(workload);
-        destroy_scheduler(scheduler);
         gDestroyGraph(&graph);
         return -1;
     }
@@ -86,7 +76,6 @@ int main(int argc, char *argv[])
             fclose(initial_graph);
             fclose(workload);
             fclose(results);
-            destroy_scheduler(scheduler);
             gDestroyGraph(&graph);
             return -1;
         }
@@ -99,13 +88,22 @@ int main(int argc, char *argv[])
             fclose(initial_graph);
             fclose(workload);
             fclose(results);
-            destroy_scheduler(scheduler);
             gDestroyGraph(&graph);
             return -1;
         }
     }
     puts("Reading complete.");
     puts("Building assistant structures/indexes...");
+    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array)) == NULL)
+    {
+        print_error();
+        fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        gDestroyGraph(&graph);
+        exit(-1);
+    }
     if(fscanf(workload, "%s", typebuf) == EOF)
     {
         fprintf(stderr, "Error reading type in workload file\n");
