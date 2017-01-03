@@ -12,24 +12,16 @@
 
 int main(int argc, char *argv[])
 {
-#ifdef VERBOSE_MODE
-    if (argc != 3 && argc != 4)
-    {
-        fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file> <OPTIONAL: \"`wc -l <workload file>`\" >\nExiting...\n");
-        return -1;
-    }
-#else
     if (argc != 3)
     {
         fprintf(stderr, "Wrong number of arguments provided.\nExpected: ./<executable> <initial graph file> <workload file>\nExiting...\n");
         return -1;
     }
-#endif // VERBOSE_MODE
     int node1, node2, ret_val,type;
     unsigned long i;
 #ifdef VERBOSE_MODE
     unsigned long lines = 0, current_percentage = 0;
-    if (argc == 4) lines = strtoul(argv[3], NULL, 10);
+    fpos_t start;
 #endif // VERBOSE_MODE
     FILE *initial_graph, *workload, *results;
     char command;
@@ -160,9 +152,10 @@ int main(int argc, char *argv[])
     }
     puts("Building complete.");
     puts("Processing workload...");
+    // read the newline
     if(fgets(typebuf, 255, workload) == NULL)
     {
-        fprintf(stderr, "Error reading in workload file\n");
+        fprintf(stderr, "Error reading workload file\n");
         fclose(initial_graph);
         fclose(workload);
         fclose(results);
@@ -171,7 +164,20 @@ int main(int argc, char *argv[])
         return -1;
     }
 #ifdef VERBOSE_MODE
-    if (lines) {printf("0%%");fflush(stdout);}
+    if (fgetpos(workload, &start))
+    {
+        fprintf(stderr, "Error saving position (fgetpos) in workload file\n");
+        fclose(initial_graph);
+        fclose(workload);
+        fclose(results);
+        destroy_scheduler(scheduler);
+        gDestroyGraph(&graph);
+        return -1;
+    }
+    for (; !feof(workload) ;) if (fgetc(workload) == '\n') lines++;
+    //printf("lines: %lu\n", lines);    //DEBUG
+    fsetpos(workload, &start);
+    printf("%lu%%", current_percentage);
 #endif // VERBOSE_MODE
     if(type==DYNAMIC){
         for (i = 1 ; !feof(workload) ; ++i)
@@ -339,7 +345,14 @@ int main(int argc, char *argv[])
 
     }
 #ifdef VERBOSE_MODE
-    if ((i-1)/lines != 1)printf("\b\b\b100%%\n");
+    if ((i*100)/lines > current_percentage && current_percentage < 100)
+    {
+        current_percentage = (i*100)/lines;
+        printf("\b\b\b");
+        printf("%lu%%\n", (i*100)/lines);
+        fflush(stdout);
+    }
+    //printf("%lu %lu %lu %lu\n", lines, i, current_percentage, (i*100)/lines); //DEBUG
 #endif // VERBOSE_MODE
     puts("Processing complete.");
     printf("Results can be found in file '%s'.\n", OUTPUT_FILE_NAME);

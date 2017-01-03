@@ -120,6 +120,7 @@ void wait_all_tasks_finish(pJobScheduler scheduler, int num_of_threads)
             pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }
+    scheduler->finished_threads = 0;
 }
 
 void destroy_scheduler(pJobScheduler scheduler)
