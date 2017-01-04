@@ -27,6 +27,9 @@ rcode gDestroyGraph(pGraph *);
 rcode gAddEdge(pGraph, graphNode from, graphNode to);
 	// Adds the node 'from'--->'to' to the graph 'pGraph'
 
+rcode gAddEdge_t(pGraph, graphNode from, graphNode to,uint32_t version);
+	// Adds the node 'from'--->'to' to the graph 'pGraph'
+
 rcode create_indexes(pGraph ,int type);
 
 int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);

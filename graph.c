@@ -153,8 +153,58 @@ rcode gAddEdge(pGraph g, graphNode from, graphNode to)
     return OK_SUCCESS;
 }
 
+rcode gAddEdge_t(pGraph g, graphNode from, graphNode to,uint32_t version)
+{
+    if (g == NULL)
+    {
+        error_val = GRAPH_NULL_POINTER_PROVIDED;
+        return GRAPH_NULL_POINTER_PROVIDED;
+    }
+    if (from == to)
+    {
+        error_val = OK_SUCCESS;
+        return OK_SUCCESS;
+    }
+    graphNode max = from;
+    if (to > max) max = to;
+    rcode return_value;
+    // check if nodes exist (insert nodes checks, and adds them if they don't exist)
+    // (insert the max of the two nodes, so in case it doesn't exist indexes are updated to include him)
+    return_value = insertNode(g->outIndex, max);
+    if (return_value) return return_value;
+    return_value = insertNode(g->inIndex, max);
+    if (return_value) return return_value;
+    // check if edge exists
+    // we check in the index that has the fewer neighbors, so that extreme cases that slow the process are avoided
+    // (no need to check both indexes; if it exists in one, it exists in the other one as well)
+    if(get_node_number_of_edges(g->outIndex,from) <= get_node_number_of_edges(g->inIndex,to))
+        return_value = edge_exists(g->outIndex, from, to);
+    else
+        return_value = edge_exists(g->inIndex, to, from);
+
+    if (return_value < 0)
+    {    // error
+        return return_value;
+    }
+    else if (!return_value)
+    {    // edge does not exist
+        return_value = add_edge_t(g->outIndex, from, to,version);
+        if (return_value) return return_value;
+        return_value = add_edge_t(g->inIndex, to, from,version);
+        if (return_value) return return_value;
+        if(g->type==DYNAMIC){
+            CC_insertNewEdge(g->ccindex,from,to);
+        }
+    }
+    else{
+        return EDGE_EXISTS;
+    }
+    // if return_value == 1 the edge already exists, so there is nothing to be done
+    error_val = OK_SUCCESS;
+    return OK_SUCCESS;
+}
 int bfs(pGraph g, graphNode from, graphNode to);
-int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, pvis visited);
+int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, pvis visited,uint32_t version);
 int bidirectional_bfs_grail(pGraph g, graphNode from, graphNode to, phead *open_list, pvis visited);
 
 int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
@@ -230,7 +280,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
             return bidirectional_bfs_grail(g, from, to, g->open_intlist, g->visited);
         }
     }
-    (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to, g->open_intlist, g->visited)));
+    (type == BFS ? (return_value=bfs(g, from, to)) : (return_value=bidirectional_bfs(g, from, to, g->open_intlist, g->visited,0)));
     return return_value;
 }
 
@@ -270,7 +320,7 @@ int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pv
             return bidirectional_bfs_grail(g, from, to, lists, visited);
         }
     }
-    return_value=bidirectional_bfs(g, from, to, lists, visited);
+    return_value=bidirectional_bfs(g, from, to, lists, visited,version);
     return return_value;
 }
 
@@ -390,7 +440,7 @@ int bfs(pGraph g, graphNode from, graphNode to)
     return GRAPH_SEARCH_PATH_NOT_FOUND;
 }
 
-int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, pvis visited)
+int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, pvis visited,uint32_t version)
 {    // 0 is for out-Index, 1 is for in-Index
     int i, n, return_value, path_length[2], grandchildren[2], number_of_nodes, current_bfs, k, edges;
     uint32_t current_neighbor;
@@ -491,52 +541,54 @@ int bidirectional_bfs(pGraph g, graphNode from, graphNode to, phead *open_list, 
             edges = get_node_number_of_edges((current_bfs == 0 ? g->outIndex : g->inIndex),temp_node);
             for(k = 0 ; k < edges ; k++)
             {
-                current_neighbor = listnode->neighbor[i];
-                // check if the two nodes (from-to) are directly connected
-                if (path_length[current_bfs] == 1 && current_bfs == 0 && current_neighbor == to)
-                {    // the two nodes are direct neighbors, so the path is 1
-                    return 1;
-                }
-                return_value = v_visited(visited, current_neighbor);
-                if (return_value < 0)
-                {
-                    print_error();
-                    error_val = GRAPH_BFS_FAIL_CHECK_VISITED;
-                    return GRAPH_BFS_FAIL_CHECK_VISITED;
-                }
-                else if (!return_value)
-                {    // if this node hasn't been visited yet, insert it to the list
-                    if (insert_back(open_list[current_bfs], current_neighbor) != OK_SUCCESS)
-                    {
-                        print_error();
-                        error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
-                        return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                if(listnode->edgeProperty[i]<=version){
+                    current_neighbor = listnode->neighbor[i];
+                    // check if the two nodes (from-to) are directly connected
+                    if (path_length[current_bfs] == 1 && current_bfs == 0 && current_neighbor == to)
+                    {    // the two nodes are direct neighbors, so the path is 1
+                        return 1;
                     }
-                    if (v_mark(visited, current_neighbor, current_bfs, VISITED) < 0)
-                    {
-                        print_error();
-                        error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
-                        return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
-                    }
-                    grandchildren[current_bfs]+=*(get_node_number_of_edges_2((current_bfs == 0 ? g->outIndex : g->inIndex), current_neighbor));
-                }
-                else if (return_value > 0)
-                {
-                    return_value = v_ret_tag(visited, current_neighbor);
+                    return_value = v_visited(visited, current_neighbor);
                     if (return_value < 0)
                     {
                         print_error();
-                        error_val = GRAPH_BFS_FAIL_CHECK_BFS_TAG;
-                        return GRAPH_BFS_FAIL_CHECK_BFS_TAG;
+                        error_val = GRAPH_BFS_FAIL_CHECK_VISITED;
+                        return GRAPH_BFS_FAIL_CHECK_VISITED;
                     }
-                    if (return_value == 1-current_bfs)
-                    {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
-                        // then the two bfss have just met so a path has been found
-                        if (v_ret_expanded(visited, current_neighbor) == VISITED)
-                            path_length[1-current_bfs]++;
-                        return path_length[0] + path_length[1] - 1;
+                    else if (!return_value)
+                    {    // if this node hasn't been visited yet, insert it to the list
+                        if (insert_back(open_list[current_bfs], current_neighbor) != OK_SUCCESS)
+                        {
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                            return GRAPH_BFS_FAIL_INSERT_TO_QUEUE;
+                        }
+                        if (v_mark(visited, current_neighbor, current_bfs, VISITED) < 0)
+                        {
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                            return GRAPH_BFS_FAIL_INSERT_TO_HASHTABLE;
+                        }
+                        grandchildren[current_bfs]+=*(get_node_number_of_edges_2((current_bfs == 0 ? g->outIndex : g->inIndex), current_neighbor));
                     }
-                    // if return value (=tag) == current_bfs, then the node has already been visited by this bfs, so it doesn't enter the open list again
+                    else if (return_value > 0)
+                    {
+                        return_value = v_ret_tag(visited, current_neighbor);
+                        if (return_value < 0)
+                        {
+                            print_error();
+                            error_val = GRAPH_BFS_FAIL_CHECK_BFS_TAG;
+                            return GRAPH_BFS_FAIL_CHECK_BFS_TAG;
+                        }
+                        if (return_value == 1-current_bfs)
+                        {    // if the tag of the neighbor that's already on the 'visited' list is the other bfs' tag
+                            // then the two bfss have just met so a path has been found
+                            if (v_ret_expanded(visited, current_neighbor) == VISITED)
+                                path_length[1-current_bfs]++;
+                            return path_length[0] + path_length[1] - 1;
+                        }
+                        // if return value (=tag) == current_bfs, then the node has already been visited by this bfs, so it doesn't enter the open list again
+                    }
                 }
                 i++;
                 if (i == N)

@@ -8,7 +8,7 @@
 #include "jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define THREAD_POOL_SIZE 16
+#define THREAD_POOL_SIZE 4
 
 int main(int argc, char *argv[])
 {
@@ -184,6 +184,7 @@ int main(int argc, char *argv[])
     printf("%lu%%", current_percentage);fflush(stdout);
 #endif // VERBOSE_MODE
     if(type==DYNAMIC){
+        uint32_t version=1,query_flag=0;
         for (i = 1 ; !feof(workload) ; ++i)
         {
             command = fgetc(workload);
@@ -224,7 +225,11 @@ int main(int argc, char *argv[])
             /*printf("%c %d %d\n", command, node1, node2); // DEBUG*/
             if (command == 'A')
             {
-                ret_val = gAddEdge(graph, node1, node2);
+                if(query_flag){
+                    version++;
+                    query_flag=0;
+                }
+                ret_val = gAddEdge_t(graph, node1, node2,version);
                 if (ret_val < 0)
                 {
                     print_error();
@@ -240,7 +245,8 @@ int main(int argc, char *argv[])
             else if (command == 'Q')
             {
                 query_counter++;
-                submit_job(scheduler, query_counter-1, node1, node2, i);    // we pass query_counter -1 as argument, so that the thread will place the result in the correct position in the array
+                query_flag=1;
+                submit_job(scheduler, query_counter-1, node1, node2, version);    // we pass query_counter -1 as argument, so that the thread will place the result in the correct position in the array
             }
             else
             {
