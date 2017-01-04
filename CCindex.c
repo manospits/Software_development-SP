@@ -280,9 +280,11 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
     else if(c->ccindex[nodeida].cc==-1||c->ccindex[nodeidb].cc==-1){
         if(c->ccindex[nodeida].cc==-1){
             c->ccindex[nodeida].cc=c->ccindex[nodeidb].cc;
+            c->ccindex[nodeida].version=version;
         }
         if(c->ccindex[nodeidb].cc==-1){
             c->ccindex[nodeidb].cc=c->ccindex[nodeida].cc;
+            c->ccindex[nodeidb].version=version;
         }
     }
     else if(!same_component_edge(c,nodeida,nodeidb)){
@@ -386,7 +388,7 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
     }
 }
 
-int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist){//using external list as this is a thread function
+int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist,){//using external list as this is a thread function
     stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
@@ -452,7 +454,7 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
 int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist){
     int m,a,b;
     c->queries++;
-    if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc)) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)){
+    if((m=((c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)))){
         return 1;
     }
     else{
@@ -586,6 +588,7 @@ rcode CC_rebuildIndexes(CC_index c){
     for(j=0;j<c->index_size;j++){
         if(c->ccindex[j].cc!=-1 ){
             c->ccindex[j].cc=c->vals[c->ccindex[j].cc];
+            c->ccindex[j].version=0;
         }
     }
     c->check++;
