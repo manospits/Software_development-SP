@@ -8,7 +8,7 @@
 #include "jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define THREAD_POOL_SIZE 4
+#define THREAD_POOL_SIZE 8
 
 int main(int argc, char *argv[])
 {
@@ -193,7 +193,6 @@ int main(int argc, char *argv[])
                 break;
             if (command == 'F')
             {
-                rebuild(graph);
                 if (query_counter > results_array_size)
                 {
                     results_array_size = query_counter;
@@ -202,6 +201,7 @@ int main(int argc, char *argv[])
                 }
                 execute_all_jobs(scheduler, query_counter);
                 wait_all_tasks_finish(scheduler);
+                rebuild(graph);
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
                     fprintf(results, "%d\n", (*results_array)[j]);
