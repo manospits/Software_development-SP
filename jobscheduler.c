@@ -190,14 +190,14 @@ void * worker_thread_function(void *params)
     {
         // wait to get an item from the queue
         pthread_mutex_lock(&scheduler->mtx_for_queue);
-        while (!q_get_size(scheduler->queue)/* ||!scheduler->execution*/)
+        while (!q_get_size(scheduler->queue) ||!scheduler->execution)
         {
             pthread_cond_wait(&scheduler->cond_empty_queue, &scheduler->mtx_for_queue);
         }
         //get item from queue
         temp = q_peek(scheduler->queue);
         q_pop_front(scheduler->queue);
-        if (q_get_size(scheduler->queue)) pthread_cond_signal(&scheduler->cond_empty_queue);
+        pthread_cond_signal(&scheduler->cond_empty_queue);
         pthread_mutex_unlock(&scheduler->mtx_for_queue);
         // process job
         // check if job signals thread to exit
