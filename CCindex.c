@@ -386,7 +386,39 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
     }
 }
 
-int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist){//using external list as this is a thread function
+int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist,pvis visited,int* update_queries){//using external list as this is a thread function
+    stpnode tmpnode;
+    if(c->ccindex[nodeid].cc==-1){
+        return -1;
+    }
+    *update_queries++;
+    insert_back(idlist,c->ccindex[nodeid].cc);
+    while(get_size(idlist)!=0){
+        int tmp = peek_back(idlist),data;
+        pop_back(idlist);
+        iterator it;
+        it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
+        while(it!=-1){
+            /*printf("%d\n",data);*/
+            tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
+            data=tmpnode->data;
+            if(tmpnode->tag<=version){
+                if(v_visited(visited,data)){
+                    if(data==c->ccindex[nodeid2].cc){
+                        empty_list(idlist);
+                        return 1;
+                    }
+                    v_mark(visited,data,0,0);
+                    insert_back(idlist,data);
+                }
+            }
+            it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
+        }
+    }
+    return 0;
+}
+
+int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2,phead idlist){//using external list as this is a thread function
     stpnode tmpnode;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
@@ -402,16 +434,14 @@ int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t v
             /*printf("%d\n",data);*/
             tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
             data=tmpnode->data;
-            if(tmpnode->tag<=version){
-                if(c->marked[data]<c->check){
-                    if(data==c->ccindex[nodeid2].cc){
-                        c->check++;
-                        empty_list(idlist);
-                        return 1;
-                    }
-                    c->marked[data]=c->check;
-                    insert_back(idlist,data);
+            if(c->marked[data]<c->check){
+                if(data==c->ccindex[nodeid2].cc){
+                    c->check++;
+                    empty_list(idlist);
+                    return 1;
                 }
+                c->marked[data]=c->check;
+                insert_back(idlist,data);
             }
             it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
         }
@@ -436,22 +466,22 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,0,c->idlist);
+                return CC_checkifcompsmeet(c,nodeidb,nodeida,c->idlist);
             }
             else{
-                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,0,c->idlist);
+                return CC_checkifcompsmeet(c,nodeida,nodeidb,c->idlist);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,0,c->idlist);
+            return CC_checkifcompsmeet(c,nodeidb,nodeida,c->idlist);
         }
     }
     return -1;
 }
 
-int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist){
+int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist,pvis visited,int *queries, int *update_queries){
     int m,a,b;
-    c->queries++;
+    *queries++;
     if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc)) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)){
         return 1;
     }
@@ -466,14 +496,14 @@ int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist);
+                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited,update_queries);
             }
             else{
-                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist);
+                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist,visited,update_queries);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist);
+            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited,update_queries);
         }
     }
     return -1;
