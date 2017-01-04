@@ -8,7 +8,7 @@
 #include "jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define THREAD_POOL_SIZE 4
+#define THREAD_POOL_SIZE 16
 
 int main(int argc, char *argv[])
 {
@@ -199,8 +199,8 @@ int main(int argc, char *argv[])
                     if (*results_array != NULL) free(*results_array);
                     *results_array = malloc(results_array_size*sizeof(int));
                 }
-                execute_all_jobs(scheduler);
-                wait_all_tasks_finish(scheduler, query_counter);
+                execute_all_jobs(scheduler, query_counter);
+                wait_all_tasks_finish(scheduler);
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
                     fprintf(results, "%d\n", (*results_array)[j]);
@@ -282,9 +282,9 @@ int main(int argc, char *argv[])
                     if (*results_array != NULL) free(*results_array);
                     *results_array = malloc(results_array_size*sizeof(int));
                 }
-                execute_all_jobs(scheduler);
+                execute_all_jobs(scheduler, query_counter);
                 /*puts("waiting");*/
-                wait_all_tasks_finish(scheduler, query_counter);
+                wait_all_tasks_finish(scheduler);
                 /*puts("finished");*/
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
@@ -354,9 +354,10 @@ int main(int argc, char *argv[])
     {
         current_percentage = (i*100)/lines;
         printf("\b\b\b");
-        printf("%lu%%\n", (i*100)/lines);
+        printf("%lu%%", current_percentage);
         fflush(stdout);
     }
+    puts("");
     //printf("%lu %lu %lu %lu\n", lines, i, current_percentage, (i*100)/lines); //DEBUG
 #endif // VERBOSE_MODE
     puts("Processing complete.");

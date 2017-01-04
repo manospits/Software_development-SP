@@ -31,9 +31,9 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
 
 void submit_job(pJobScheduler sch, uint32_t query_id, uint32_t from, uint32_t to, long unsigned int version);
 
-void execute_all_jobs(pJobScheduler);
+void execute_all_jobs(pJobScheduler, uint32_t num_of_queries);
 
-void wait_all_tasks_finish(pJobScheduler, uint32_t num_of_threads); //waits all submitted tasks to finish
+void wait_all_tasks_finish(pJobScheduler); //waits all submitted tasks to finish
 
 void destroy_scheduler(pJobScheduler);
 

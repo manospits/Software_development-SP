@@ -9,7 +9,7 @@
 struct JobScheduler
 {
     int number_of_threads;
-    int finished_threads;
+    int queries_pending;
     int execution;
 	pthread_t *thread_pool;
     qphead queue;
@@ -50,7 +50,7 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
     }
     // initialize its fields
     newJS->number_of_threads = execution_threads;
-    newJS->finished_threads = 0;
+    newJS->queries_pending = 0;
     if ((newJS->thread_pool = malloc(execution_threads*sizeof(pthread_t))) == NULL)
     {
         error_val = JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL;
@@ -110,22 +110,22 @@ void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint3
     }
 }
 
-void execute_all_jobs(pJobScheduler scheduler)
+void execute_all_jobs(pJobScheduler scheduler, uint32_t num_of_queries)
 {
     /*printf("execution started , queue size %d \n",q_get_size(scheduler->queue));*/
     scheduler->execution=1;
+    scheduler->queries_pending = num_of_queries;
     if (scheduler != NULL) pthread_cond_broadcast(&scheduler->cond_empty_queue);
 }
 
-void wait_all_tasks_finish(pJobScheduler scheduler, uint32_t num_of_threads)
+void wait_all_tasks_finish(pJobScheduler scheduler)
 {
     /*printf("waiting for %d threads\n",num_of_threads);*/
     if (scheduler != NULL)
     {
         pthread_mutex_lock(&scheduler->sync_mtx);
-        while (scheduler->finished_threads != num_of_threads)
+        while (scheduler->queries_pending)
             pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
-        scheduler->finished_threads = 0;
         scheduler->execution = 0;
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }
@@ -139,7 +139,7 @@ void destroy_scheduler(pJobScheduler scheduler)
         // send signal to terminate threads
         for (i = 0 ; i < scheduler->number_of_threads ; ++i)
             submit_job(scheduler, 0, 0, 0, 0);
-        execute_all_jobs(scheduler);
+        execute_all_jobs(scheduler, scheduler->number_of_threads);
         // wait for threads to join
         for (i = 0 ; i < scheduler->number_of_threads ; ++i)
             pthread_join(scheduler->thread_pool[i], NULL);
@@ -220,8 +220,8 @@ void * worker_thread_function(void *params)
         }
         // job processing finished, inform the scheduler
         pthread_mutex_lock(&scheduler->sync_mtx);
-        scheduler->finished_threads++;
-        pthread_cond_signal(&scheduler->sync_cond);
+        scheduler->queries_pending--;
+        if (!scheduler->queries_pending) pthread_cond_signal(&scheduler->sync_cond);
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }
     ds_list(open_list[0]);
