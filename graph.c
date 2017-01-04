@@ -193,7 +193,7 @@ rcode gAddEdge_t(pGraph g, graphNode from, graphNode to,uint32_t version)
         return_value = add_edge_t(g->inIndex, to, from,version);
         if (return_value) return return_value;
         if(g->type==DYNAMIC){
-            CC_insertNewEdge(g->ccindex,from,to);
+            CC_insertNewEdge_t(g->ccindex,from,to,version);
         }
     }
     else{
@@ -284,7 +284,7 @@ int gFindShortestPath(pGraph g, graphNode from, graphNode to, int type)
     return return_value;
 }
 
-int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version)//version will be used only for dynamic graphs
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version,int *queries,int *update_queries)
 {
     int return_value;
     if (g == NULL)
@@ -301,9 +301,10 @@ int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pv
     empty_list(lists[0]);
     empty_list(lists[1]);
     if(g->type==DYNAMIC){
-        if(!CC_same_component_2_t(g->ccindex,from,to,version,lists[0])){
+        if(!CC_same_component_2_t(g->ccindex,from,to,version,lists[0],visited,queries,update_queries)){
             return GRAPH_SEARCH_PATH_NOT_FOUND;
         }
+        v_update_loop(visited,get_index_size(g->inIndex));
     }
     else if(g->type==STATIC){
         //TODO change to thread safe functions
@@ -1308,5 +1309,11 @@ rcode create_indexes(pGraph g,int type){
 void rebuild(pGraph g){
     if(g->type==DYNAMIC){
         check_rebuild(g->ccindex);
+    }
+}
+
+void rebuild_t(pGraph g,int* queries,int* update_queries){
+    if(g->type==DYNAMIC){
+        check_rebuild_t(g->ccindex,queries,update_queries);
     }
 }

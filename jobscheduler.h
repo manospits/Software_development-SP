@@ -27,7 +27,7 @@ struct Job
     uint32_t to;
 };
 
-pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **result_array);
+pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **result_array,int *queries,int *updated_queries);
 
 void submit_job(pJobScheduler sch, uint32_t query_id, uint32_t from, uint32_t to, long unsigned int version);
 

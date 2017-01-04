@@ -21,6 +21,8 @@ pGraph gCreateGraph();
 	// Creates a graph
 	// Returns a pointer to the created graph on success, or NULL and sets error_val to an appropriate error code if any error occurs
 
+int ggetType(pGraph g);
+
 rcode gDestroyGraph(pGraph *);
 	// Frees all structs created by the graph, and then deletes him
 
@@ -37,7 +39,8 @@ int gFindShortestPath(pGraph, graphNode from, graphNode to, int type);
 	// Returns the length of the path found, or an appropriate error code (negative number) in case of error
 	// 'type' is the type of search, defined above
 
-int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version);
+int gFindShortestPath_t(pGraph g, graphNode from, graphNode to, phead *lists, pvis visited, uint32_t version,int *queries,int *update_queries);
+    //version, marked, check, marked_size will be used only for dynamic graphs
     // Is the thread safe version of the above function,
     // Needs 2 intlists for CC/bidirectional searches ,version will be used only for dynamic graphs
 
@@ -53,4 +56,5 @@ Index_ptr ret_inIndex(pGraph);
 Index_ptr ret_outIndex(pGraph);
 void print_ccid(pGraph,graphNode gnode);
 void rebuild(pGraph);
+void rebuild_t(pGraph g,int* queries,int* update_queries);
 #endif // _GRAPH_H_

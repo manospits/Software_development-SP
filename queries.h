@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 typedef struct query{
-    long unsigned int version;
+    uint32_t version;
     uint32_t query_id;
     uint32_t nodea;
     uint32_t nodeb;

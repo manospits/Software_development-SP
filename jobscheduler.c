@@ -11,6 +11,8 @@ struct JobScheduler
     int number_of_threads;
     int queries_pending;
     int execution;
+    int *queries;
+    int *updated_queries;
 	pthread_t *thread_pool;
     qphead queue;
 	pthread_mutex_t mtx_for_queue;
@@ -31,7 +33,7 @@ struct thread_params
 
 void * worker_thread_function(void *params);
 
-pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **result_array)
+pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **result_array,int *queries,int *updated_queries)
 {
     // a sanity check
     if (execution_threads <= 0)
@@ -51,6 +53,8 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
     // initialize its fields
     newJS->number_of_threads = execution_threads;
     newJS->queries_pending = 0;
+    newJS->queries=queries;
+    newJS->updated_queries=updated_queries;
     if ((newJS->thread_pool = malloc(execution_threads*sizeof(pthread_t))) == NULL)
     {
         error_val = JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL;
@@ -154,6 +158,7 @@ void destroy_scheduler(pJobScheduler scheduler)
 void * worker_thread_function(void *params)
 {
     int **result_array;
+    int q,u;
     // read thread parameters
     pGraph graph = ((struct thread_params *)params)->graph;
     pJobScheduler scheduler = ((struct thread_params *)params)->scheduler;
@@ -204,7 +209,9 @@ void * worker_thread_function(void *params)
         if (!temp->version)break;
         // otherwise, execute the query
         /*printf("asked:%d \n", temp->query_id);*/
-        result = gFindShortestPath_t(graph, temp->nodea, temp->nodeb, open_list, visited, temp->version);
+        q=0;
+        u=0;
+        result = gFindShortestPath_t(graph, temp->nodea, temp->nodeb, open_list, visited, temp->version,&q,&u);
         /*printf("query:%d finished\n", temp->query_id);*/
         // output the result to the appropriate position in the array
         if (result >= 0)
@@ -221,6 +228,8 @@ void * worker_thread_function(void *params)
         // job processing finished, inform the scheduler
         pthread_mutex_lock(&scheduler->sync_mtx);
         scheduler->queries_pending--;
+        *(scheduler->queries)+=q;
+        *(scheduler->updated_queries)+=u;
         if (!scheduler->queries_pending) pthread_cond_signal(&scheduler->sync_cond);
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }

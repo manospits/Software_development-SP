@@ -8,7 +8,7 @@
 #include "jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
-#define THREAD_POOL_SIZE 2
+#define THREAD_POOL_SIZE 4
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     int node1, node2, ret_val, type, query_counter = 0, **results_array, results_array_size = 0, j;
+    int queries=0,updated_queries=0;
     unsigned long i;
 #ifdef VERBOSE_MODE
     unsigned long lines = 0, current_percentage = 0;
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     }
     puts("Reading complete.");
     puts("Building assistant structures/indexes...");
-    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array)) == NULL)
+    if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array,&queries,&updated_queries)) == NULL)
     {
         print_error();
         fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
@@ -201,7 +202,7 @@ int main(int argc, char *argv[])
                 }
                 execute_all_jobs(scheduler, query_counter);
                 wait_all_tasks_finish(scheduler);
-                rebuild(graph);
+                rebuild_t(graph,&queries,&updated_queries);
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
                     fprintf(results, "%d\n", (*results_array)[j]);

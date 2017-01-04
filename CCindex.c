@@ -28,7 +28,6 @@ typedef struct cc_extras{
 }cc_extras;
 
 typedef struct CC{
-    double metric;
     ccindex_record *ccindex; //CCindex
     UpdateIndex UpdateIndex;
     lpool lists;
@@ -52,6 +51,7 @@ typedef struct CC{
 } CC;
 
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
+int CC_findNodeConnectedComponentID_t(CC_index c,uint32_t nodeid,pvis visited,phead idlist,int version);
 
 CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
@@ -80,7 +80,6 @@ CC_index CC_create_index(pGraph g){
     tmp->total_update_queries=0;
     tmp->total_queries=0;
     tmp->queries=0;
-    tmp->metric= 0;
     tmp->index_size = max_nodes;
     tmp->next_component_num = 0;
     tmp->lists=create_listpool();
@@ -218,7 +217,7 @@ CC_index CC_create_index(pGraph g){
 }
 
 rcode CC_destroy(CC_index c){
-    printf("Total queries %d \nUpdated queries %d\n",c->total_queries+c->queries,c->total_update_queries+c->update_queries);
+    printf("Total queries %d \nUpdated queries %d\n",c->total_queries,c->total_update_queries);
     ds_list(c->idlist);
     ds_list(c->uidlist);
     ds_pool(c->lists);
@@ -236,7 +235,6 @@ rcode CC_destroy(CC_index c){
 rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t version){
     uint32_t max=nodeidb;
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
-    c->metric=(double)c->update_queries/(double)c->queries;
     if(max>=c->index_size){
         int prev_size=c->index_size;
         int next_size=c->index_size,i;
@@ -306,7 +304,6 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
 rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
     uint32_t max=nodeidb;
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
-    c->metric=(double)c->update_queries/(double)c->queries;
     if(max>=c->index_size){
         int prev_size=c->index_size;
         int next_size=c->index_size,i;
@@ -388,15 +385,15 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
     }
 }
 
-int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist,pvis visited,int* update_queries){//using external list as this is a thread function
+int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist,pvis visited){//using external list as this is a thread function
     stpnode tmpnode;
+    int tmp,data;
     if(c->ccindex[nodeid].cc==-1){
         return -1;
     }
-    *update_queries++;
     insert_back(idlist,c->ccindex[nodeid].cc);
     while(get_size(idlist)!=0){
-        int tmp = peek_back(idlist),data;
+        tmp = peek_back(idlist);
         pop_back(idlist);
         iterator it;
         it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
@@ -451,6 +448,7 @@ int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2,phead idlist
     c->check++;
     return 0;
 }
+
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
     int m,a,b;
     c->queries++;
@@ -482,13 +480,13 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
 }
 
 int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist,pvis visited,int *queries, int *update_queries){
-    int m,a,b;
-    *queries++;
+    int m,a,b,cca,ccb;
+    (*queries)++;
     if((m=((c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)))){
         return 1;
     }
     else{
-        c->update_queries++;
+        (*update_queries)++;
         uint32_t ca=c->ccindex[nodeida].cc;
         uint32_t cb=c->ccindex[nodeidb].cc;
         a=(c->updated[ca]<c->version);
@@ -498,20 +496,23 @@ int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited,update_queries);
+                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited);
             }
             else{
-                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist,visited,update_queries);
+                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist,visited);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited,update_queries);
+            cca=CC_findNodeConnectedComponentID_t(c,nodeida,visited,idlist,version);
+            v_update_loop(visited,c->updated_size);
+            ccb=CC_findNodeConnectedComponentID_t(c,nodeida,visited,idlist,version);
+            return (cca==ccb);
         }
     }
     return -1;
 }
 rcode check_rebuild(CC_index c){
-    if(c->metric>METRIC_VAL){
+    if((double)c->update_queries/(double)c->queries>METRIC_VAL){
         CC_rebuildIndexes(c);
         c->total_queries+=c->queries;
         c->queries=0;
@@ -521,8 +522,18 @@ rcode check_rebuild(CC_index c){
     return OK_SUCCESS;
 }
 
+rcode check_rebuild_t(CC_index c,int *queries,int *update_queries){
+    if((double)*update_queries/(double)*queries>METRIC_VAL){
+        CC_rebuildIndexes(c);
+        c->total_queries+=*queries;
+        *queries=0;
+        c->total_update_queries+=*update_queries;
+        *update_queries=0;
+    }
+    return OK_SUCCESS;
+}
+
 int CC_same_component(CC_index c, uint32_t a, uint32_t b){
-    c->metric=(double)c->update_queries/(double)c->queries;
     /*printf("%lf\n",c->metric);*/
     c->queries++;
     if(c->ccindex[a].cc==c->ccindex[b].cc){
@@ -572,6 +583,44 @@ int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
     }
 }
 
+int CC_findNodeConnectedComponentID_t(CC_index c,uint32_t nodeid,pvis visited,phead idlist,int version){
+    int a,b;
+    stpnode tmpnode;
+    if(c->ccindex[nodeid].cc==-1){
+        return -1;
+    }
+    a=c->updated[c->ccindex[nodeid].cc];
+    b=c->version;
+    if(a<b){
+        return c->ccindex[nodeid].cc;
+    }
+    else{
+        int min=c->ccindex[nodeid].cc;
+        insert_back(idlist,c->ccindex[nodeid].cc);
+        while(get_size(idlist)!=0){
+            int tmp = peek(idlist),data;
+            pop_front(idlist);
+            iterator it;
+            it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
+            while(it!=-1){
+                /*printf("%d\n",data);*/
+                tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
+                if(tmpnode->tag<=version){
+                    data=tmpnode->data;
+                    if(v_visited(visited,data)){
+                        if(data<min){
+                            min=data;
+                        }
+                        v_mark(visited,data,0,0);
+                        insert_back(idlist,data);
+                    }
+                }
+                it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
+            }
+        }
+        return min;
+    }
+}
 
 rcode CC_rebuildIndexes(CC_index c){
     int j,tmp,com_num=0;
@@ -618,7 +667,6 @@ rcode CC_rebuildIndexes(CC_index c){
     for(j=0;j<c->index_size;j++){
         if(c->ccindex[j].cc!=-1 ){
             c->ccindex[j].cc=c->vals[c->ccindex[j].cc];
-            c->ccindex[j].version=0;
         }
     }
     c->check++;
