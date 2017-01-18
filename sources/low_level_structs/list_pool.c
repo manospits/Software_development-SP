@@ -41,14 +41,15 @@ stphead get_alist(lpool l){
         }
         l->size*=2;
     }
+    st_empty_list(l->lists[l->nextavailable]);
     return l->lists[l->nextavailable++];
 }
 
 rcode empty_lists(lpool l){
-    int i;
-    for(i=0;i<l->nextavailable;i++){
-        st_empty_list(l->lists[i]);
-    }
+    /*int i;*/
+    /*for(i=0;i<l->nextavailable;i++){*/
+        /*st_empty_list(l->lists[i]);*/
+    /*}*/
     l->nextavailable=0;
     error_val=OK_SUCCESS;
     return OK_SUCCESS;
