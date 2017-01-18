@@ -1,5 +1,5 @@
-#include "error.h"
-#include "queries.h"
+#include "../include/error.h"
+#include "../include/queries.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

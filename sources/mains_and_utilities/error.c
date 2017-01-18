@@ -1,4 +1,4 @@
-#include "error.h"
+#include "../include/error.h"
 #include <stdio.h>
 
 int error_val=OK_SUCCESS;

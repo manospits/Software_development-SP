@@ -6,11 +6,11 @@
 #include <check.h>
 
 #line 1 "testmain.check"
-#include "intlist.h"
-#include "struct_list.h"
-#include "queries.h"
-#include "index.h"
-#include "error.h"
+#include "../include/intlist.h"
+#include "../include/struct_list.h"
+#include "../include/queries.h"
+#include "../include/index.h"
+#include "../include/error.h"
 #include <stdio.h>
 
 int hash_function(void *data,void *size)

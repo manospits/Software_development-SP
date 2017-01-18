@@ -1,14 +1,14 @@
-#include "CCindex.h"
+#include "../include/CCindex.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "intlist.h"
-#include "struct_list.h"
-#include "error.h"
-#include "graph.h"
-#include "buffer.h"
-#include "list_pool.h"
-#include "index.h"
+#include "../include/intlist.h"
+#include "../include/struct_list.h"
+#include "../include/error.h"
+#include "../include/graph.h"
+#include "../include/buffer.h"
+#include "../include/list_pool.h"
+#include "../include/index.h"
 
 typedef struct UpdateIndex{
     stphead *uindex;

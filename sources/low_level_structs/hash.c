@@ -1,7 +1,7 @@
-#include "error.h"
-#include "hash.h"
-#include "struct_list.h"
-#include "intlist.h"
+#include "../include/error.h"
+#include "../include/hash.h"
+#include "../include/struct_list.h"
+#include "../include/intlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 

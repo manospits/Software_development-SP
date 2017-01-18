@@ -1,6 +1,6 @@
 UT = unittesting
-PFINAL = pspath
-FINAL = spath
+PFINAL = spath
+FINAL = part2_spath
 OBJDIR = objects
 SRCDIR = sources
 LOWDIR = $(SRCDIR)/low_level_structs
@@ -15,7 +15,7 @@ UTILDIR_SOURCES_W_PREFIX =  $(addprefix $(UTILDIR)/,$(UTILDIR_SOURCES))
 HDRDIR = $(SRCDIR)/include
 SOURCES_W_PREFIX = $(LOWDIR_SOURCES_W_PREFIX) $(HIGHDIR_SOURCES_W_PREFIX) $(UTILDIR_SOURCES_W_PREFIX)
 UTOBJS = buffer.o error.o testmain.o index.o intlist.o struct_list.o hash.o queries.o
-UTOBJS_W_PREFIX = $(addprefix $(OBJDIR)/,$(OBJS))
+UTOBJS_W_PREFIX = $(addprefix $(OBJDIR)/,$(UTOBJS))
 PFOBJS = buffer.o error.o main.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o jobscheduler.o
 PFOBJS_W_PREFIX = $(addprefix $(OBJDIR)/,$(PFOBJS))
 FOBJS = buffer.o error.o main_part2_20161227.o index.o intlist.o struct_list.o graph.o visited.o CCindex.o list_pool.o scc.o utils.o grail.o hash.o queries.o
@@ -29,10 +29,9 @@ CC = gcc
 FLAGS = -c -Wall $(OPT)
 CHECK_FLAGS = -lcheck -lrt
 
-all :$(PFINAL) $(FINAL) $(BIN)
+all :$(PFINAL) $(FINAL) $(UT)
 
 $(FINAL) : $(FOBJS_W_PREFIX)
-	if test ! -d $(OBJDIR); then mkdir $(OBJDIR); else echo "OK: directory \""$(OBJDIR)"\" already exists"; fi
 	$(CC) $(OPT) -o $@ $(FOBJS_W_PREFIX)
 
 $(PFINAL) : $(PFOBJS_W_PREFIX)

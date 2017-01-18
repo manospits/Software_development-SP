@@ -1,5 +1,5 @@
-#include "error.h"
-#include "visited.h"
+#include "../include/error.h"
+#include "../include/visited.h"
 #include <stdint.h>
 #include <stdlib.h>
 

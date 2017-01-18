@@ -1,6 +1,6 @@
-#include "jobscheduler.h"
-#include "error.h"
-#include "queries.h"
+#include "../include/jobscheduler.h"
+#include "../include/error.h"
+#include "../include/queries.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

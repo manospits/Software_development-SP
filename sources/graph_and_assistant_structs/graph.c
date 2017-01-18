@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "graph.h"
-#include "buffer.h"
-#include "index.h"
-#include "visited.h"
-#include "struct_list.h"
-#include "intlist.h"
-#include "scc.h"
-#include "CCindex.h"
-#include "scc.h"
-#include "grail.h"
+#include "../include/graph.h"
+#include "../include/buffer.h"
+#include "../include/index.h"
+#include "../include/visited.h"
+#include "../include/struct_list.h"
+#include "../include/intlist.h"
+#include "../include/scc.h"
+#include "../include/CCindex.h"
+#include "../include/scc.h"
+#include "../include/grail.h"
 #include <assert.h>
 
 #define VISITED 0

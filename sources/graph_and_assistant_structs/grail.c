@@ -1,7 +1,7 @@
-#include "grail.h"
-#include "scc.h"
-#include "intlist.h"
-#include "error.h"
+#include "../include/grail.h"
+#include "../include/scc.h"
+#include "../include/intlist.h"
+#include "../include/error.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>

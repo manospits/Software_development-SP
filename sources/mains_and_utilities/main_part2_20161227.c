@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "CCindex.h"
-#include "graph.h"
-#include "error.h"
+#include "../include/CCindex.h"
+#include "../include/graph.h"
+#include "../include/error.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
 

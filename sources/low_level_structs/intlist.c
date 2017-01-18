@@ -1,5 +1,5 @@
-#include "error.h"
-#include "intlist.h"
+#include "../include/error.h"
+#include "../include/intlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

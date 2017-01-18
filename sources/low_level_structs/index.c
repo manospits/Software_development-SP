@@ -1,6 +1,6 @@
-#include "error.h"
-#include "index.h"
-#include "buffer.h"
+#include "../include/error.h"
+#include "../include/index.h"
+#include "../include/buffer.h"
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef INDEX_INIT_SIZE

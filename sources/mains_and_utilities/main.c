@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "CCindex.h"
-#include "graph.h"
-#include "error.h"
-#include "jobscheduler.h"
+#include "../include/CCindex.h"
+#include "../include/graph.h"
+#include "../include/error.h"
+#include "../include/jobscheduler.h"
 
 #define OUTPUT_FILE_NAME "results.txt"
 #define THREAD_POOL_SIZE 4

@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include "list_pool.h"
-#include "struct_list.h"
-#include "error.h"
+#include "../include/list_pool.h"
+#include "../include/struct_list.h"
+#include "../include/error.h"
 
 typedef struct list_pool{
     stphead* lists;

@@ -1,5 +1,5 @@
-#include "buffer.h"
-#include "error.h"
+#include "../include/buffer.h"
+#include "../include/error.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>

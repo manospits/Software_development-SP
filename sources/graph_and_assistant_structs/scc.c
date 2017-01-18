@@ -1,8 +1,8 @@
-#include "scc.h"
-#include "intlist.h"
-#include "buffer.h"
-#include "index.h"
-#include "utils.h"
+#include "../include/scc.h"
+#include "../include/intlist.h"
+#include "../include/buffer.h"
+#include "../include/index.h"
+#include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
