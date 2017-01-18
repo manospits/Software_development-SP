@@ -42,6 +42,10 @@ $(UT): $(UTOBJS_W_PREFIX)
 
 $(PFOBJS_W_PREFIX) : | $(OBJDIR)
 
+$(FOBJS_W_PREFIX) : | $(OBJDIR)
+
+$(UTOBJS_W_PREFIX) : | $(OBJDIR)
+
 $(OBJDIR) : 
 	mkdir -p $@
 
@@ -100,7 +104,7 @@ $(OBJDIR)/utils.o: $(UTILDIR)/utils.c
 	$(CC) $(FLAGS) $? -o $@
 
 clean:
-	rm -f $(AOBJS_W_PREFIX) $(BIN) $(FINAL) $(PFINAL)
+	rm -f $(AOBJS_W_PREFIX) $(UT) $(FINAL) $(PFINAL)
 
 no_exe_clean:
 	rm -f $(AOBJS_W_PREFIX)
