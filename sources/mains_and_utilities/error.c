@@ -156,6 +156,10 @@ void print_error(){
             fprintf(stderr, "Error: Memory reallocation in CC index failed\n");
             error_val=OK_SUCCESS;
             break;
+        case CC_CREATION_FAIL:
+            fprintf(stderr, "Error: Error occured in Connected components creation\n");
+            error_val=OK_SUCCESS;
+            break;
         case LP_MALLOC_FAIL:
             fprintf(stderr, "Error: Memory allocation in list pool failed\n");
             error_val=OK_SUCCESS;
@@ -465,6 +469,10 @@ void print_errorv(int error_val){
             fprintf(stderr, "Error: Memory reallocation in CC index failed\n");
             error_val=OK_SUCCESS;
             break;
+        case CC_CREATION_FAIL:
+            fprintf(stderr, "Error: Error occured in Connected components creation\n");
+            error_val=OK_SUCCESS;
+            break;
         case LP_MALLOC_FAIL:
             fprintf(stderr, "Error: Memory allocation in list pool failed\n");
             error_val=OK_SUCCESS;
@@ -473,7 +481,6 @@ void print_errorv(int error_val){
             fprintf(stderr, "Error: Memory reallocation in list pool failed\n");
             error_val=OK_SUCCESS;
             break;
-
         case SCC_MALLOC_FAIL_BASIC_STRUCT:
             fprintf(stderr, "Error: malloc for SCC structure failed\n");
             error_val=OK_SUCCESS;
@@ -619,5 +626,4 @@ void print_errorv(int error_val){
             error_val=OK_SUCCESS;
             break;
     }
-
 }

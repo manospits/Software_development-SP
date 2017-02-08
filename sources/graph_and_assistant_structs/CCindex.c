@@ -59,12 +59,14 @@ CC_index CC_create_index(pGraph g){
     CC_index tmp;
     int i,index,max_nodes=ret_biggest_node(inIndex)+1,return_value,l,state=0;
     if((tmp=malloc(sizeof(struct CC)))==NULL){
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     if((tmp->ccindex=malloc(sizeof(ccindex_record)*max_nodes))==NULL){
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     for(i=0;i<max_nodes;i++){
@@ -93,22 +95,22 @@ CC_index CC_create_index(pGraph g){
         if(tmp->ccindex[l].cc==-1){
             if ((return_value = insert_back(tmp->idlist,l)) != OK_SUCCESS)
             {
+                print_errorv(CC_CREATION_FAIL);
                 ds_list(tmp->idlist);
-                error_val = return_value;
                 return NULL;
             }
             while(get_size(tmp->idlist) > 0)
             {
                 if ((temp_node = peek_back(tmp->idlist)) < 0)
                 {
+                    print_errorv(CC_CREATION_FAIL);
                     ds_list(tmp->idlist);
-                    error_val = temp_node;
                     return NULL;
                 }
                 if ((return_value = pop_back(tmp->idlist)) < 0)
                 {
+                    print_errorv(CC_CREATION_FAIL);
                     ds_list(tmp->idlist);
-                    error_val = return_value;
                     return NULL;
                 }
                 for(index=0;index<2;index++){
@@ -119,35 +121,33 @@ CC_index CC_create_index(pGraph g){
                     }
                     else if (buffer_ptr_to_listnode < 0)
                     {   // an error occurred
+                        print_errorv(CC_CREATION_FAIL);
                         ds_list(tmp->idlist);
-                        error_val = return_value;
                         return NULL;
                     }
                     if ((temp_buffer = return_buffer(Ind[index])) == NULL)
                     {
-                        return_value = error_val;
+                        print_errorv(CC_CREATION_FAIL);
                         ds_list(tmp->idlist);
-                        error_val = return_value;
                         return NULL;
                     }
                     if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
                     {
-                        return_value = error_val;
+                        print_errorv(CC_CREATION_FAIL);
                         ds_list(tmp->idlist);
-                        error_val = return_value;
                         return NULL;
                     }
                     i = 0;
                     while (listnode->neighbor[i] != -1)
                     {
                         if (tmp->ccindex[listnode->neighbor[i]].cc==-1)
-                        {    // if this node hasn't been visited yet
+                        {
                             state=1;
                             tmp->ccindex[listnode->neighbor[i]].cc=tmp->next_component_num;
-                            if ((return_value =insert_back(tmp->idlist, listnode->neighbor[i])) != OK_SUCCESS)
+                            if (insert_back(tmp->idlist, listnode->neighbor[i]) != OK_SUCCESS)
                             {
+                                print_errorv(CC_CREATION_FAIL);
                                 ds_list(tmp->idlist);
-                                error_val = return_value;
                                 return NULL;
                             }
                         }
@@ -158,9 +158,8 @@ CC_index CC_create_index(pGraph g){
                                 break;
                             if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                             {
-                                return_value = error_val;
+                                print_errorv(CC_CREATION_FAIL);
                                 ds_list(tmp->idlist);
-                                error_val = return_value;
                                 return NULL;
                             }
                             i = 0;
@@ -179,19 +178,22 @@ CC_index CC_create_index(pGraph g){
     if((tmp->updated=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     if((tmp->vals=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     if((tmp->marked=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     if((tmp->markedrebuild=malloc((tmp->updated_size)*sizeof(int)))==NULL){
@@ -209,7 +211,8 @@ CC_index CC_create_index(pGraph g){
         free(tmp->ccindex);
         free(tmp->updated);
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     tmp->UpdateIndex.size = tmp->updated_size;
@@ -228,7 +231,7 @@ rcode CC_destroy(CC_index c){
     free(c->vals);
     free(c->UpdateIndex.uindex);
     free(c);
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
@@ -243,7 +246,8 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
         }
         c->index_size=next_size;
         if((c->ccindex=realloc(c->ccindex,next_size*sizeof(ccindex_record)))==NULL){
-            error_val=CC_REALLOC_FAIL;
+            print_errorv(CC_REALLOC_FAIL);
+            /*error_val=CC_REALLOC_FAIL;*/
             return CC_REALLOC_FAIL;
         }
         for(i=prev_size;i<next_size;i++){
@@ -297,8 +301,8 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
         st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeidb].cc,version);
         st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeida].cc,version);
     }
-    error_val=OK_SUCCESS;
-    return error_val;
+    /*error_val=OK_SUCCESS;*/
+    return OK_SUCCESS;
 }
 
 rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
@@ -312,7 +316,8 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
         }
         c->index_size=next_size;
         if((c->ccindex=realloc(c->ccindex,next_size*sizeof(ccindex_record)))==NULL){
-            error_val=CC_REALLOC_FAIL;
+            print_errorv(CC_REALLOC_FAIL);
+            /*error_val=CC_REALLOC_FAIL;*/
             return CC_REALLOC_FAIL;
         }
         for(i=prev_size;i<next_size;i++){
@@ -362,8 +367,8 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
         st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeidb].cc,0);
         st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeida].cc,0);
     }
-    error_val=OK_SUCCESS;
-    return error_val;
+    /*error_val=OK_SUCCESS;*/
+    return OK_SUCCESS;
 }
 
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
@@ -673,7 +678,7 @@ rcode CC_rebuildIndexes(CC_index c){
     c->version++;
     c->checkrebuild++;
     empty_lists(c->lists);
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 

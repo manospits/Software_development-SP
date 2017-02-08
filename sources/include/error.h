@@ -45,6 +45,7 @@ extern int error_val;
 #define GRAPH_HASH_DESTROY_FAIL -34
 #define CC_MALLOC_FAIL -35
 #define CC_REALLOC_FAIL -36
+#define CC_CREATION_FAIL -87
 #define LP_MALLOC_FAIL -37
 #define LP_REALLOC_FAIL -38
 #define SCC_MALLOC_FAIL_BASIC_STRUCT -39
@@ -94,5 +95,6 @@ extern int error_val;
 #define VISITED_WRONG_PARAMETERS -84
 #define VISITED_MALLOC_ERROR -85
 #define VISITED_REALLOC_FAIL -86
+//continue with 88
 
 #endif
