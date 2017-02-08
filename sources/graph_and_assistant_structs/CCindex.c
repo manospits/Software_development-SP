@@ -199,7 +199,8 @@ CC_index CC_create_index(pGraph g){
     if((tmp->markedrebuild=malloc((tmp->updated_size)*sizeof(int)))==NULL){
         free(tmp->ccindex);
         free(tmp);
-        error_val=CC_MALLOC_FAIL;
+        print_errorv(CC_MALLOC_FAIL);
+        /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
     for(i=0;i<tmp->updated_size;i++){
