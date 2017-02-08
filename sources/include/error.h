@@ -3,6 +3,7 @@
 
 typedef int rcode;
 void print_error();
+void print_errorv(int error_val);
 
 extern int error_val;
 
@@ -90,5 +91,8 @@ extern int error_val;
 #define JOBSCHEDULER_INIT_PTHREAD_CREATE_FAIL -81
 #define JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL -82
 #define JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL -83
+#define VISITED_WRONG_PARAMETERS -84
+#define VISITED_MALLOC_ERROR -85
+#define VISITED_REALLOC_FAIL -86
 
 #endif

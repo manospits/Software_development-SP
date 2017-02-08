@@ -17,7 +17,8 @@ stphead st_cr_list(){
     stphead tmphead;
     tmphead=malloc(sizeof(struct sthead));
     if(tmphead==NULL){
-        error_val=(LIST_CR_MALLOC);
+        print_errorv(LIST_CR_MALLOC);
+        /*error_val=(LIST_CR_MALLOC);*/
         return NULL;
     }
     tmphead->size=STQUEUE_INIT_SIZE;
@@ -27,35 +28,38 @@ stphead st_cr_list(){
         error_val=(LIST_CR_MALLOC);
         return NULL;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return tmphead;
 }
 
 rcode st_ds_list(stphead ltodestroy){
     if(ltodestroy==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
     free(ltodestroy->array_queue);
     free (ltodestroy);
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
 rcode st_empty_list(stphead list_to_empty){
     if(list_to_empty==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
     list_to_empty->front=0;
     list_to_empty->elements=0;
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
 rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
     int pos,newsize;
@@ -77,61 +81,67 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
 
 rcode st_pop_front(stphead listh){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
     if(listh->elements < 1){
-        error_val=EMPTY_LIST;
+        print_errorv(EMPTY_LIST);
+        /*error_val=EMPTY_LIST;*/
         return EMPTY_LIST;
     }
     listh->front=(listh->front+1)%listh->size;
     listh->elements--;
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
 int st_get_size(stphead listh){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return listh->elements;
 }
 
 int st_peek(const stphead listh){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return listh->array_queue[listh->front].data;
 }
 
 int st_peek_back(const stphead listh){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     int pos=(listh->front+listh->elements-1)%listh->size;
     return listh->array_queue[pos].data;
 }
 
 int st_get_tag(const stphead listh,uint32_t data){
     if(listh==NULL){
-        error_val=NULL_LIST;
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
         return NULL_LIST;
     }
     int i,pos;
     for(i=0;i<listh->elements;i++){
         pos=(listh->front+i)%listh->size;
         if(listh->array_queue[pos].data==data){
-            error_val=OK_SUCCESS;
+            /*error_val=OK_SUCCESS;*/
             return listh->array_queue[pos].tag;
         }
     }
-    error_val=NODE_MISSING;
+    /*error_val=NODE_MISSING;*/
     return NODE_MISSING;
 }
 

@@ -27,18 +27,20 @@ Index_ptr createNodeIndex(){
     Index_ptr tmp;
     int i;
     if((tmp=malloc(sizeof(NodeIndex)))==NULL){
-        error_val=INDEX_STRUCT_MALLOC_FAIL;
+        print_errorv(INDEX_STRUCT_MALLOC_FAIL);
+        /*error_val=INDEX_STRUCT_MALLOC_FAIL;*/
         return NULL;
     }
     if((tmp->index=malloc(sizeof(Inode)*INDEX_INIT_SIZE))==NULL){
-        error_val=INDEX_STRUCT_MALLOC_INNER_FAIL;
+        print_errorv(INDEX_STRUCT_MALLOC_INNER_FAIL);
+        /*error_val=INDEX_STRUCT_MALLOC_INNER_FAIL;*/
         free(tmp);
         return NULL;
     }
     if((tmp->buffer=createBuffer())==NULL){
         free(tmp);
-        print_error();
-        error_val=INDEX_BUFFER_CR_FAIL;
+        print_errorv(INDEX_BUFFER_CR_FAIL);
+        /*error_val=INDEX_BUFFER_CR_FAIL;*/
         return NULL;
     }
     for(i=0;i<INDEX_INIT_SIZE;i++){
@@ -50,21 +52,23 @@ Index_ptr createNodeIndex(){
     tmp->edges=0;
     tmp->nodes=0;
     tmp->size=INDEX_INIT_SIZE;
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return tmp;
 }
 
 rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId<hindex->size){
-        error_val=OK_SUCCESS;
+        /*error_val=OK_SUCCESS;*/
         if(nodeId>hindex->nodes){
             hindex->nodes=nodeId;
         }
@@ -77,7 +81,8 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             next_size<<=1;
         }
         if((hindex->index=realloc(hindex->index,next_size*sizeof(Inode)))==NULL){
-            error_val=INDEX_REALLOC_FAIL;
+            print_errorv(INDEX_REALLOC_FAIL);
+            /*error_val=INDEX_REALLOC_FAIL;*/
             return INDEX_REALLOC_FAIL;
         }
         for(i=prev_size;i<next_size;i++){
@@ -91,59 +96,68 @@ rcode insertNode(const Index_ptr hindex,uint32_t nodeId){
             hindex->nodes=nodeId;
         }
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
 ptr getListHead(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return hindex->index[nodeId].List_start;
 }
 
 int get_node_number_of_edges(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return hindex->index[nodeId].edges;
 
 }
 
 int* get_node_number_of_edges_2(const Index_ptr hindex,uint32_t nodeId){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return NULL;
     }
     if(nodeId<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return NULL;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return NULL;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return &hindex->index[nodeId].edges;
 
 }
@@ -151,15 +165,18 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
     int i;
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0||neighbor<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
     if(hindex->index[nodeId].List_start==-1){
@@ -169,13 +186,14 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     do{
         tmplnode=getListNode(hindex->buffer,nextlptr);
         if(tmplnode==NULL){
-            print_error();
-            error_val=INDEX_GET_LIST_NODE_FAIL;
+            /*print_error();*/
+            print_errorv(INDEX_GET_LIST_NODE_FAIL);
+            /*error_val=INDEX_GET_LIST_NODE_FAIL;*/
             return INDEX_GET_LIST_NODE_FAIL;
         }
         for(i=0;i<N;i++){
             if(tmplnode->neighbor[i]==neighbor){
-                error_val=OK_SUCCESS;
+                /*error_val=OK_SUCCESS;*/
                 return 1;
             }
             else if (tmplnode->neighbor[i]==-1) {
@@ -184,30 +202,34 @@ int edge_exists(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         }
         nextlptr=tmplnode->nextListNode;
     }while(nextlptr!=-1);
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return 0;
 }
 
 rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     plnode tmplnode;
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0||neighbor<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
     //List doesn't exist
     if(hindex->index[nodeId].List_start==-1){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
-            print_error();
-            error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+            /*print_error();*/
+            print_errorv(INDEX_ADD_EDGE_ALLOC_NEW_NODE);
+            /*error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;*/
             return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
         }
         hindex->index[nodeId].List_start=tmpptr;
@@ -216,8 +238,9 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     }
     tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
     if(tmplnode==NULL){
-        print_error();
-        error_val=INDEX_GET_LIST_NODE_FAIL;
+        /*print_error();*/
+        print_errorv(INDEX_GET_LIST_NODE_FAIL);
+        /*error_val=INDEX_GET_LIST_NODE_FAIL;*/
         return INDEX_GET_LIST_NODE_FAIL;
     }
     tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
@@ -226,15 +249,17 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
     if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
-            print_error();
-            error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+            /*print_error();*/
+            print_errorv(INDEX_ADD_EDGE_ALLOC_NEW_NODE);
+            /*error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;*/
             return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
         }
         //changing nextptr in list's last node
         tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
         if(tmplnode==NULL){
-            print_error();
-            error_val=INDEX_GET_LIST_NODE_FAIL;
+            /*print_error();*/
+            print_errorv(INDEX_GET_LIST_NODE_FAIL);
+            /*error_val=INDEX_GET_LIST_NODE_FAIL;*/
             return INDEX_GET_LIST_NODE_FAIL;
         }
         tmplnode->nextListNode=tmpptr;
@@ -243,7 +268,7 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
         //changing position in inner array in list node to 0
         hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     hindex->edges++;
     hindex->index[nodeId].edges++;
     return OK_SUCCESS;
@@ -252,22 +277,25 @@ rcode add_edge(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor){
 rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint32_t version){
     plnode tmplnode;
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     if(nodeId<0||neighbor<0){
-        error_val=INDEX_INSERT_NEGATIVE_NODEID;
+        print_errorv(INDEX_INSERT_NEGATIVE_NODEID);
+        /*error_val=INDEX_INSERT_NEGATIVE_NODEID;*/
         return INDEX_INSERT_NEGATIVE_NODEID;
     }
     if(nodeId>hindex->size){
-        error_val=INDEX_NODE_ID_OUT_BOUNDS;
+        print_errorv(INDEX_NODE_ID_OUT_BOUNDS);
+        /*error_val=INDEX_NODE_ID_OUT_BOUNDS;*/
         return INDEX_NODE_ID_OUT_BOUNDS;
     }
     //List doesn't exist
     if(hindex->index[nodeId].List_start==-1){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
-            print_error();
+            /*print_error();*/
             error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
             return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
         }
@@ -277,8 +305,9 @@ rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint3
     }
     tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
     if(tmplnode==NULL){
-        print_error();
-        error_val=INDEX_GET_LIST_NODE_FAIL;
+        /*print_error();*/
+        print_errorv(INDEX_GET_LIST_NODE_FAIL);
+        /*error_val=INDEX_GET_LIST_NODE_FAIL;*/
         return INDEX_GET_LIST_NODE_FAIL;
     }
     tmplnode->neighbor[hindex->index[nodeId].node_index_for_next_neighbor]=neighbor;
@@ -287,15 +316,17 @@ rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint3
     if(hindex->index[nodeId].node_index_for_next_neighbor==N){
         ptr tmpptr;
         if((tmpptr=allocNewNode(hindex->buffer))<0){
-            print_error();
-            error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;
+            /*print_error();*/
+            print_errorv(INDEX_ADD_EDGE_ALLOC_NEW_NODE);
+            /*error_val=INDEX_ADD_EDGE_ALLOC_NEW_NODE;*/
             return INDEX_ADD_EDGE_ALLOC_NEW_NODE;
         }
         //changing nextptr in list's last node
         tmplnode=getListNode(hindex->buffer,hindex->index[nodeId].list_node_for_next_neigbor);
         if(tmplnode==NULL){
-            print_error();
-            error_val=INDEX_GET_LIST_NODE_FAIL;
+            /*print_error();*/
+            print_errorv(INDEX_GET_LIST_NODE_FAIL);
+            /*error_val=INDEX_GET_LIST_NODE_FAIL;*/
             return INDEX_GET_LIST_NODE_FAIL;
         }
         tmplnode->nextListNode=tmpptr;
@@ -304,7 +335,7 @@ rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint3
         //changing position in inner array in list node to 0
         hindex->index[nodeId].node_index_for_next_neighbor=0;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     hindex->edges++;
     hindex->index[nodeId].edges++;
     return OK_SUCCESS;
@@ -312,40 +343,45 @@ rcode add_edge_t(const Index_ptr hindex,uint32_t nodeId,uint32_t neighbor, uint3
 
 rcode destroyNodeIndex(const Index_ptr hindex){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
     free(hindex->index);
     destroyBuffer(hindex->buffer);
     free(hindex);
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
 pBuffer return_buffer(const Index_ptr hindex){
     if(hindex==NULL){
+        print_errorv(INDEX_NULL_HEAD);
         error_val=INDEX_NULL_HEAD;
+        /*print_errorv(INDEX_NULL_HEAD);*/
         return NULL;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return hindex->buffer;
 }
 
 int get_index_size(const Index_ptr hindex){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return hindex->size;
 }
 
 int get_number_of_edges(const Index_ptr hindex){
     if(hindex==NULL){
-        error_val=INDEX_NULL_HEAD;
+        print_errorv(INDEX_NULL_HEAD);
+        /*error_val=INDEX_NULL_HEAD;*/
         return INDEX_NULL_HEAD;
     }
-    error_val=OK_SUCCESS;
+    /*error_val=OK_SUCCESS;*/
     return hindex->edges;
 }
 

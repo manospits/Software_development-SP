@@ -19,15 +19,15 @@ pvis create_visited(int size){
     pvis a;
     int i;
     if(size<=0){
-        /*error_val=VISITED_WRONG_PARAMTERS;*/
+        print_errorv(VISITED_WRONG_PARAMETERS);
         return NULL;
     }
     if((a=malloc(sizeof(struct visited_head)))==NULL){
-        /*error_val=VISITED_MALLOC_ERROR;*/
+        print_errorv(VISITED_MALLOC_ERROR);
         return NULL;
     }
     if((a->nodes=malloc(size*sizeof(struct visited_node)))==NULL){
-        /*error_val=VISITED_MALLOC_ERROR;*/
+        print_errorv(VISITED_MALLOC_ERROR);
         return NULL;
     }
     a->size=size;
@@ -42,7 +42,7 @@ pvis create_visited(int size){
 
 rcode v_mark(pvis a,uint32_t data,int tag,int expanded){
     if(data >= a->size || (tag !=1&&tag!=0)||(expanded!=0&&expanded!=1)){
-        //TODO
+        print_errorv(VISITED_WRONG_PARAMETERS);
     }
     a->nodes[data].mark=a->loop_count;
     a->nodes[data].tag=tag;
