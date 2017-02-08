@@ -24,18 +24,21 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
     int visited_version=1;
     int i,k,l,posa,posb;
     if((g=malloc(sizeof(GrailIndex)))==NULL){
-        error_val=GRAIL_MALLOC_FAIL;
+        print_errorv(GRAIL_MALLOC_FAIL);
+        /*error_val=GRAIL_MALLOC_FAIL;*/
         return NULL;
     }
     g->gindex_size=get_number_of_components(s);
     if((g->gindex=malloc(g->gindex_size*sizeof(struct Gnode)))==NULL){
         free(g);
-        error_val=GRAIL_MALLOC_FAIL;
+        print_errorv(GRAIL_MALLOC_FAIL);
+        /*error_val=GRAIL_MALLOC_FAIL;*/
         return NULL;
     }
     if((visited=malloc(g->gindex_size*sizeof(int)))==NULL){
         free(g);
-        error_val=GRAIL_MALLOC_FAIL;
+        print_errorv(GRAIL_MALLOC_FAIL);
+        /*error_val=GRAIL_MALLOC_FAIL;*/
         return NULL;
     }
     for(i=0;i<g->gindex_size;i++){
@@ -70,7 +73,8 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                                 size_n<<=1;
                             }
                             if((neighbors_copy=malloc(size_n*sizeof(uint32_t)))==NULL){
-                                error_val=GRAIL_MALLOC_FAIL;
+                                print_errorv(GRAIL_MALLOC_FAIL);
+                                /*error_val=GRAIL_MALLOC_FAIL;*/
                                 return NULL;
                             }
                             neighbors_copy_size=size_n;
@@ -81,7 +85,8 @@ Grail buildGrailIndex(pSCC s,phead nodes,phead nodesp){
                                 size_n<<=1;
                             }
                             if((neighbors_copy=realloc(neighbors_copy,size_n*sizeof(uint32_t)))==NULL){
-                                error_val=GRAIL_MALLOC_FAIL;
+                                print_errorv(GRAIL_MALLOC_FAIL);
+                                /*error_val=GRAIL_MALLOC_FAIL;*/
                                 return NULL;
                             }
                             neighbors_copy_size=size_n;

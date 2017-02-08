@@ -237,6 +237,10 @@ void print_error(){
             fprintf(stderr, "Error: estimating Strongly Connected Components for static graph failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAIL_MALLOC_FAIL:
+            fprintf(stderr, "Error: Allocating memory for grail index failed\n");
+            error_val=OK_SUCCESS;
+            break;
         case GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL:
             fprintf(stderr, "Error: estimating Strongly Connected Components' neighbors for static graph failed\n");
             error_val=OK_SUCCESS;
@@ -481,6 +485,7 @@ void print_errorv(int error_val){
             fprintf(stderr, "Error: Memory reallocation in list pool failed\n");
             error_val=OK_SUCCESS;
             break;
+
         case SCC_MALLOC_FAIL_BASIC_STRUCT:
             fprintf(stderr, "Error: malloc for SCC structure failed\n");
             error_val=OK_SUCCESS;
@@ -547,6 +552,10 @@ void print_errorv(int error_val){
             break;
         case GRAPH_CREATE_STATIC_INDEX_SCCS_FAIL:
             fprintf(stderr, "Error: estimating Strongly Connected Components for static graph failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAIL_MALLOC_FAIL:
+            fprintf(stderr, "Error: Allocating memory for grail index failed\n");
             error_val=OK_SUCCESS;
             break;
         case GRAPH_CREATE_STATIC_INDEX_ESTIMATE_SCCS_NEIGHBORS_FAIL:
