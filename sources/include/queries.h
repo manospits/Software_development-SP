@@ -21,13 +21,13 @@ qphead q_cr_list();
 rcode q_ds_list(qphead list_to_destroy);
 rcode q_empty_list(qphead list_to_empty);
 //MODIFY
-rcode q_insert_back(qphead listh,uint32_t query_id,uint32_t nodea,uint32_t nodeb,long unsigned int version);          //inserts node in back
-rcode q_pop_front(qphead listh);                         //deletes first node in list
+rcode q_insert_back(qphead listh,uint32_t query_id,uint32_t nodea,uint32_t nodeb,long unsigned int version);          //inserts querie in back
+rcode q_pop_front(qphead listh);                         //deletes first querie in list
 
 //ACCESS
-int q_get_size(const qphead listh);                     //get number of elements
-qpnode q_peek(const qphead listh);                      //returns list's first querie
-qpnode q_peek_back(const qphead listh);                    //returns list's first int
+int q_get_size(const qphead listh);                     //get number of queries
+qpnode q_peek(const qphead listh);                      //returns list's front querie
+qpnode q_peek_back(const qphead listh);                 //returns querie list's back querie
 
 
 
