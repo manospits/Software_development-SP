@@ -96,5 +96,6 @@ extern int error_val;
 #define VISITED_MALLOC_ERROR -85
 #define VISITED_REALLOC_FAIL -86
 //continue with 88
+#define GRAPH_CREATION_CR_LIST_FAIL -88
 
 #endif

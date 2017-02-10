@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     *results_array = NULL;
     if (graph == NULL)
     {
-        print_error();
+        //print_error();
         fprintf(stderr, "An error occurred during graph creation.\nExiting...\n");
         return -1;
     }
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         ret_val = gAddEdge(graph, node1, node2);
         if (ret_val < 0)
         {
-            print_error();
+            //print_error();
             fprintf(stderr, "Error(s) found while processing initial graph file (line %lu)\nExiting...\n", i);
             fclose(initial_graph);
             fclose(workload);
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     puts("Building assistant structures/indexes...");
     if ((scheduler = initialize_scheduler(THREAD_POOL_SIZE, graph, results_array,&queries,&updated_queries)) == NULL)
     {
-        print_error();
+        //print_error();
         fprintf(stderr, "An error occurred during job scheduler initialization.\nExiting...\n");
         fclose(initial_graph);
         fclose(workload);
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
     {
         if (create_indexes(graph,DYNAMIC) < 0)
         {
-            print_error();
+            //print_error();
             fprintf(stderr, "Error creating assistant structures/indexes for dynamic graph\n");
             fclose(initial_graph);
             fclose(workload);
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     {
         if (create_indexes(graph,STATIC) < 0)
         {
-            print_error();
+            //print_error();
             fprintf(stderr, "Error creating assistant structures/indexes for static graph\n");
             fclose(initial_graph);
             fclose(workload);
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
                 ret_val = gAddEdge_t(graph, node1, node2,version);
                 if (ret_val < 0)
                 {
-                    print_error();
+                    //print_error();
                     fprintf(stderr, "Error(s) found while processing workload file (line %lu)\nExiting...\n", i);
                     fclose(initial_graph);
                     fclose(workload);
@@ -320,7 +320,7 @@ int main(int argc, char *argv[])
                 submit_job(scheduler, query_counter-1, node1, node2, 1);    // we pass query_counter -1 as argument, so that the thread will place the result in the correct position in the array
                 if (error_val)
                 {
-                    print_error();
+                    //print_error();
                     fprintf(stderr, "Error submitting a new job to scheduler (line %lu)\nExiting...\n", i);
                     fclose(initial_graph);
                     fclose(workload);
