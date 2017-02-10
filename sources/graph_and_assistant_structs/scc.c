@@ -49,7 +49,8 @@ int add_node_to_component(pSCC sccs, uint32_t nodeId)
         sccs->components[sccs->components_count - 1].array_size *= 2;
         if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].array_size)*sizeof(uint32_t))) == NULL)
         {
-            error_val = SCC_ADD_COMPONENT_REALLOC_FAIL;
+            //error_val = SCC_ADD_COMPONENT_REALLOC_FAIL;
+            print_errorv(SCC_ADD_COMPONENT_REALLOC_FAIL);
             return SCC_ADD_COMPONENT_REALLOC_FAIL;
         }
     }
@@ -393,13 +394,15 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
     {   // temp buffer is retrieved outside of main loop; no point in extracting the same info every time, we do it once since temp_buffer value won't change
         print_error();
-        error_val = TARJAN_BUFFER_RETRIEVAL_FAIL;
+        //error_val = TARJAN_BUFFER_RETRIEVAL_FAIL;
+        print_errorv(TARJAN_BUFFER_RETRIEVAL_FAIL);
         return TARJAN_BUFFER_RETRIEVAL_FAIL;
     }
     if (insert_back(stack, nodeId) < 0)
     {
         print_error();
-        error_val = TARJAN_STACK_INSERT_FAIL;
+        //error_val = TARJAN_STACK_INSERT_FAIL;
+        print_errorv(TARJAN_STACK_INSERT_FAIL);
         return TARJAN_STACK_INSERT_FAIL;
     }
     flags[nodeId].onStack = 1;
@@ -413,7 +416,8 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     if (buffer_ptr_to_listnode < -1)
     {   // an error occurred
         print_error();
-        error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+        //error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+        print_errorv(TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL);
         return TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
     }
     else if (buffer_ptr_to_listnode == -1)
@@ -425,7 +429,8 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
         if ((flags[nodeId].listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
         {
             print_error();
-            error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+            //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+            print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
         }
     }
@@ -446,8 +451,9 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                 {   // index is undefined -> neighbor not visited yet
                     if (insert_back(stack, listnode->neighbor[i]) < 0)
                     {
-                        print_error();
-                        error_val = TARJAN_STACK_INSERT_FAIL;
+                        //print_error();
+                        //error_val = TARJAN_STACK_INSERT_FAIL;
+                        print_errorv(TARJAN_STACK_INSERT_FAIL);
                         return TARJAN_STACK_INSERT_FAIL;
                     }
                     flags[listnode->neighbor[i]].onStack = 1;
@@ -460,8 +466,9 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), listnode->neighbor[i]);
                     if (buffer_ptr_to_listnode < -1)
                     {   // an error occurred
-                        print_error();
-                        error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+                        //print_error();
+                        //error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+                        print_errorv(TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL);
                         return TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
                     }
                     else if (buffer_ptr_to_listnode == -1)
@@ -472,8 +479,9 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                     {
                         if ((flags[listnode->neighbor[i]].listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
                         {
-                            print_error();
-                            error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                            //print_error();
+                            //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                            print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
                             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
                         }
                     }
@@ -484,8 +492,9 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                             flags[recursive_top].listnode = NULL;
                         else if ((flags[recursive_top].listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                         {
-                            print_error();
-                            error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                            //print_error();
+                            //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                            print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
                             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
                         }
                         flags[recursive_top].next_child = 0;
@@ -509,8 +518,9 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
                         break;
                     if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                     {
-                        print_error();
-                        error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                        //print_error();
+                        //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                        print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
                         return TARJAN_LISTNODE_RETRIEVAL_FAIL;
                     }
                     i = 0;
@@ -532,7 +542,8 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
             sccs->components[sccs->components_count].array_size = 8;
             if ((sccs->components[sccs->components_count].included_node_ids = malloc((sccs->components[sccs->components_count].array_size)*sizeof(uint32_t))) == NULL)
             {
-                error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+                //error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+                print_errorv(TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL);
                 return TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
             }
             (sccs->components_count)++;
@@ -540,27 +551,31 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
             {
                 if ((temp_node_for_scc_creation = peek_back(stack)) < 0)
                 {
-                    print_error();
-                    error_val = TARJAN_STACK_PEEK_FAIL;
+                    //print_error();
+                    //error_val = TARJAN_STACK_PEEK_FAIL;
+                    print_errorv(TARJAN_STACK_PEEK_FAIL);
                     return TARJAN_STACK_PEEK_FAIL;
                 }
                 if (pop_back(stack) < 0)
                 {
-                    print_error();
-                    error_val = TARJAN_STACK_POP_FAIL;
+                    //print_error();
+                    //error_val = TARJAN_STACK_POP_FAIL;
+                    print_errorv(TARJAN_STACK_POP_FAIL);
                     return TARJAN_STACK_POP_FAIL;
                 }
                 flags[temp_node_for_scc_creation].onStack = 0;
                 if (add_node_to_component(sccs, temp_node_for_scc_creation) < 0)
                 {
-                    print_error();
-                    error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+                    //print_error();
+                    //error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+                    print_errorv(TARJAN_ADD_NODE_TO_COMPONENT_FAIL);
                     return TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
                 }
             }while(temp_node_for_scc_creation != recursive_top);
             if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].included_nodes_count)*sizeof(uint32_t))) == NULL)
             {
-                error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+                //error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+                print_errorv(TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL);
                 return TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
             }
             // ATTENTION: array_size field now is wrong; size now is included_nodes_count*sizeof()
@@ -583,8 +598,9 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
     (*tarjan_index_param)++;
     if (insert_back(stack, nodeId) < 0)
     {
-        print_error();
-        error_val = TARJAN_STACK_INSERT_FAIL;
+        //print_error();
+        //error_val = TARJAN_STACK_INSERT_FAIL;
+        print_errorv(TARJAN_STACK_INSERT_FAIL);
         return TARJAN_STACK_INSERT_FAIL;
     }
     flags[nodeId].onStack = 1;
@@ -593,22 +609,25 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
     buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), nodeId);
     if (buffer_ptr_to_listnode < -1)
     {   // an error occurred
-        print_error();
-        error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+        //print_error();
+        //error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
+        print_errorv(TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL);
         return TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
     }
     else if (buffer_ptr_to_listnode != -1)
     {   // if buffer_ptr_to_listnode == -1 then node has no neighbors, so continue to the end
         if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
         {
-            print_error();
-            error_val = TARJAN_BUFFER_RETRIEVAL_FAIL;
+            //print_error();
+            //error_val = TARJAN_BUFFER_RETRIEVAL_FAIL;
+            print_errorv(TARJAN_BUFFER_RETRIEVAL_FAIL);
             return TARJAN_BUFFER_RETRIEVAL_FAIL;
         }
         if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
         {
-            print_error();
-            error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+            //print_error();
+            //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+            print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
         }
         i = 0;
@@ -631,8 +650,9 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
                     break;
                 if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                 {
-                    print_error();
-                    error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                    //print_error();
+                    //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
+                    print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
                     return TARJAN_LISTNODE_RETRIEVAL_FAIL;
                 }
                 i = 0;
@@ -648,7 +668,8 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
         sccs->components[sccs->components_count].array_size = 8;
         if ((sccs->components[sccs->components_count].included_node_ids = malloc((sccs->components[sccs->components_count].array_size)*sizeof(uint32_t))) == NULL)
         {
-            error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+            //error_val = TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
+            print_errorv(TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL);
             return TARJAN_COMPONENT_INIT_ARRAY_MALLOC_FAIL;
         }
         (sccs->components_count)++;
@@ -656,27 +677,31 @@ rcode tarjan_rec(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32_
         {
             if ((temp = peek_back(stack)) < 0)
             {
-                print_error();
-                error_val = TARJAN_STACK_PEEK_FAIL;
+                //print_error();
+                //error_val = TARJAN_STACK_PEEK_FAIL;
+                print_errorv(TARJAN_STACK_PEEK_FAIL);
                 return TARJAN_STACK_PEEK_FAIL;
             }
             if (pop_back(stack) < 0)
             {
-                print_error();
-                error_val = TARJAN_STACK_POP_FAIL;
+                //print_error();
+                //error_val = TARJAN_STACK_POP_FAIL;
+                print_errorv(TARJAN_STACK_POP_FAIL);
                 return TARJAN_STACK_POP_FAIL;
             }
             flags[temp].onStack = 0;
             if (add_node_to_component(sccs, temp) < 0)
             {
-                print_error();
-                error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+                //print_error();
+                //error_val = TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
+                print_errorv(TARJAN_ADD_NODE_TO_COMPONENT_FAIL);
                 return TARJAN_ADD_NODE_TO_COMPONENT_FAIL;
             }
         }while(temp != nodeId);
         if ((sccs->components[sccs->components_count - 1].included_node_ids = realloc(sccs->components[sccs->components_count - 1].included_node_ids, (sccs->components[sccs->components_count - 1].included_nodes_count)*sizeof(uint32_t))) == NULL)
         {
-            error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+            //error_val = TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
+            print_errorv(TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL);
             return TARJAN_COMPONENT_FINALIZE_ARRAY_REALLOC_FAIL;
         }
         // ATTENTION: array_size field now is wrong; size now is included_nodes_count*sizeof()
@@ -695,27 +720,31 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
     // create & initialize scss
     if ((sccs = malloc(sizeof(_scc))) == NULL)
     {
-        error_val = SCC_MALLOC_FAIL_BASIC_STRUCT;
+        //error_val = SCC_MALLOC_FAIL_BASIC_STRUCT;
+        print_errorv(SCC_MALLOC_FAIL_BASIC_STRUCT);
         return NULL;
     }
     sccs->components_count = 0;
     sccs->number_of_nodes = ret_biggest_node(ret_outIndex(graph)) + 1;  // first node is 0
     if ((sccs->components = malloc((sccs->number_of_nodes)*sizeof(_component))) == NULL)
     {
-        error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        //error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        print_errorv(SCC_MALLOC_FAIL_IDS_ARRAY);
         free(sccs);
         return NULL;
     }
     if ((sccs->id_belongs_to_component = malloc((sccs->number_of_nodes)*sizeof(uint32_t))) == NULL)
     {
-        error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        //error_val = SCC_MALLOC_FAIL_IDS_ARRAY;
+        print_errorv(SCC_MALLOC_FAIL_IDS_ARRAY);
         free(sccs->components);
         free(sccs);
         return NULL;
     }
     if ((flags = malloc((sccs->number_of_nodes)*sizeof(scc_flags))) == NULL)
     {
-        error_val = SCC_MALLOC_FAIL_FLAGS_ARRAY;
+        //error_val = SCC_MALLOC_FAIL_FLAGS_ARRAY;
+        print_errorv(SCC_MALLOC_FAIL_FLAGS_ARRAY);
         free(sccs->id_belongs_to_component);
         free(sccs->components);
         free(sccs);
@@ -737,7 +766,8 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         free(flags);
         free(sccs->id_belongs_to_component);
         free(sccs);
-        error_val = SCC_STACK_CREATION_FAIL;
+        //error_val = SCC_STACK_CREATION_FAIL;
+        print_errorv(SCC_STACK_CREATION_FAIL);
         return NULL;
     }
 
@@ -747,17 +777,19 @@ pSCC estimateStronglyConnectedComponents(pGraph graph)
         if (flags[i].index == UINT_MAX) // UINT_MAX means that the node is undefined - could be replaced with special field, but this way uses less memory
             if (tarjan_iter(graph, sccs, stack, flags, &index, i) != OK_SUCCESS)
             {
-                print_error();
+                //print_error();
                 free(flags);
                 free(sccs->id_belongs_to_component);
                 free(sccs);
                 ds_list(stack);
-                error_val = SCC_TARJAN_FAIL;
+                //error_val = SCC_TARJAN_FAIL;
+                print_errorv(SCC_TARJAN_FAIL);
                 return NULL;
             }
     if ((sccs->components = realloc(sccs->components, sccs->components_count*sizeof(_component))) == NULL)
     {
-        error_val = SCC_FINAL_REALLOC_FAIL;
+        //error_val = SCC_FINAL_REALLOC_FAIL;
+        print_errorv(SCC_FINAL_REALLOC_FAIL);
         free(sccs->id_belongs_to_component);
         if (sccs->components != NULL) free(sccs->components);
         free(sccs);
@@ -775,7 +807,8 @@ int add_component_neighbor(pComponent comp, uint32_t neighborId)
     {
         if ((comp->neighbor_ids = malloc(sizeof(uint32_t))) == NULL)
         {
-            error_val = SCC_ADD_COMPONENT_NEIGHBOR_MALLOC_FAIL;
+            //error_val = SCC_ADD_COMPONENT_NEIGHBOR_MALLOC_FAIL;
+            print_errorv(SCC_ADD_COMPONENT_NEIGHBOR_MALLOC_FAIL);
             return SCC_ADD_COMPONENT_NEIGHBOR_MALLOC_FAIL;
         }
         comp->neighbor_ids[0] = neighborId;
@@ -786,7 +819,8 @@ int add_component_neighbor(pComponent comp, uint32_t neighborId)
         (comp->neighbors_count)++;
         if ((comp->neighbor_ids = realloc(comp->neighbor_ids, (comp->neighbors_count)*sizeof(uint32_t))) == NULL)
         {
-            error_val = SCC_ADD_COMPONENT_NEIGHBOR_REALLOC_FAIL;
+            //error_val = SCC_ADD_COMPONENT_NEIGHBOR_REALLOC_FAIL;
+            print_errorv(SCC_ADD_COMPONENT_NEIGHBOR_REALLOC_FAIL);
             return SCC_ADD_COMPONENT_NEIGHBOR_REALLOC_FAIL;
         }
         comp->neighbor_ids[comp->neighbors_count - 1] = neighborId;
@@ -803,7 +837,8 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
     uint32_t *component_flags, i, j, k;
     if ((component_flags = calloc(sccs->components_count, sizeof(uint32_t))) == NULL)
     {
-        error_val = SCC_NEIGHBORS_FLAGS_CALLOC_FAIL;
+        //error_val = SCC_NEIGHBORS_FLAGS_CALLOC_FAIL;
+        print_errorv(SCC_NEIGHBORS_FLAGS_CALLOC_FAIL);
         return SCC_NEIGHBORS_FLAGS_CALLOC_FAIL;
     }
     // flags is used to check whether this neighbor has already been added to current component
@@ -819,22 +854,25 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
             buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), sccs->components[j].included_node_ids[i]);
             if (buffer_ptr_to_listnode < -1)
             {   // an error occurred
-                print_error();
-                error_val = SCC_NEIGHBORS_BUFFER_POINTER_RETRIEVAL_FAIL;
+                //print_error();
+                //error_val = SCC_NEIGHBORS_BUFFER_POINTER_RETRIEVAL_FAIL;
+                print_errorv(SCC_NEIGHBORS_BUFFER_POINTER_RETRIEVAL_FAIL);
                 return SCC_NEIGHBORS_BUFFER_POINTER_RETRIEVAL_FAIL;
             }
             else if (buffer_ptr_to_listnode != -1)
             {   // if buffer_ptr_to_listnode == -1 then node has no neighbors, so continue to the end
                 if ((temp_buffer = return_buffer(ret_outIndex(graph))) == NULL)
                 {
-                    print_error();
-                    error_val = SCC_NEIGHBORS_BUFFER_RETRIEVAL_FAIL;
+                    //print_error();
+                    //error_val = SCC_NEIGHBORS_BUFFER_RETRIEVAL_FAIL;
+                    print_errorv(SCC_NEIGHBORS_BUFFER_RETRIEVAL_FAIL);
                     return SCC_NEIGHBORS_BUFFER_RETRIEVAL_FAIL;
                 }
                 if ((listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
                 {
-                    print_error();
-                    error_val = SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
+                    //print_error();
+                    //error_val = SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
+                    print_errorv(SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL);
                     return SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
                 }
                 k = 0;
@@ -847,7 +885,8 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
                             component_flags[sccs->id_belongs_to_component[listnode->neighbor[k]]] = sccs->components[j].component_id + 1;
                             if (add_component_neighbor(&(sccs->components[j]), sccs->id_belongs_to_component[listnode->neighbor[k]]) < 0)
                             {
-                                error_val = SCC_NEIGHBORS_ADD_COMPONENT_FAIL;
+                                //error_val = SCC_NEIGHBORS_ADD_COMPONENT_FAIL;
+                                print_errorv(SCC_NEIGHBORS_ADD_COMPONENT_FAIL);
                                 return SCC_NEIGHBORS_ADD_COMPONENT_FAIL;
                             }
                         }
@@ -860,8 +899,9 @@ int estimateSCCsNeighbors(pSCC sccs, pGraph graph)
                             break;
                         if ((listnode = getListNode(temp_buffer, listnode->nextListNode)) == NULL)
                         {
-                            print_error();
-                            error_val = SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
+                            //print_error();
+                            //error_val = SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
+                            print_errorv(SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL);
                             return SCC_NEIGHBORS_LISTNODE_RETRIEVAL_FAIL;
                         }
                         k = 0;
