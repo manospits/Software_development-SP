@@ -515,25 +515,6 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
     return OK_SUCCESS;
 }
 
-int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
-    if(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc){
-        return 1;
-    }
-    else if(c->updated[c->ccindex[nodeida].cc]<c->version || c->updated[c->ccindex[nodeidb].cc]<c->version){
-        return 0;
-    }
-    else{
-        int sizea=st_get_size(c->UpdateIndex.uindex[c->ccindex[nodeida].cc]);
-        int sizeb=st_get_size(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]);
-        if(sizea<sizeb){
-            return st_in(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeidb].cc);
-        }
-        else{
-            return st_in(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeida].cc);
-        }
-    }
-}
-
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
     int m,a,b,ucca,uccb;
     c->queries++;
