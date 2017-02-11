@@ -128,6 +128,10 @@ void print_error(){
             fprintf(stderr, "Error: malloc for a graph index failed\n");
             error_val=OK_SUCCESS;
             break;
+        case GRAPH_CREATION_CR_LIST_FAIL:
+            fprintf(stderr, "Error: creating an open_intlist for a graph index failed\n");
+            error_val=OK_SUCCESS;
+            break;
         case GRAPH_SEARCH_INIT_STRUCTS_FAIL:
             fprintf(stderr, "Error: initializing structs for graph search failed\n");
             error_val=OK_SUCCESS;
@@ -443,6 +447,10 @@ void print_errorv(int error_val){
             break;
         case GRAPH_CREATION_INDEX_MALLOC_FAIL:
             fprintf(stderr, "Error: malloc for a graph index failed\n");
+            error_val=OK_SUCCESS;
+            break;
+        case GRAPH_CREATION_CR_LIST_FAIL:
+            fprintf(stderr, "Error: creating an open_intlist for a graph index failed\n");
             error_val=OK_SUCCESS;
             break;
         case GRAPH_SEARCH_INIT_STRUCTS_FAIL:
