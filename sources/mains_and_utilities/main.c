@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
                 }
                 execute_all_jobs(scheduler, query_counter);
                 wait_all_tasks_finish(scheduler);
-                /*rebuild_t(graph,&queries,&updated_queries);*/
+                rebuild_t(graph,&queries,&updated_queries);
                 // output the results
                 for (j = 0 ; j < query_counter ; ++j)
                     fprintf(results, "%d\n", (*results_array)[j]);
