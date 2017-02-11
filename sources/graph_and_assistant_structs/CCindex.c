@@ -54,7 +54,8 @@ typedef struct findret{
     stpnode b;
 }findret;
 
-int unify(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
+int unify(CC_index c,uint32_t cca,uint32_t ccb);
+int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
 
 CC_index CC_create_index(pGraph g){
@@ -303,7 +304,7 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
             c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
             st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,version);
         }
-        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc,version);
+        unify_t(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc,0);
         if(c->updated[c->ccindex[nodeida].cc]<c->version){
             c->updated[c->ccindex[nodeida].cc]=c->version;
         }
@@ -335,6 +336,21 @@ findret find_last(CC_index c,uint32_t cc){
         tmpnode=st_peek_back_node(c->UpdateIndex.uindex[tmpnode->data]);
         tmpnode->data=retval.b->data;
     }
+    return retval;
+}
+
+findret find_last_nc(CC_index c,uint32_t cc){
+    stpnode tmpnode;
+    findret retval;
+    uint32_t ccnum;
+    tmpnode=st_peek_back_node(c->UpdateIndex.uindex[cc]);
+    ccnum=cc;
+    while(ccnum!=tmpnode->data){
+        ccnum=tmpnode->data;
+        tmpnode=st_peek_back_node(c->UpdateIndex.uindex[tmpnode->data]);
+    }
+    retval.a=c->UpdateIndex.uindex[cc];
+    retval.b=tmpnode;
     return retval;
 }
 
@@ -400,9 +416,30 @@ findret find(CC_index c,uint32_t cc,uint32_t version){
     return retval;
 }
 
-int unify(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
-    findret ccarootinfo=find(c,cca,version);
-    findret ccbrootinfo=find(c,ccb,version);
+int unify(CC_index c,uint32_t cca,uint32_t ccb){
+    findret ccarootinfo=find_last(c,cca);
+    findret ccbrootinfo=find_last(c,ccb);
+    stpnode xroot=ccarootinfo.b;
+    stpnode yroot=ccbrootinfo.b;
+    if(xroot->data==yroot->data){
+        return OK_SUCCESS;
+    }
+    if (xroot->data2<yroot->data2){
+        xroot->data=yroot->data;
+    }
+    else if(xroot->data2>yroot->data2){
+        yroot->data=xroot->data;
+    }
+    else{
+        yroot->data=xroot->data;
+        xroot->data2+=1;
+    }
+    return OK_SUCCESS;
+}
+
+int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
+    findret ccarootinfo=find_last_nc(c,cca);
+    findret ccbrootinfo=find_last_nc(c,ccb);
     stpnode xroot=ccarootinfo.b;
     stpnode yroot=ccbrootinfo.b;
     if(xroot->data==yroot->data){
@@ -503,7 +540,7 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
             c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
             st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,0);
         }
-        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc,0);
+        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc);
         if(c->updated[c->ccindex[nodeida].cc]<c->version){
             c->updated[c->ccindex[nodeida].cc]=c->version;
         }
