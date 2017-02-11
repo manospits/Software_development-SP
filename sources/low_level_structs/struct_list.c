@@ -78,6 +78,29 @@ rcode st_insert_back(stphead listh,uint32_t data,uint32_t tag){
     listh->elements++;
     return OK_SUCCESS;
 }
+rcode st_insert_back2(stphead listh,uint32_t data,uint32_t data2 ,uint32_t tag){
+    if(listh==NULL){
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
+        return NULL_LIST;
+    }
+    int pos,newsize;
+    if(listh->elements+1>listh->size){
+        newsize=listh->size*2;
+        listh->array_queue=realloc(listh->array_queue,newsize*sizeof(struct stnode));
+        if(listh->front!=0){
+            memcpy(&listh->array_queue[newsize-(listh->size-listh->front)],&listh->array_queue[listh->front],(listh->size-listh->front)*sizeof(struct stnode));
+            listh->front=newsize-(listh->size-listh->front);
+        }
+        listh->size=newsize;
+    }
+    pos=(listh->front+listh->elements)%listh->size;
+    listh->array_queue[pos].data=data;
+    listh->array_queue[pos].data2=data2;
+    listh->array_queue[pos].tag=tag;
+    listh->elements++;
+    return OK_SUCCESS;
+}
 
 rcode st_pop_front(stphead listh){
     if(listh==NULL){
@@ -125,6 +148,17 @@ int st_peek_back(const stphead listh){
     /*error_val=OK_SUCCESS;*/
     int pos=(listh->front+listh->elements-1)%listh->size;
     return listh->array_queue[pos].data;
+}
+
+stpnode st_peek_back_node(const stphead listh){
+    if(listh==NULL){
+        print_errorv(NULL_LIST);
+        /*error_val=NULL_LIST;*/
+        return NULL;
+    }
+    /*error_val=OK_SUCCESS;*/
+    int pos=(listh->front+listh->elements-1)%listh->size;
+    return &listh->array_queue[pos];
 }
 
 int st_get_tag(const stphead listh,uint32_t data){

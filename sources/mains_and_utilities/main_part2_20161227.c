@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
         if (command == 'F')
         {
             if(type==DYNAMIC){
-                rebuild(graph);
+                /*rebuild(graph);*/
             }
             if (fgets(typebuf,255,workload) ==NULL)
                 break;

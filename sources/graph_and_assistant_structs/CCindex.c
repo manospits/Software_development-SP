@@ -32,7 +32,6 @@ typedef struct CC{
     UpdateIndex UpdateIndex;
     lpool lists;
     phead idlist;
-    phead uidlist;
     int *updated; //
     int *marked; //
     int *markedrebuild;
@@ -50,8 +49,13 @@ typedef struct CC{
     uint32_t metricVal;
 } CC;
 
+typedef struct findret{
+    stphead a;
+    stpnode b;
+}findret;
+
+int unify(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
-int CC_findNodeConnectedComponentID_t(CC_index c,uint32_t nodeid,pvis visited,phead idlist,int version);
 
 CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
@@ -74,7 +78,6 @@ CC_index CC_create_index(pGraph g){
         tmp->ccindex[i].version=0;
     }
     tmp->idlist=cr_list();
-    tmp->uidlist=cr_list();
     tmp->version=0;
     tmp->check=0;
     tmp->checkrebuild=0;
@@ -221,9 +224,7 @@ CC_index CC_create_index(pGraph g){
 }
 
 rcode CC_destroy(CC_index c){
-    printf("Total queries %d \nUpdated queries %d\n",c->total_queries,c->total_update_queries);
     ds_list(c->idlist);
-    ds_list(c->uidlist);
     ds_pool(c->lists);
     free(c->ccindex);
     free(c->updated);
@@ -238,6 +239,9 @@ rcode CC_destroy(CC_index c){
 
 rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t version){
     uint32_t max=nodeidb;
+    if(nodeida==nodeidb){
+        return OK_SUCCESS;
+    }
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
     if(max>=c->index_size){
         int prev_size=c->index_size;
@@ -290,23 +294,157 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
             c->ccindex[nodeidb].version=version;
         }
     }
-    else if(!same_component_edge(c,nodeida,nodeidb)){
+    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){
+        if(c->updated[c->ccindex[nodeida].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeida].cc,0,version);
+        }
+        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,version);
+        }
+        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc,version);
         if(c->updated[c->ccindex[nodeida].cc]<c->version){
             c->updated[c->ccindex[nodeida].cc]=c->version;
-            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
         }
         if(c->updated[c->ccindex[nodeidb].cc]<c->version){
             c->updated[c->ccindex[nodeidb].cc]=c->version;
-            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
         }
-        st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeidb].cc,version);
-        st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeida].cc,version);
     }
     /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
+findret find_last(CC_index c,uint32_t cc){
+    stpnode tmpnode;
+    findret retval;
+    uint32_t ccnum;
+    tmpnode=st_peek_back_node(c->UpdateIndex.uindex[cc]);
+    ccnum=cc;
+    while(ccnum!=tmpnode->data){
+        insert_back(c->idlist,ccnum);
+        ccnum=tmpnode->data;
+        tmpnode=st_peek_back_node(c->UpdateIndex.uindex[tmpnode->data]);
+    }
+    retval.a=c->UpdateIndex.uindex[cc];
+    retval.b=tmpnode;
+    while(get_size(c->idlist) > 0)
+    {
+        ccnum=peek_back(c->idlist);
+        pop_back(c->idlist);
+        tmpnode=st_peek_back_node(c->UpdateIndex.uindex[tmpnode->data]);
+        tmpnode->data=retval.b->data;
+    }
+    return retval;
+}
+
+findret find(CC_index c,uint32_t cc,uint32_t version){
+    stpnode tmpnode,startingnode=NULL;
+    findret retval;
+    uint32_t ccnum;
+    iterator it,it2;
+    it=st_ret_iterator(c->UpdateIndex.uindex[cc]);
+    while(it!=-1){
+        tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[cc],it);
+        if(tmpnode->tag<=version){
+            startingnode=tmpnode;
+        }
+        else{
+            break;
+        }
+        it=st_advance_iterator(c->UpdateIndex.uindex[cc],it);
+    }
+    tmpnode=startingnode;
+    ccnum=cc;
+    /*if(ccnum!=tmpnode->data){*/
+        /*it2=st_ret_iterator(c->UpdateIndex.uindex[tmpnode->data]);*/
+        /*ccnum=tmpnode->data;*/
+        /*while(it2!=-1){*/
+            /*tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmpnode->data],it2);*/
+            /*if(tmpnode->tag<=version){*/
+                /*startingnode=tmpnode;*/
+            /*}*/
+            /*else{*/
+                /*break;*/
+            /*}*/
+            /*it2=st_advance_iterator(c->UpdateIndex.uindex[tmpnode->data],it2);*/
+        /*}*/
+        /*retval=find(c,startingnode->data,version);*/
+    /*}*/
+    /*else{*/
+        /*retval.a=c->UpdateIndex.uindex[cc];*/
+        /*retval.b=checkingnode;*/
+    /*}*/
+    if(startingnode==NULL){
+        retval.a=NULL;
+        retval.b=NULL;
+        return retval;
+    }
+    while(ccnum!=tmpnode->data){
+        it2=st_ret_iterator(c->UpdateIndex.uindex[tmpnode->data]);
+        ccnum=tmpnode->data;
+        while(it2!=-1){
+            tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmpnode->data],it2);
+            if(tmpnode->tag<=version){
+                startingnode=tmpnode;
+            }
+            else{
+                break;
+            }
+            it2=st_advance_iterator(c->UpdateIndex.uindex[tmpnode->data],it2);
+        }
+        tmpnode=startingnode;
+    }
+    retval.a=c->UpdateIndex.uindex[tmpnode->data];
+    retval.b=tmpnode;
+    return retval;
+}
+
+int unify(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
+    findret ccarootinfo=find(c,cca,version);
+    findret ccbrootinfo=find(c,ccb,version);
+    stpnode xroot=ccarootinfo.b;
+    stpnode yroot=ccbrootinfo.b;
+    if(xroot->data==yroot->data){
+        return OK_SUCCESS;
+    }
+    if (xroot->data2<yroot->data2){
+        if(xroot->tag<version){
+            st_insert_back2(ccarootinfo.a,yroot->data,xroot->data2,version);
+        }
+        else{
+            xroot->data=yroot->data;
+        }
+    }
+    else if(xroot->data2>yroot->data2){
+        if(yroot->tag<version){
+            st_insert_back2(ccbrootinfo.a,xroot->data,yroot->data2,version);
+        }
+        else{
+            yroot->data=xroot->data;
+        }
+    }
+    else{
+        if(yroot->tag<version){
+            st_insert_back2(ccbrootinfo.a,xroot->data,yroot->data2,version);
+        }
+        else{
+            yroot->data=xroot->data;
+        }
+        if(xroot->tag<version){
+            st_insert_back2(ccarootinfo.a,xroot->data,xroot->data2+1,version);
+        }
+        else{
+            xroot->data2+=1;
+        }
+    }
+    return OK_SUCCESS;
+}
+
 rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
+    if(nodeida==nodeidb){
+        return OK_SUCCESS;
+    }
     uint32_t max=nodeidb;
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
     if(max>=c->index_size){
@@ -356,17 +494,22 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
             c->ccindex[nodeidb].cc=c->ccindex[nodeida].cc;
         }
     }
-    else if(!same_component_edge(c,nodeida,nodeidb)){
+    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){
+        if(c->updated[c->ccindex[nodeida].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeida].cc,0,0);
+        }
+        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,0);
+        }
+        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc,0);
         if(c->updated[c->ccindex[nodeida].cc]<c->version){
             c->updated[c->ccindex[nodeida].cc]=c->version;
-            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
         }
         if(c->updated[c->ccindex[nodeidb].cc]<c->version){
             c->updated[c->ccindex[nodeidb].cc]=c->version;
-            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
         }
-        st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeidb].cc,0);
-        st_insert_back(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeida].cc,0);
     }
     /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
@@ -391,72 +534,8 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb){
     }
 }
 
-int CC_checkifcompsmeet_t(CC_index c,uint32_t nodeid,uint32_t nodeid2,uint32_t version,phead idlist,pvis visited){//using external list as this is a thread function
-    stpnode tmpnode;
-    int tmp,data;
-    if(c->ccindex[nodeid].cc==-1){
-        return -1;
-    }
-    insert_back(idlist,c->ccindex[nodeid].cc);
-    while(get_size(idlist)!=0){
-        tmp = peek_back(idlist);
-        pop_back(idlist);
-        iterator it;
-        it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-        while(it!=-1){
-            /*printf("%d\n",data);*/
-            tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-            data=tmpnode->data;
-            if(tmpnode->tag<=version){
-                if(v_visited(visited,data)){
-                    if(data==c->ccindex[nodeid2].cc){
-                        empty_list(idlist);
-                        return 1;
-                    }
-                    v_mark(visited,data,0,0);
-                    insert_back(idlist,data);
-                }
-            }
-            it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-        }
-    }
-    return 0;
-}
-
-int CC_checkifcompsmeet(CC_index c,uint32_t nodeid,uint32_t nodeid2,phead idlist){//using external list as this is a thread function
-    stpnode tmpnode;
-    if(c->ccindex[nodeid].cc==-1){
-        return -1;
-    }
-    c->update_queries++;
-    insert_back(idlist,c->ccindex[nodeid].cc);
-    while(get_size(idlist)!=0){
-        int tmp = peek_back(idlist),data;
-        pop_back(idlist);
-        iterator it;
-        it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-        while(it!=-1){
-            /*printf("%d\n",data);*/
-            tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-            data=tmpnode->data;
-            if(c->marked[data]<c->check){
-                if(data==c->ccindex[nodeid2].cc){
-                    c->check++;
-                    empty_list(idlist);
-                    return 1;
-                }
-                c->marked[data]=c->check;
-                insert_back(idlist,data);
-            }
-            it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-        }
-    }
-    c->check++;
-    return 0;
-}
-
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
-    int m,a,b;
+    int m,a,b,ucca,uccb;
     c->queries++;
     if((m=(c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc))){
         return 1;
@@ -472,21 +551,51 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet(c,nodeidb,nodeida,c->idlist);
+                findret uccbi=find_last(c,c->ccindex[nodeidb].cc);
+                ucca=c->ccindex[nodeida].cc;
+                if(uccbi.a == NULL){
+                    uccb=c->ccindex[nodeidb].cc;
+                }
+                else{
+                    uccb=uccbi.b->data;
+                }
+                    return (ucca==uccb);
             }
             else{
-                return CC_checkifcompsmeet(c,nodeida,nodeidb,c->idlist);
+                findret uccai=find_last(c,c->ccindex[nodeida].cc);
+                if(uccai.a == NULL){
+                    ucca=c->ccindex[nodeida].cc;
+                }
+                else{
+                    ucca=uccai.b->data;
+                }
+                uccb=c->ccindex[nodeidb].cc;
+                return (ucca==uccb);
             }
         }
         else if(!a && !b){
-            return CC_checkifcompsmeet(c,nodeidb,nodeida,c->idlist);
+            findret uccai=find_last(c,c->ccindex[nodeida].cc);
+            findret uccbi=find_last(c,c->ccindex[nodeidb].cc);
+            if(uccai.a == NULL){
+                ucca=c->ccindex[nodeida].cc;
+            }
+            else{
+                ucca=uccai.b->data;
+            }
+            if(uccbi.a == NULL){
+                uccb=c->ccindex[nodeidb].cc;
+            }
+            else{
+                uccb=uccbi.b->data;
+            }
+            return (ucca==uccb);
         }
     }
     return -1;
 }
 
-int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,phead idlist,pvis visited,int *queries, int *update_queries){
-    int m,a,b,cca,ccb;
+int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,int *queries, int *update_queries){
+    int m,a,b,ucca,uccb;
     (*queries)++;
     if((m=((c->ccindex[nodeidb].cc==c->ccindex[nodeida].cc) && (c->ccindex[nodeida].version <= version) && (c->ccindex[nodeidb].version <=version)))){
         return 1;
@@ -502,21 +611,49 @@ int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t
                 return m;
             }
             else if(a && !b){
-                return CC_checkifcompsmeet_t(c,nodeidb,nodeida,version,idlist,visited);
+                findret uccbi=find(c,c->ccindex[nodeidb].cc,version);
+                ucca=c->ccindex[nodeida].cc;
+                if(uccbi.a == NULL){
+                    uccb=c->ccindex[nodeidb].cc;
+                }
+                else{
+                    uccb=uccbi.b->data;
+                }
+                    return (ucca==uccb);
             }
             else{
-                return CC_checkifcompsmeet_t(c,nodeida,nodeidb,version,idlist,visited);
+                findret uccai=find(c,c->ccindex[nodeida].cc,version);
+                if(uccai.a == NULL){
+                    ucca=c->ccindex[nodeida].cc;
+                }
+                else{
+                    ucca=uccai.b->data;
+                }
+                uccb=c->ccindex[nodeidb].cc;
+                return (ucca==uccb);
             }
         }
         else if(!a && !b){
-            cca=CC_findNodeConnectedComponentID_t(c,nodeida,visited,idlist,version);
-            v_update_loop(visited,c->updated_size);
-            ccb=CC_findNodeConnectedComponentID_t(c,nodeida,visited,idlist,version);
-            return (cca==ccb);
+            findret uccai=find(c,c->ccindex[nodeida].cc,version);
+            findret uccbi=find(c,c->ccindex[nodeidb].cc,version);
+            if(uccai.a == NULL){
+                ucca=c->ccindex[nodeida].cc;
+            }
+            else{
+                ucca=uccai.b->data;
+            }
+            if(uccbi.a == NULL){
+                uccb=c->ccindex[nodeidb].cc;
+            }
+            else{
+                uccb=uccbi.b->data;
+            }
+            return (ucca==uccb);
         }
     }
     return -1;
 }
+
 rcode check_rebuild(CC_index c){
     if((double)c->update_queries/(double)c->queries>METRIC_VAL){
         CC_rebuildIndexes(c);
@@ -539,139 +676,16 @@ rcode check_rebuild_t(CC_index c,int *queries,int *update_queries){
     return OK_SUCCESS;
 }
 
-int CC_same_component(CC_index c, uint32_t a, uint32_t b){
-    /*printf("%lf\n",c->metric);*/
-    c->queries++;
-    if(c->ccindex[a].cc==c->ccindex[b].cc){
-        return 1;
-    }
-    else{
-        return CC_findNodeConnectedComponentID(c,a) == CC_findNodeConnectedComponentID(c,b);
-    }
-}
-
-int CC_findNodeConnectedComponentID(CC_index c,uint32_t nodeid){
-    int a,b;
-    stpnode tmpnode;
-    if(c->ccindex[nodeid].cc==-1){
-        return -1;
-    }
-    a=c->updated[c->ccindex[nodeid].cc];
-    b=c->version;
-    if(a<b){
-        return c->ccindex[nodeid].cc;
-    }
-    else{
-        c->update_queries++;
-        int min=c->ccindex[nodeid].cc;
-        insert_back(c->idlist,c->ccindex[nodeid].cc);
-        while(get_size(c->idlist)!=0){
-            int tmp = peek(c->idlist),data;
-            pop_front(c->idlist);
-            iterator it;
-            it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-            while(it!=-1){
-                /*printf("%d\n",data);*/
-                tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-                data=tmpnode->data;
-                if(c->marked[data]<c->check){
-                    if(data<min){
-                        min=data;
-                    }
-                    c->marked[data]=c->check;
-                    insert_back(c->idlist,data);
-                }
-                it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-            }
-        }
-        c->check++;
-        return min;
-    }
-}
-
-int CC_findNodeConnectedComponentID_t(CC_index c,uint32_t nodeid,pvis visited,phead idlist,int version){
-    int a,b;
-    stpnode tmpnode;
-    if(c->ccindex[nodeid].cc==-1){
-        return -1;
-    }
-    a=c->updated[c->ccindex[nodeid].cc];
-    b=c->version;
-    if(a<b){
-        return c->ccindex[nodeid].cc;
-    }
-    else{
-        int min=c->ccindex[nodeid].cc;
-        insert_back(idlist,c->ccindex[nodeid].cc);
-        while(get_size(idlist)!=0){
-            int tmp = peek(idlist),data;
-            pop_front(idlist);
-            iterator it;
-            it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-            while(it!=-1){
-                /*printf("%d\n",data);*/
-                tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-                if(tmpnode->tag<=version){
-                    data=tmpnode->data;
-                    if(v_visited(visited,data)){
-                        if(data<min){
-                            min=data;
-                        }
-                        v_mark(visited,data,0,0);
-                        insert_back(idlist,data);
-                    }
-                }
-                it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-            }
-        }
-        return min;
-    }
-}
-
 rcode CC_rebuildIndexes(CC_index c){
-    int j,tmp,com_num=0;
-    /*puts("rebuild");*/
-    stpnode tmpnode;
+    int j;
     for(j=0;j<c->updated_size;j++){
-        if(c->updated[j]==c->version && c->markedrebuild[j] < c->checkrebuild){
-            int data;
-            insert_back(c->idlist,j);
-            insert_back(c->uidlist,j);
-            while(get_size(c->idlist)!=0){
-                tmp = peek(c->idlist);
-                pop_front(c->idlist);
-                iterator it;
-                it=st_ret_iterator(c->UpdateIndex.uindex[tmp]);
-                while(it!=-1){
-                    tmpnode=st_get_iterator_data(c->UpdateIndex.uindex[tmp],it);
-                    data=tmpnode->data;
-                    if(c->marked[data]<c->check){
-                        c->marked[data]=c->check;
-                        insert_back(c->idlist,data);
-                        insert_back(c->uidlist,data);
-                    }
-                    it=st_advance_iterator(c->UpdateIndex.uindex[tmp],it);
-                }
-            }
-            /*empty_list(c->idlist);*/
-            int i=0;
-            while(get_size(c->uidlist)!=0){
-                i++;
-                tmp = peek(c->uidlist);
-                c->markedrebuild[tmp]=c->checkrebuild;
-                c->vals[tmp]=com_num;
-                pop_front(c->uidlist);
-            }
-            com_num++;
-            /*empty_list(c->uidlist);*/
-            c->check++;
-        }
-        else if(c->updated[j]<c->version){
-            c->vals[j]=com_num++;
+        if(c->updated[j]==c->version){
+            findret rootinfo=find_last(c,j);
+            c->vals[j]=rootinfo.b->data;
         }
     }
     for(j=0;j<c->index_size;j++){
-        if(c->ccindex[j].cc!=-1 ){
+        if(c->ccindex[j].cc!=-1 && c->updated[c->ccindex[j].cc]==c->version ){
             c->ccindex[j].cc=c->vals[c->ccindex[j].cc];
         }
     }
@@ -679,7 +693,6 @@ rcode CC_rebuildIndexes(CC_index c){
     c->version++;
     c->checkrebuild++;
     empty_lists(c->lists);
-    /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
 
