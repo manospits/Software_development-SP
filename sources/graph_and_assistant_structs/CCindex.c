@@ -407,6 +407,7 @@ int unify(CC_index c,uint32_t cca,uint32_t ccb){
     return OK_SUCCESS;
 }
 
+//unify two connected components (thread safe version)
 int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
     findret ccarootinfo=find_last_nc(c,cca);
     findret ccbrootinfo=find_last_nc(c,ccb);
@@ -416,7 +417,7 @@ int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
         return OK_SUCCESS;
     }
     if (xroot->data2<yroot->data2){
-        if(xroot->tag<version){
+        if(xroot->tag<version){ //add new node in list with current version
             st_insert_back2(ccarootinfo.a,yroot->data,xroot->data2,version);
         }
         else{
@@ -424,7 +425,7 @@ int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
         }
     }
     else if(xroot->data2>yroot->data2){
-        if(yroot->tag<version){
+        if(yroot->tag<version){//add new node in list with current version
             st_insert_back2(ccbrootinfo.a,xroot->data,yroot->data2,version);
         }
         else{
@@ -432,13 +433,13 @@ int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
         }
     }
     else{
-        if(yroot->tag<version){
+        if(yroot->tag<version){//add new node in list with current version
             st_insert_back2(ccbrootinfo.a,xroot->data,yroot->data2,version);
         }
         else{
             yroot->data=xroot->data;
         }
-        if(xroot->tag<version){
+        if(xroot->tag<version){//add new node in list with current version
             st_insert_back2(ccarootinfo.a,xroot->data,xroot->data2+1,version);
         }
         else{
@@ -454,7 +455,7 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
     }
     uint32_t max=nodeidb;
     (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
-    if(max>=c->index_size){
+    if(max>=c->index_size){ //realloc table two new size
         int prev_size=c->index_size;
         int next_size=c->index_size,i;
         while(next_size<=max){
@@ -471,7 +472,7 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
             c->ccindex[i].version=0;
         }
     }
-    if(c->ccindex[nodeida].cc==-1 && c->ccindex[nodeidb].cc==-1 ){
+    if(c->ccindex[nodeida].cc==-1 && c->ccindex[nodeidb].cc==-1 ){ //nodes dont belong in a cc
         c->ccindex[nodeida].cc=c->next_component_num;
         c->ccindex[nodeidb].cc=c->next_component_num;
         c->next_component_num++;
@@ -489,7 +490,7 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
             c->updated_size=next_size;
         }
     }
-    else if(c->ccindex[nodeida].cc==-1||c->ccindex[nodeidb].cc==-1){
+    else if(c->ccindex[nodeida].cc==-1||c->ccindex[nodeidb].cc==-1){//a node belong in a cc
         if(c->ccindex[nodeida].cc==-1){
             c->ccindex[nodeida].cc=c->ccindex[nodeidb].cc;
         }
@@ -497,7 +498,7 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
             c->ccindex[nodeidb].cc=c->ccindex[nodeida].cc;
         }
     }
-    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){
+    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){//unify different ccs
         if(c->updated[c->ccindex[nodeida].cc]<c->version){
             c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
             st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeida].cc,0,0);
@@ -530,14 +531,14 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
         uint32_t cb=c->ccindex[nodeidb].cc;
         a=(c->updated[ca]<c->version);
         b=(c->updated[cb]<c->version);
-        if(a||b){
-            if(a&&b){
+        if(a||b){//one or two not updated
+            if(a&&b){//both not updated use only cc index
                 return m;
             }
             else if(a && !b){
                 findret uccbi=find_last(c,c->ccindex[nodeidb].cc);
                 ucca=c->ccindex[nodeida].cc;
-                if(uccbi.a == NULL){
+                if(uccbi.a == NULL){//could not find node with the needed version
                     uccb=c->ccindex[nodeidb].cc;
                 }
                 else{
@@ -557,7 +558,7 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
                 return (ucca==uccb);
             }
         }
-        else if(!a && !b){
+        else if(!a && !b){//use updated
             findret uccai=find_last(c,c->ccindex[nodeida].cc);
             findret uccbi=find_last(c,c->ccindex[nodeidb].cc);
             if(uccai.a == NULL){
@@ -578,6 +579,7 @@ int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
     return -1;
 }
 
+//thread safe version of find
 int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,uint32_t version,int *queries, int *update_queries){
     int m,a,b,ucca,uccb;
     (*queries)++;
