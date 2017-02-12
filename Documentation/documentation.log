@@ -1,4 +1,4 @@
-This is LuaTeX, Version beta-0.80.0 (TeX Live 2015/Debian) (rev 5238)  (format=lualatex 2016.4.23)  12 FEB 2017 17:01
+This is LuaTeX, Version beta-0.80.0 (TeX Live 2015/Debian) (rev 5238)  (format=lualatex 2016.4.23)  12 FEB 2017 18:58
  restricted \write18 enabled.
 **documentation.tex
 (./documentation.tex
@@ -184,7 +184,7 @@ Inserting `luaotfload.aux.set_capheight' at position 3 in `luaotfload.patch_font
 '.
 Inserting `luaotfload.rewrite_fontname' at position 4 in `luaotfload.patch_font'
 .
-luaotfload | main : initialization completed in 0.056 seconds)
+luaotfload | main : initialization completed in 0.060 seconds)
 Lua module: fontspec 2016/02/01 2.5a Advanced font selection for LuaLaTeX.
 (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-luatex.sty
 Package: fontspec-luatex 2016/02/01 v2.5a Font selection for XeLaTeX and LuaLaTe
@@ -841,7 +841,11 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
 (Font)                  OT1/cmr/bx/n --> EU2/CMUSerif(1)/bx/n on input line 19.
 luaotfload | load : Lookup/name: "CMUSerif" -> "cmunrm.otf" (./documentation.au
-x)
+x
+
+LaTeX Warning: Label `sdmmu' multiply defined.
+
+)
 \openout1 = documentation.aux
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
@@ -1178,91 +1182,145 @@ luc)(load luc: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmmono12-re
 gular.luc)
 luaotfload | load : Lookup/name: "CMUSerif" -> "cmunrm.otf"
 luaotfload | load : Lookup/name: "CMUSerif" -> "cmunbx.otf"
+luaotfload | load : Lookup/name: "CMUSerif" -> "cmunrm.otf"
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 5.00008pt on input line 48.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 4.99992pt on input line 48.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 12.00018pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 8.41495pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 5.97696pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 11.99982pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 8.41469pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 5.97679pt on input line 58.
+luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
+ to file:
 <DynamicDatasets_times.png, id=1, 455.45157pt x 255.95625pt>
 File: DynamicDatasets_times.png Graphic file (type png)
 
 <use DynamicDatasets_times.png>
-Package pdftex.def Info: DynamicDatasets_times.png used on input line 41.
+Package pdftex.def Info: DynamicDatasets_times.png used on input line 60.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<DynamicDatasets_VmPeak.png, id=2, 455.45157pt x 255.95625pt>
+Underfull \hbox (badness 10000) in paragraph at lines 40--62
+
+ []
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+<DynamicDatasets_VmPeak.png, id=10, 455.45157pt x 255.95625pt>
 File: DynamicDatasets_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasets_VmPeak.png>
-Package pdftex.def Info: DynamicDatasets_VmPeak.png used on input line 42.
+Package pdftex.def Info: DynamicDatasets_VmPeak.png used on input line 80.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<StaticDatasets_times.png, id=3, 455.45157pt x 255.95625pt>
+<StaticDatasets_times.png, id=11, 455.45157pt x 255.95625pt>
 File: StaticDatasets_times.png Graphic file (type png)
 
 <use StaticDatasets_times.png>
-Package pdftex.def Info: StaticDatasets_times.png used on input line 43.
+Package pdftex.def Info: StaticDatasets_times.png used on input line 101.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<StaticDatasets_VmPeak.png, id=4, 455.45157pt x 255.95625pt>
+<StaticDatasets_VmPeak.png, id=12, 455.45157pt x 255.95625pt>
 File: StaticDatasets_VmPeak.png Graphic file (type png)
 
 <use StaticDatasets_VmPeak.png>
-Package pdftex.def Info: StaticDatasets_VmPeak.png used on input line 44.
+Package pdftex.def Info: StaticDatasets_VmPeak.png used on input line 122.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
-
-<DynamicDatasetMultithreading_times.png, id=5, 455.45157pt x 255.95625pt>
+ [2<./DynamicDatasets_times.png><./DynamicDatasets_VmPeak.png><./StaticDatasets_
+times.png>]
+<DynamicDatasetMultithreading_times.png, id=16, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_times.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_times.png>
 Package pdftex.def Info: DynamicDatasetMultithreading_times.png used on input li
-ne 46.
+ne 144.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<DynamicDatasetMultithreading_VmPeak.png, id=6, 455.45157pt x 255.95625pt>
+Underfull \hbox (badness 10000) in paragraph at lines 126--146
+
+ []
+
+<DynamicDatasetMultithreading_VmPeak.png, id=17, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_VmPeak.png>
 Package pdftex.def Info: DynamicDatasetMultithreading_VmPeak.png used on input l
-ine 47.
+ine 166.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<DynamicStaticMultithreading_times.png, id=7, 455.45157pt x 255.95625pt>
+Underfull \hbox (badness 10000) in paragraph at lines 166--167
+
+ []
+
+<DynamicStaticMultithreading_times.png, id=18, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_times.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_times.png>
 Package pdftex.def Info: DynamicStaticMultithreading_times.png used on input lin
-e 48.
+e 188.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
-
-<DynamicStaticMultithreading_VmPeak.png, id=8, 455.45157pt x 255.95625pt>
+ [3<./StaticDatasets_VmPeak.png><./DynamicDatasetMultithreading_times.png><./Dyn
+amicDatasetMultithreading_VmPeak.png>] <DynamicStaticMultithreading_VmPeak.png,
+ id=22, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_VmPeak.png>
 Package pdftex.def Info: DynamicStaticMultithreading_VmPeak.png used on input li
-ne 49.
+ne 210.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
- [1
+ [4<./DynamicStaticMultithreading_times.png><./DynamicStaticMultithreading_VmPea
+k.png>] (./documentation.aux)
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2<./DynamicDatasets_times.
-png><./DynamicDatasets_VmPeak.png><./StaticDatasets_times.png><./StaticDatasets_
-VmPeak.png><./DynamicDatasetMultithreading_times.png><./DynamicDatasetMultithrea
-ding_VmPeak.png>] [3<./DynamicStaticMultithreading_times.png><./DynamicStaticMul
-tithreading_VmPeak.png>]
-(./documentation.aux))
+LaTeX Warning: There were multiply-defined labels.
+
+)
 
 Here is how much of LuaTeX's memory you used:
- 22176 strings out of 495004
+ 22222 strings out of 495004
  125171,552014 words of node,token memory allocated
- 401 words of node memory still in use:
-   7 hlist, 2 vlist, 2 rule, 2 glue, 1 kern, 1 glyph, 7 attribute, 49 glue_spec,
+ 427 words of node memory still in use:
+   7 hlist, 2 vlist, 2 rule, 2 glue, 1 kern, 1 glyph, 7 attribute, 50 glue_spec,
  7 attribute_list, 1 write nodes
-   avail lists: 1:6,2:213,3:69,4:393,5:96,6:1077,7:20,8:1,9:100,10:13
- 25084 multiletter control sequences out of 65536+600000
- 48 fonts using 14109127 bytes
- 50i,6n,68p,1513b,281s stack positions out of 5000i,500n,10000p,200000b,100000s
+   avail lists: 1:6,2:611,3:70,4:1218,5:99,6:1297,7:164,8:1,9:219,10:31
+ 25114 multiletter control sequences out of 65536+600000
+ 64 fonts using 22729039 bytes
+ 50i,12n,68p,1513b,363s stack positions out of 5000i,500n,10000p,200000b,100000s
 </usr/share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunbx.otf></usr
 /share/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texlive/t
 exmf-dist/fonts/opentype/public/cm-unicode/cmunrm.otf>
-Output written on documentation.pdf (3 pages, 192979 bytes).
+Output written on documentation.pdf (4 pages, 198936 bytes).
 
-PDF statistics: 43 PDF objects out of 1000 (max. 8388607)
- 20 compressed objects within 1 object stream
+PDF statistics: 46 PDF objects out of 1000 (max. 8388607)
+ 22 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 131072)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
