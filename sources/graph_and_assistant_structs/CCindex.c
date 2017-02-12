@@ -22,8 +22,6 @@ typedef struct ccindex_record{
 
 typedef struct cc_extras{
     int updated;
-    int marked;
-    int markedrebuild;
     int vals;
 }cc_extras;
 
@@ -33,8 +31,6 @@ typedef struct CC{
     lpool lists;
     phead idlist;
     int *updated; //
-    int *marked; //
-    int *markedrebuild;
     int *vals; //
     int version;
     int index_size;
@@ -44,8 +40,6 @@ typedef struct CC{
     int total_update_queries;
     int total_queries;
     int queries;
-    int check;
-    int checkrebuild;
     uint32_t metricVal;
 } CC;
 
@@ -80,8 +74,6 @@ CC_index CC_create_index(pGraph g){
     }
     tmp->idlist=cr_list();
     tmp->version=0;
-    tmp->check=0;
-    tmp->checkrebuild=0;
     tmp->update_queries=0;
     tmp->total_update_queries=0;
     tmp->total_queries=0;
@@ -193,24 +185,8 @@ CC_index CC_create_index(pGraph g){
         /*error_val=CC_MALLOC_FAIL;*/
         return NULL;
     }
-    if((tmp->marked=malloc((tmp->updated_size)*sizeof(int)))==NULL){
-        free(tmp->ccindex);
-        free(tmp);
-        print_errorv(CC_MALLOC_FAIL);
-        /*error_val=CC_MALLOC_FAIL;*/
-        return NULL;
-    }
-    if((tmp->markedrebuild=malloc((tmp->updated_size)*sizeof(int)))==NULL){
-        free(tmp->ccindex);
-        free(tmp);
-        print_errorv(CC_MALLOC_FAIL);
-        /*error_val=CC_MALLOC_FAIL;*/
-        return NULL;
-    }
     for(i=0;i<tmp->updated_size;i++){
         tmp->updated[i]=-1;
-        tmp->marked[i]=-1;
-        tmp->markedrebuild[i]=-1;
     }
     if((tmp->UpdateIndex.uindex=malloc(tmp->updated_size*sizeof(stphead)))==NULL){
         free(tmp->ccindex);
@@ -229,8 +205,6 @@ rcode CC_destroy(CC_index c){
     ds_pool(c->lists);
     free(c->ccindex);
     free(c->updated);
-    free(c->marked);
-    free(c->markedrebuild);
     free(c->vals);
     free(c->UpdateIndex.uindex);
     free(c);
@@ -273,14 +247,10 @@ rcode CC_insertNewEdge_t(CC_index c,uint32_t nodeida,uint32_t nodeidb,uint32_t v
                 next_size*=2;
             }
             c->updated=realloc(c->updated,next_size*(sizeof(int)));
-            c->marked=realloc(c->marked,next_size*(sizeof(int)));
-            c->markedrebuild=realloc(c->markedrebuild,next_size*(sizeof(int)));
             c->vals=realloc(c->vals,next_size*(sizeof(int)));
             c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,next_size*sizeof(stphead));
             for(i=c->updated_size;i<next_size;i++){
                 c->updated[i]=-1;
-                c->marked[i]=-1;
-                c->markedrebuild[i]=-1;
             }
             c->updated_size=next_size;
         }
@@ -511,14 +481,10 @@ rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
                 next_size*=2;
             }
             c->updated=realloc(c->updated,next_size*(sizeof(int)));
-            c->marked=realloc(c->marked,next_size*(sizeof(int)));
-            c->markedrebuild=realloc(c->markedrebuild,next_size*(sizeof(int)));
             c->vals=realloc(c->vals,next_size*(sizeof(int)));
             c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,next_size*sizeof(phead));
             for(i=c->updated_size;i<next_size;i++){
                 c->updated[i]=-1;
-                c->marked[i]=-1;
-                c->markedrebuild[i]=-1;
             }
             c->updated_size=next_size;
         }
@@ -707,9 +673,7 @@ rcode CC_rebuildIndexes(CC_index c){
             c->ccindex[j].cc=c->vals[c->ccindex[j].cc];
         }
     }
-    c->check++;
     c->version++;
-    c->checkrebuild++;
     empty_lists(c->lists);
     return OK_SUCCESS;
 }
