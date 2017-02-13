@@ -118,6 +118,7 @@ void execute_all_jobs(pJobScheduler scheduler, uint32_t num_of_queries)
 {
     /*printf("execution started , queue size %d \n",q_get_size(scheduler->queue));*/
     scheduler->execution=1;
+    // execution flag set to 1, so that threads are allowed to take queries from the queue
     scheduler->queries_pending = num_of_queries;
     if (scheduler != NULL) pthread_cond_broadcast(&scheduler->cond_empty_queue);
 }
@@ -131,6 +132,7 @@ void wait_all_tasks_finish(pJobScheduler scheduler)
         while (scheduler->queries_pending)
             pthread_cond_wait(&scheduler->sync_cond, &scheduler->sync_mtx);
         scheduler->execution = 0;
+        // execution flag set to 0, to prevent threads from incorrectly get a query from next query burst (extreme case)
         pthread_mutex_unlock(&scheduler->sync_mtx);
     }
 }
