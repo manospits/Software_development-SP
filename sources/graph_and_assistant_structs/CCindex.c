@@ -54,8 +54,6 @@ int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
 findret find_last(CC_index c,uint32_t cc);
 findret find_last_nc(CC_index c,uint32_t cc);
 findret find(CC_index c,uint32_t cc,uint32_t version);
-int unify(CC_index c,uint32_t cca,uint32_t ccb);
-int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
 
 CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
@@ -144,7 +142,7 @@ CC_index CC_create_index(pGraph g){
                         if (tmp->ccindex[listnode->neighbor[i]].cc==-1)
                         {
                             state=1;
-                            tmp->ccindex[listnode->neighbor[i]].cc=tmp->next_component_num;
+                            tmp->ccindex[listnode->neighbor[i]].cc=tmp->next_component_num;//assigning in ccindex the number of cc
                             if (insert_back(tmp->idlist, listnode->neighbor[i]) != OK_SUCCESS)
                             {
                                 print_errorv(CC_CREATION_FAIL);
@@ -226,6 +224,76 @@ rcode CC_destroy(CC_index c){
     free(c->vals);
     free(c->UpdateIndex.uindex);
     free(c);
+    /*error_val=OK_SUCCESS;*/
+    return OK_SUCCESS;
+}
+
+rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
+    if(nodeida==nodeidb){
+        return OK_SUCCESS;
+    }
+    uint32_t max=nodeidb;
+    (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
+    if(max>=c->index_size){ //realloc table two new size
+        int prev_size=c->index_size;
+        int next_size=c->index_size,i;
+        while(next_size<=max){
+            next_size<<=1;
+        }
+        c->index_size=next_size;
+        if((c->ccindex=realloc(c->ccindex,next_size*sizeof(ccindex_record)))==NULL){
+            print_errorv(CC_REALLOC_FAIL);
+            /*error_val=CC_REALLOC_FAIL;*/
+            return CC_REALLOC_FAIL;
+        }
+        for(i=prev_size;i<next_size;i++){
+            c->ccindex[i].cc=-1;
+            c->ccindex[i].version=0;
+        }
+    }
+    if(c->ccindex[nodeida].cc==-1 && c->ccindex[nodeidb].cc==-1 ){ //nodes dont belong in a cc
+        c->ccindex[nodeida].cc=c->next_component_num;
+        c->ccindex[nodeidb].cc=c->next_component_num;
+        c->next_component_num++;
+        if(c->updated_size<=c->next_component_num){
+            int i,next_size=c->updated_size;
+            while(next_size<=c->next_component_num){
+                next_size*=2;
+            }
+            c->updated=realloc(c->updated,next_size*(sizeof(int)));
+            c->vals=realloc(c->vals,next_size*(sizeof(int)));
+            c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,next_size*sizeof(phead));
+            for(i=c->updated_size;i<next_size;i++){
+                c->updated[i]=-1;
+            }
+            c->updated_size=next_size;
+        }
+    }
+    else if(c->ccindex[nodeida].cc==-1||c->ccindex[nodeidb].cc==-1){//a node belong in a cc
+        if(c->ccindex[nodeida].cc==-1){
+            c->ccindex[nodeida].cc=c->ccindex[nodeidb].cc;
+        }
+        if(c->ccindex[nodeidb].cc==-1){
+            c->ccindex[nodeidb].cc=c->ccindex[nodeida].cc;
+        }
+    }
+    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){//unify different ccs
+        if(c->updated[c->ccindex[nodeida].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeida].cc,0,0);
+        }
+        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
+            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
+            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,0);
+        }
+        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc);
+        if(c->updated[c->ccindex[nodeida].cc]<c->version){
+            c->updated[c->ccindex[nodeida].cc]=c->version;
+        }
+        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
+            c->updated[c->ccindex[nodeidb].cc]=c->version;
+        }
+    }
     /*error_val=OK_SUCCESS;*/
     return OK_SUCCESS;
 }
@@ -467,75 +535,7 @@ int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version){
     return OK_SUCCESS;
 }
 
-rcode CC_insertNewEdge(CC_index c,uint32_t nodeida,uint32_t nodeidb){
-    if(nodeida==nodeidb){
-        return OK_SUCCESS;
-    }
-    uint32_t max=nodeidb;
-    (nodeida>nodeidb) ? (max=nodeida) : (max=nodeidb);
-    if(max>=c->index_size){ //realloc table two new size
-        int prev_size=c->index_size;
-        int next_size=c->index_size,i;
-        while(next_size<=max){
-            next_size<<=1;
-        }
-        c->index_size=next_size;
-        if((c->ccindex=realloc(c->ccindex,next_size*sizeof(ccindex_record)))==NULL){
-            print_errorv(CC_REALLOC_FAIL);
-            /*error_val=CC_REALLOC_FAIL;*/
-            return CC_REALLOC_FAIL;
-        }
-        for(i=prev_size;i<next_size;i++){
-            c->ccindex[i].cc=-1;
-            c->ccindex[i].version=0;
-        }
-    }
-    if(c->ccindex[nodeida].cc==-1 && c->ccindex[nodeidb].cc==-1 ){ //nodes dont belong in a cc
-        c->ccindex[nodeida].cc=c->next_component_num;
-        c->ccindex[nodeidb].cc=c->next_component_num;
-        c->next_component_num++;
-        if(c->updated_size<=c->next_component_num){
-            int i,next_size=c->updated_size;
-            while(next_size<=c->next_component_num){
-                next_size*=2;
-            }
-            c->updated=realloc(c->updated,next_size*(sizeof(int)));
-            c->vals=realloc(c->vals,next_size*(sizeof(int)));
-            c->UpdateIndex.uindex=realloc(c->UpdateIndex.uindex,next_size*sizeof(phead));
-            for(i=c->updated_size;i<next_size;i++){
-                c->updated[i]=-1;
-            }
-            c->updated_size=next_size;
-        }
-    }
-    else if(c->ccindex[nodeida].cc==-1||c->ccindex[nodeidb].cc==-1){//a node belong in a cc
-        if(c->ccindex[nodeida].cc==-1){
-            c->ccindex[nodeida].cc=c->ccindex[nodeidb].cc;
-        }
-        if(c->ccindex[nodeidb].cc==-1){
-            c->ccindex[nodeidb].cc=c->ccindex[nodeida].cc;
-        }
-    }
-    else if(c->ccindex[nodeida].cc!=c->ccindex[nodeidb].cc){//unify different ccs
-        if(c->updated[c->ccindex[nodeida].cc]<c->version){
-            c->UpdateIndex.uindex[c->ccindex[nodeida].cc]=get_alist(c->lists);
-            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeida].cc],c->ccindex[nodeida].cc,0,0);
-        }
-        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
-            c->UpdateIndex.uindex[c->ccindex[nodeidb].cc]=get_alist(c->lists);
-            st_insert_back2(c->UpdateIndex.uindex[c->ccindex[nodeidb].cc],c->ccindex[nodeidb].cc,0,0);
-        }
-        unify(c,c->ccindex[nodeida].cc,c->ccindex[nodeidb].cc);
-        if(c->updated[c->ccindex[nodeida].cc]<c->version){
-            c->updated[c->ccindex[nodeida].cc]=c->version;
-        }
-        if(c->updated[c->ccindex[nodeidb].cc]<c->version){
-            c->updated[c->ccindex[nodeidb].cc]=c->version;
-        }
-    }
-    /*error_val=OK_SUCCESS;*/
-    return OK_SUCCESS;
-}
+
 
 int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb){
     int m,a,b,ucca,uccb;
