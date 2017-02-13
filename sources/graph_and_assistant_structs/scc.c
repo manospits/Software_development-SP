@@ -415,7 +415,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     buffer_ptr_to_listnode = getListHead(ret_outIndex(graph), nodeId);
     if (buffer_ptr_to_listnode < -1)
     {   // an error occurred
-        print_error();
+        /*print_error();*/
         //error_val = TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
         print_errorv(TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL);
         return TARJAN_BUFFER_POINTER_RETRIEVAL_FAIL;
@@ -428,7 +428,7 @@ rcode tarjan_iter(pGraph graph, pSCC sccs, phead stack, scc_flags *flags, uint32
     {
         if ((flags[nodeId].listnode = getListNode(temp_buffer, buffer_ptr_to_listnode)) == NULL)
         {
-            print_error();
+            /*print_error();*/
             //error_val = TARJAN_LISTNODE_RETRIEVAL_FAIL;
             print_errorv(TARJAN_LISTNODE_RETRIEVAL_FAIL);
             return TARJAN_LISTNODE_RETRIEVAL_FAIL;
