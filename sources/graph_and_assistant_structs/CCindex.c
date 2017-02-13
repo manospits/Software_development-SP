@@ -51,6 +51,11 @@ typedef struct findret{
 int unify(CC_index c,uint32_t cca,uint32_t ccb);
 int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
 int same_component_edge(CC_index c, uint32_t  nodeida,uint32_t nodeidb);
+findret find_last(CC_index c,uint32_t cc);
+findret find_last_nc(CC_index c,uint32_t cc);
+findret find(CC_index c,uint32_t cc,uint32_t version);
+int unify(CC_index c,uint32_t cca,uint32_t ccb);
+int unify_t(CC_index c,uint32_t cca,uint32_t ccb,uint32_t version);
 
 CC_index CC_create_index(pGraph g){
     Index_ptr inIndex=ret_inIndex(g);
@@ -201,6 +206,19 @@ CC_index CC_create_index(pGraph g){
 }
 
 rcode CC_destroy(CC_index c){
+    //UNCOMMENT TO SEE NUMBER OF COMPONENTS IN THE END
+    /*int j,ccnum=0;*/
+    /*CC_rebuildIndexes(c);*/
+    /*for(j=0;j<c->updated_size;j++){*/
+        /*c->vals[j]=0;*/
+    /*}*/
+    /*for(j=0;j<c->index_size;j++){*/
+        /*if(!c->vals[c->ccindex[j].cc]){*/
+            /*c->vals[c->ccindex[j].cc]=1;*/
+            /*ccnum++;*/
+        /*}*/
+    /*}*/
+    /*printf("Number of componets in the end : %d\n",ccnum);*/
     ds_list(c->idlist);
     ds_pool(c->lists);
     free(c->ccindex);
