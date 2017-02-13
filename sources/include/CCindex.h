@@ -21,10 +21,10 @@ rcode CC_rebuildIndexes(CC_index c);                                //rebuild CC
 
 rcode CC_destroy(CC_index c);                                       //destroy cc index structure
 
-rcode check_rebuild(CC_index c);                                    //check if there is an need for a rebuild
-rcode check_rebuild_t(CC_index c,int *queries,int *update_queries); // thread version of the above function
+rcode check_rebuild(CC_index c);                                    //check if there is an need for a rebuild and perform it
+rcode check_rebuild_t(CC_index c,int *queries,int *update_queries); //thread version of the above function
 
-int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb); //faster version of the above function
+int CC_same_component_2(CC_index c,uint32_t nodeida ,uint32_t nodeidb); //checks if two nodes belong in the same connected component
 int CC_same_component_2_t(CC_index c,uint32_t nodeida ,uint32_t nodeidb,
                           uint32_t version,int *queries,
                           int *update_queries);                         //thread version of the above function
