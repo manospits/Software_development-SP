@@ -31,6 +31,22 @@
 
 
 \section{Εισαγωγή - Γενικά}
+Η παρούσα εργασία αποτελεί υλοποίηση μιας λύσης για το πρόβλημα του ελάχιστου μονοπατιού σε γράφους. Μετά από μια πρώτη απλή προσέγγιση με αμφίδρομη αναζήτηση στο γράφο προστέθηκαν ειδικές δομές για απάντηση ερωτημάτων, καθώς και πολυνηματισμός για την παράλληλη επεξεργασία τους, όπως περιγράφονται στις επιμέρους εκφωνήσεις.\\\\
+\textbf{\underline{Μεταγλώττιση \& Εκτέλεση:}}
+\begin{itemize}
+\item Για το τελικό εκτελέσιμο:\\
+> make spath\\
+> ./spath <initial graph file> <workload file>\\
+Σημείωση: αν η main μεταγλωττισθεί με δήλωση VERBOSE\_MODE, δηλαδή εκτελεστεί η εντολή: \\
+> gcc -c -Wall -Ofast sources/mains\_and\_utilities/main.c -DVERBOSE\_MODE -o objects/main.o\\
+(πριν την εντολή make), τότε κατά την εκτέλεση του workload εμφανίζεται το ποσοστό του workload που έχει εκτελεστεί. Αυτό μπορεί να φανεί χρήσιμο κατά την εκτέλεση πολύ μεγάλων workloads όπου η εκτέλεση παίρνει πολλή ώρα.
+\item Για το εκτελέσιμο του 2ου part (χωρίς πολυνηματισμό):\\
+> make part2\_spath\\
+> ./part2\_spath <initial graph file> <workload file>
+\item Για το unit testing:\\
+> make unittesting\\
+> ./unittesting
+\end{itemize}
 
 \section{Λεπτομέρειες υλοποίησης Part 1}
 \begin{itemize}

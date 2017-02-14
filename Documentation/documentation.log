@@ -1,4 +1,4 @@
-This is LuaTeX, Version beta-0.76.0-2013121407 (rev 4627)  (format=lualatex 2016.12.8)  14 FEB 2017 17:04
+This is LuaTeX, Version beta-0.76.0-2013121407 (rev 4627)  (format=lualatex 2016.12.8)  14 FEB 2017 17:44
  restricted \write18 enabled.
 **documentation.tex
 (./documentation.tex
@@ -986,8 +986,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 luaotfload | load : auto-selecting default features for script: dflt(load luc: /
 home/panos/.texmf-var/luatex-cache/generic/fonts/otf/cmunrm.luc)
 luaotfload | load : auto-selecting default features for script: dflt
-luaotfload: font no 22 (CMUSerif-Roman) defines feature ss01 for script latn
-luaotfload: font no 22 (CMUSerif-Roman) defines feature ss01 for script latn
+luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn
+luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn
 \g_fontspec_family_CMU Serif_int=\count360
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn wit
@@ -1106,7 +1106,7 @@ tinmodern-math.luc)
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
  math
 \g_fontspec_family_latinmodern-math.otf_int=\count367
 luaotfload | load : auto-selecting default features for script: dflt
@@ -1161,7 +1161,7 @@ luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 29 (LatinModernMath-Regular) defines feature aalt for script
+luaotfload: font no 29 (LatinModernMath-Regular) defines feature dtls for script
  math
 LaTeX Font Info:    Encoding `OT1' has changed to `EU2' for symbol font
 (Font)              `operators' in the math version `normal' on input line 28.
@@ -1179,7 +1179,7 @@ back to file:
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
  math
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
@@ -1271,7 +1271,7 @@ back to file:
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
  math
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
@@ -1447,8 +1447,6 @@ luaotfload | load : auto-selecting default features for script: latn
 luaotfload | load : no defaults for script "latn", falling back to "dflt"
 luaotfload | load : auto-selecting default features for script: latn
 luaotfload | load : no defaults for script "latn", falling back to "dflt"
-luaotfload | load : auto-selecting default features for script: latn
-luaotfload | load : no defaults for script "latn", falling back to "dflt"
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
@@ -1461,167 +1459,175 @@ luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : auto-selecting default features for script: dflt
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 10.95015pt on input line 43.
+(Font)              scaled to size 10.95015pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 7.66507pt on input line 43.
+(Font)              scaled to size 7.66507pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.47507pt on input line 43.
+(Font)              scaled to size 5.47507pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 10.94983pt on input line 43.
+(Font)              scaled to size 10.94983pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 7.66484pt on input line 43.
+(Font)              scaled to size 7.66484pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.4749pt on input line 43.
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file: [1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
-luaotfload | load : auto-selecting default features for script: latn
-luaotfload | load : no defaults for script "latn", falling back to "dflt"
+(Font)              scaled to size 5.4749pt on input line 35.
 luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file:
-luaotfload | load : auto-selecting default features for script: dflt
-luaotfload | load : auto-selecting default features for script: dflt
-LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 9.00014pt on input line 83.
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file:
-LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.00008pt on input line 83.
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file:
-LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 8.99986pt on input line 83.
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file:
-LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 4.99992pt on input line 83.
-luaotfload | load : auto-selecting default features for script: math
-luaotfload | load : no defaults for script "math", falling back to "dflt"
-luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
-back to file:
-<DynamicDatasets_times.png, id=41, 455.45157pt x 255.95625pt>
-File: DynamicDatasets_times.png Graphic file (type png)
-
-<use DynamicDatasets_times.png>
-Package pdftex.def Info: DynamicDatasets_times.png used on input line 95.
-(pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 75--97
+Underfull \hbox (badness 10000) in paragraph at lines 34--36
 
  []
 
-<DynamicDatasets_VmPeak.png, id=42, 455.45157pt x 255.95625pt>
+
+Overfull \hbox (28.33743pt too wide) in paragraph at lines 37--43
+\EU2/CMUSerif(0)/m/n/10.95 > gcc -c -Wall -Ofast sources/mains_and_utilities/ma
+in.c -DVERBOSE_MODE -o objects/main.o 
+ []
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+luaotfload | load : auto-selecting default features for script: latn
+luaotfload | load : no defaults for script "latn", falling back to "dflt" [2]
+luaotfload | load : auto-selecting default features for script: latn
+luaotfload | load : no defaults for script "latn", falling back to "dflt"
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+luaotfload | load : auto-selecting default features for script: dflt
+luaotfload | load : auto-selecting default features for script: dflt
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 9.00014pt on input line 99.
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 5.00008pt on input line 99.
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 8.99986pt on input line 99.
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 4.99992pt on input line 99.
+luaotfload | load : auto-selecting default features for script: math
+luaotfload | load : no defaults for script "math", falling back to "dflt"
+luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
+back to file:
+<DynamicDatasets_times.png, id=40, 455.45157pt x 255.95625pt>
+File: DynamicDatasets_times.png Graphic file (type png)
+
+<use DynamicDatasets_times.png>
+Package pdftex.def Info: DynamicDatasets_times.png used on input line 111.
+(pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 91--113
+
+ []
+
+[3] <DynamicDatasets_VmPeak.png, id=47, 455.45157pt x 255.95625pt>
 File: DynamicDatasets_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasets_VmPeak.png>
-Package pdftex.def Info: DynamicDatasets_VmPeak.png used on input line 115.
+Package pdftex.def Info: DynamicDatasets_VmPeak.png used on input line 131.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
- [3 <./DynamicDatasets_times.png (PNG copy)>]
-<StaticDatasets_times.png, id=49, 455.45157pt x 255.95625pt>
+
+<StaticDatasets_times.png, id=48, 455.45157pt x 255.95625pt>
 File: StaticDatasets_times.png Graphic file (type png)
 
 <use StaticDatasets_times.png>
-Package pdftex.def Info: StaticDatasets_times.png used on input line 136.
+Package pdftex.def Info: StaticDatasets_times.png used on input line 152.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<StaticDatasets_VmPeak.png, id=50, 455.45157pt x 255.95625pt>
+<StaticDatasets_VmPeak.png, id=49, 455.45157pt x 255.95625pt>
 File: StaticDatasets_VmPeak.png Graphic file (type png)
 
 <use StaticDatasets_VmPeak.png>
-Package pdftex.def Info: StaticDatasets_VmPeak.png used on input line 157.
+Package pdftex.def Info: StaticDatasets_VmPeak.png used on input line 173.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
-
-<DynamicDatasetMultithreading_times.png, id=51, 455.45157pt x 255.95625pt>
+ [4 <./DynamicDatasets_times.png (PNG copy)> <./DynamicDatasets_VmPeak.png (PNG 
+copy)> <./StaticDatasets_times.png (PNG copy)>]
+<DynamicDatasetMultithreading_times.png, id=57, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_times.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_times.png>
 Package pdftex.def Info: DynamicDatasetMultithreading_times.png used on input li
-ne 179.
+ne 195.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--181
+Underfull \hbox (badness 10000) in paragraph at lines 177--197
 
  []
 
-[4 <./DynamicDatasets_VmPeak.png (PNG copy)> <./StaticDatasets_times.png (PNG co
-py)> <./StaticDatasets_VmPeak.png (PNG copy)>]
-<DynamicDatasetMultithreading_VmPeak.png, id=60, 455.45157pt x 255.95625pt>
+<DynamicDatasetMultithreading_VmPeak.png, id=58, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_VmPeak.png>
 Package pdftex.def Info: DynamicDatasetMultithreading_VmPeak.png used on input l
-ine 201.
+ine 217.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 201--202
+Underfull \hbox (badness 10000) in paragraph at lines 217--218
 
  []
 
-<DynamicStaticMultithreading_times.png, id=61, 455.45157pt x 255.95625pt>
+<DynamicStaticMultithreading_times.png, id=59, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_times.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_times.png>
 Package pdftex.def Info: DynamicStaticMultithreading_times.png used on input lin
-e 223.
+e 239.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
-
-<DynamicStaticMultithreading_VmPeak.png, id=62, 455.45157pt x 255.95625pt>
+ [5 <./StaticDatasets_VmPeak.png (PNG copy)> <./DynamicDatasetMultithreading_tim
+es.png (PNG copy)> <./DynamicDatasetMultithreading_VmPeak.png (PNG copy)>]
+<DynamicStaticMultithreading_VmPeak.png, id=68, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_VmPeak.png>
 Package pdftex.def Info: DynamicStaticMultithreading_VmPeak.png used on input li
-ne 245.
+ne 261.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
- [5 <./DynamicDatasetMultithreading_times.png (PNG copy)> <./DynamicDatasetMulti
-threading_VmPeak.png (PNG copy)> <./DynamicStaticMultithreading_times.png (PNG c
-opy)>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 249.
- [6 <./DynamicStaticMultithreading_VmPeak.png (PNG copy)>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 249.
- (./documentation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 249.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 249.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 265.
+ [6 <./DynamicStaticMultithreading_times.png (PNG copy)> <./DynamicStaticMultith
+reading_VmPeak.png (PNG copy)>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 265.
+
+(./documentation.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 265.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 265.
 Package rerunfilecheck Info: File `documentation.out' has not changed.
 (rerunfilecheck)             Checksum: 2FFBAD74A284AC2E69047951B7365CDA;380.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  )
 
 Here is how much of LuaTeX's memory you used:
@@ -1630,16 +1636,16 @@ Here is how much of LuaTeX's memory you used:
  440 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 2 glue, 2 kern, 1 glyph, 8 attribute, 51 glue_spec,
  8 attribute_list, 1 write nodes
-   avail lists: 1:55,2:8083,3:92,4:1264,5:208,6:2603,7:173,8:7,9:522,10:982,11:5
-10,12:228
+   avail lists: 1:55,2:8996,3:100,4:1307,5:214,6:2847,7:172,8:7,9:522,10:982,11:
+510,12:228
  29310 multiletter control sequences out of 65536+600000
- 68 fonts using 17252595 bytes
- 48i,13n,53p,1595b,468s stack positions out of 5000i,500n,10000p,200000b,100000s
+ 68 fonts using 17252895 bytes
+ 48i,13n,53p,1595b,467s stack positions out of 5000i,500n,10000p,200000b,100000s
 </usr/share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunti.otf></usr
 /share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunbx.otf></usr/shar
 e/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texlive/texmf-
 dist/fonts/opentype/public/cm-unicode/cmunrm.otf>
-Output written on documentation.pdf (6 pages, 220384 bytes).
+Output written on documentation.pdf (6 pages, 222017 bytes).
 
 PDF statistics: 104 PDF objects out of 1000 (max. 8388607)
  75 compressed objects within 1 object stream
