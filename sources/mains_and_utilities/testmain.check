@@ -3,6 +3,7 @@
 #include "../include/queries.h"
 #include "../include/index.h"
 #include "../include/error.h"
+#include "../include/hash.h"
 #include <stdio.h>
 
 int hash_function(void *data,void *size)
@@ -10,6 +11,25 @@ int hash_function(void *data,void *size)
     return (*(uint32_t *)data) % (*(int*)size);
 }
 
+#test hashtable
+    phash hasht;
+    int i,j,k;
+    for(i=0;i<3;i++){
+        fail_unless((hasht=create_hashtable(&hash_function))!=NULL);
+        for(j=0;j<1000;j++){
+            fail_unless(h_insert(hasht,j)==OK_SUCCESS);
+        }
+        for(k=0;k<1100;k++){
+            if(k<1000){
+                fail_unless(in_hash(hasht,k));
+            }
+            else{
+                fail_unless(!in_hash(hasht,k));
+            }
+        }
+        fail_unless(ds_hash(hasht)==OK_SUCCESS);
+    }
+    puts("testing hashtable finished");
 #test intlist
     phead list;
     int i,j,k;
