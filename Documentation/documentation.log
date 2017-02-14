@@ -1,4 +1,4 @@
-This is LuaTeX, Version beta-0.76.0-2013121407 (rev 4627)  (format=lualatex 2016.12.8)  14 FEB 2017 17:44
+This is LuaTeX, Version beta-0.76.0-2013121407 (rev 4627)  (format=lualatex 2016.12.8)  14 FEB 2017 17:48
  restricted \write18 enabled.
 **documentation.tex
 (./documentation.tex
@@ -986,8 +986,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 luaotfload | load : auto-selecting default features for script: dflt(load luc: /
 home/panos/.texmf-var/luatex-cache/generic/fonts/otf/cmunrm.luc)
 luaotfload | load : auto-selecting default features for script: dflt
-luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn
-luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn
+luaotfload: font no 22 (CMUSerif-Roman) defines feature mkmk for script latn
+luaotfload: font no 22 (CMUSerif-Roman) defines feature mkmk for script latn
 \g_fontspec_family_CMU Serif_int=\count360
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload: font no 22 (CMUSerif-Roman) defines feature smcp for script latn wit
@@ -1106,7 +1106,7 @@ tinmodern-math.luc)
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
  math
 \g_fontspec_family_latinmodern-math.otf_int=\count367
 luaotfload | load : auto-selecting default features for script: dflt
@@ -1161,7 +1161,7 @@ luaotfload | load : auto-selecting default features for script: math
 luaotfload | load : no defaults for script "math", falling back to "dflt"
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 29 (LatinModernMath-Regular) defines feature dtls for script
+luaotfload: font no 29 (LatinModernMath-Regular) defines feature aalt for script
  math
 LaTeX Font Info:    Encoding `OT1' has changed to `EU2' for symbol font
 (Font)              `operators' in the math version `normal' on input line 28.
@@ -1179,7 +1179,7 @@ back to file:
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
  math
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
@@ -1271,7 +1271,7 @@ back to file:
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
 back to file:
-luaotfload: font no 28 (LatinModernMath-Regular) defines feature dtls for script
+luaotfload: font no 28 (LatinModernMath-Regular) defines feature aalt for script
  math
 luaotfload | load : auto-selecting default features for script: dflt
 luaotfload | load : path lookup of "latinmodern-math.otf" unsuccessful, falling 
@@ -1639,13 +1639,13 @@ Here is how much of LuaTeX's memory you used:
    avail lists: 1:55,2:8996,3:100,4:1307,5:214,6:2847,7:172,8:7,9:522,10:982,11:
 510,12:228
  29310 multiletter control sequences out of 65536+600000
- 68 fonts using 17252895 bytes
+ 68 fonts using 17252495 bytes
  48i,13n,53p,1595b,467s stack positions out of 5000i,500n,10000p,200000b,100000s
 </usr/share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunti.otf></usr
 /share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunbx.otf></usr/shar
 e/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texlive/texmf-
 dist/fonts/opentype/public/cm-unicode/cmunrm.otf>
-Output written on documentation.pdf (6 pages, 222017 bytes).
+Output written on documentation.pdf (6 pages, 222067 bytes).
 
 PDF statistics: 104 PDF objects out of 1000 (max. 8388607)
  75 compressed objects within 1 object stream
