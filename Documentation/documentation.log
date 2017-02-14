@@ -1,4 +1,4 @@
-This is LuaTeX, Version beta-0.80.0 (TeX Live 2015/Debian) (rev 5238)  (format=lualatex 2016.4.23)  13 FEB 2017 21:55
+This is LuaTeX, Version beta-0.80.0 (TeX Live 2015/Debian) (rev 5238)  (format=lualatex 2016.4.23)  14 FEB 2017 14:22
  restricted \write18 enabled.
 **documentation.tex
 (./documentation.tex
@@ -184,7 +184,7 @@ Inserting `luaotfload.aux.set_capheight' at position 3 in `luaotfload.patch_font
 '.
 Inserting `luaotfload.rewrite_fontname' at position 4 in `luaotfload.patch_font'
 .
-luaotfload | main : initialization completed in 0.057 seconds)
+luaotfload | main : initialization completed in 0.054 seconds)
 Lua module: fontspec 2016/02/01 2.5a Advanced font selection for LuaLaTeX.
 (/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-luatex.sty
 Package: fontspec-luatex 2016/02/01 v2.5a Font selection for XeLaTeX and LuaLaTe
@@ -224,28 +224,20 @@ ther characters in Unicode lower plane
 (/usr/share/texmf/tex/latex/tipa/t3enc.def
 File: t3enc.def 2001/12/31 T3 encoding
 (compiling luc: /var/lib/texmf/luatex-cache/generic/fonts/otf/lmromanslant10-reg
-ular.luc)(compiling luc: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/l
-mromanslant10-regular.luc)(save: /home/manos/.texmf-var/luatex-cache/generic/fon
-ts/otf/lmromanslant10-regular.lua)(save: /home/manos/.texmf-var/luatex-cache/gen
-eric/fonts/otf/lmromanslant10-regular.luc)(compiling luc: /var/lib/texmf/luatex-
-cache/generic/fonts/otf/lmroman10-italic.luc)(compiling luc: /home/manos/.texmf-
-var/luatex-cache/generic/fonts/otf/lmroman10-italic.luc)(save: /home/manos/.texm
-f-var/luatex-cache/generic/fonts/otf/lmroman10-italic.lua)(save: /home/manos/.te
-xmf-var/luatex-cache/generic/fonts/otf/lmroman10-italic.luc)(compiling luc: /var
-/lib/texmf/luatex-cache/generic/fonts/otf/lmroman10-bold.luc)(compiling luc: /ho
-me/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmroman10-bold.luc)(save: /ho
-me/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmroman10-bold.lua)(save: /ho
-me/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmroman10-bold.luc)
+ular.luc)(load luc: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmroma
+nslant10-regular.luc)(compiling luc: /var/lib/texmf/luatex-cache/generic/fonts/o
+tf/lmroman10-italic.luc)(load luc: /home/manos/.texmf-var/luatex-cache/generic/f
+onts/otf/lmroman10-italic.luc)(compiling luc: /var/lib/texmf/luatex-cache/generi
+c/fonts/otf/lmroman10-bold.luc)(load luc: /home/manos/.texmf-var/luatex-cache/ge
+neric/fonts/otf/lmroman10-bold.luc)
 LaTeX Font Info:    Try loading font information for EU2+lmss on input line 357.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/euenc/eu2lmss.fd
 File: eu2lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )(compiling luc: /var/lib/texmf/luatex-cache/generic/fonts/otf/lmsans10-regular.
-luc)(compiling luc: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmsans
-10-regular.luc)(save: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmsa
-ns10-regular.lua)(save: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lm
-sans10-regular.luc))
+luc)(load luc: /home/manos/.texmf-var/luatex-cache/generic/fonts/otf/lmsans10-re
+gular.luc))
 \tipaTiiicode=\count118
 \tipasavetokens=\toks14
 \tipachecktokens=\toks15
@@ -1373,7 +1365,7 @@ luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
 LaTeX Font Info:    Font shape `EU2/latinmodern-math.otf(2)/m/n' will be
 (Font)              scaled to size 4.99992pt on input line 83.
 luaotfload | load : path lookup of "latinmodern-math" unsuccessful, falling back
- to file: <DynamicDatasets_times.png, id=43, 455.45157pt x 255.95625pt>
+ to file: <DynamicDatasets_times.png, id=41, 455.45157pt x 255.95625pt>
 File: DynamicDatasets_times.png Graphic file (type png)
 
 <use DynamicDatasets_times.png>
@@ -1384,28 +1376,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 75--97
 
  []
 
-<DynamicDatasets_VmPeak.png, id=44, 455.45157pt x 255.95625pt>
+<DynamicDatasets_VmPeak.png, id=42, 455.45157pt x 255.95625pt>
 File: DynamicDatasets_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasets_VmPeak.png>
 Package pdftex.def Info: DynamicDatasets_VmPeak.png used on input line 115.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<StaticDatasets_times.png, id=45, 455.45157pt x 255.95625pt>
+<StaticDatasets_times.png, id=43, 455.45157pt x 255.95625pt>
 File: StaticDatasets_times.png Graphic file (type png)
 
 <use StaticDatasets_times.png>
 Package pdftex.def Info: StaticDatasets_times.png used on input line 136.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
  [3<./DynamicDatasets_times.png><./DynamicDatasets_VmPeak.png>] <StaticDatasets
-_VmPeak.png, id=53, 455.45157pt x 255.95625pt>
+_VmPeak.png, id=51, 455.45157pt x 255.95625pt>
 File: StaticDatasets_VmPeak.png Graphic file (type png)
 
 <use StaticDatasets_VmPeak.png>
 Package pdftex.def Info: StaticDatasets_VmPeak.png used on input line 157.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<DynamicDatasetMultithreading_times.png, id=54, 455.45157pt x 255.95625pt>
+<DynamicDatasetMultithreading_times.png, id=52, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_times.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_times.png>
@@ -1417,7 +1409,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 161--181
 
  []
 
-<DynamicDatasetMultithreading_VmPeak.png, id=55, 455.45157pt x 255.95625pt>
+<DynamicDatasetMultithreading_VmPeak.png, id=53, 455.45157pt x 255.95625pt>
 File: DynamicDatasetMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicDatasetMultithreading_VmPeak.png>
@@ -1431,7 +1423,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 201--202
 
 [4<./StaticDatasets_times.png><./StaticDatasets_VmPeak.png><./DynamicDatasetMult
 ithreading_times.png>]
-<DynamicStaticMultithreading_times.png, id=64, 455.45157pt x 255.95625pt>
+<DynamicStaticMultithreading_times.png, id=62, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_times.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_times.png>
@@ -1439,7 +1431,7 @@ Package pdftex.def Info: DynamicStaticMultithreading_times.png used on input lin
 e 223.
 (pdftex.def)             Requested size: 227.72522pt x 127.9778pt.
 
-<DynamicStaticMultithreading_VmPeak.png, id=65, 455.45157pt x 255.95625pt>
+<DynamicStaticMultithreading_VmPeak.png, id=63, 455.45157pt x 255.95625pt>
 File: DynamicStaticMultithreading_VmPeak.png Graphic file (type png)
 
 <use DynamicStaticMultithreading_VmPeak.png>
@@ -1453,41 +1445,28 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 249.
  (./documentation.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 249.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 249.
-
-
-Package rerunfilecheck Warning: File `documentation.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `documentation.out':
-(rerunfilecheck)             Before: 0246E813822C3DFFB215F79149C820F2;457
-(rerunfilecheck)             After:  2FFBAD74A284AC2E69047951B7365CDA;380.
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+Package rerunfilecheck Info: File `documentation.out' has not changed.
+(rerunfilecheck)             Checksum: 2FFBAD74A284AC2E69047951B7365CDA;380.
 )
 
 Here is how much of LuaTeX's memory you used:
- 25872 strings out of 495004
+ 25870 strings out of 495004
  125171,662416 words of node,token memory allocated
  431 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 2 glue, 1 kern, 1 glyph, 7 attribute, 51 glue_spec,
  7 attribute_list, 1 write nodes
-   avail lists: 1:9,2:652,3:97,4:1309,5:227,6:2743,7:176,8:6,9:222,10:65
- 28661 multiletter control sequences out of 65536+600000
+   avail lists: 1:8,2:652,3:97,4:1309,5:233,6:2839,7:176,8:6,9:222,10:66
+ 28660 multiletter control sequences out of 65536+600000
  70 fonts using 25546699 bytes
  50i,13n,68p,1578b,468s stack positions out of 5000i,500n,10000p,200000b,100000s
-LuaTeX warning (dest): name{section.6} has been referenced but does not exist, r
-eplaced by a fixed one
-
 </usr/share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunti.otf></usr
 /share/texlive/texmf-dist/fonts/opentype/public/cm-unicode/cmunbx.otf></usr/shar
 e/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texlive/texmf-
 dist/fonts/opentype/public/cm-unicode/cmunrm.otf>
-Output written on documentation.pdf (5 pages, 219348 bytes).
+Output written on documentation.pdf (5 pages, 219603 bytes).
 
-PDF statistics: 102 PDF objects out of 1000 (max. 8388607)
- 74 compressed objects within 1 object stream
- 22 named destinations out of 1000 (max. 131072)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+PDF statistics: 100 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
+ 21 named destinations out of 1000 (max. 131072)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
