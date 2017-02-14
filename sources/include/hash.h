@@ -15,7 +15,7 @@ typedef struct hash_node *phnode;
 //| .|
 //|__|->N->...|-
 
-phash create_hashtable(int hash_table_size,int(*h)(void *,void*));       //type 0 for simple 1 for sorted lists
+phash create_hashtable(int(*h)(void *,void*));                              //h is the hash function
 rcode h_insert(phash a,uint32_t data);                                      //inserts data
 int in_hash(phash a,uint32_t data);                                         //checks if data  exists in hash
 rcode ds_hash(phash a);                                                     //destroys hash table a

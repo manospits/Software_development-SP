@@ -13,7 +13,7 @@ typedef struct bucket {
 }bucket ;
 
 typedef struct hash_info {
-    phead bins[3];                //array of lists
+    phead bins[HASHTABLE_SIZE];                //array of lists
     int size;                   //hash_table size
     int (*h)(void *,void*);
     phead accessed_bins;
@@ -21,7 +21,8 @@ typedef struct hash_info {
 
 phnode create_phnode(void* el);   //creates a hash_node
 
-phash create_hashtable(int hash_table_size ,int(*h)(void *,void*)){
+phash create_hashtable(int(*h)(void *,void*)){
+    int hash_table_size=HASHTABLE_SIZE;
     if(hash_table_size<=0){
         error_val=HASH_WRONG_PARMS;
         return NULL;
