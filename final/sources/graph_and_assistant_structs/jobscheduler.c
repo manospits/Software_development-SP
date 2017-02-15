@@ -38,7 +38,8 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
     // a sanity check
     if (execution_threads <= 0)
     {
-        error_val = JOBSCHEDULER_INIT_INVALID_NUM_OF_THREADS;
+        //error_val = JOBSCHEDULER_INIT_INVALID_NUM_OF_THREADS;
+        print_errorv(JOBSCHEDULER_INIT_INVALID_NUM_OF_THREADS);
         return NULL;
     }
     int i, ret_val;
@@ -47,7 +48,8 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
     pJobScheduler newJS;
     if ((newJS = malloc(sizeof(struct JobScheduler))) == NULL)
     {
-        error_val = JOBSCHEDULER_INIT_INITIAL_MALLOC_FAIL;
+        //error_val = JOBSCHEDULER_INIT_INITIAL_MALLOC_FAIL;
+        print_errorv(JOBSCHEDULER_INIT_INITIAL_MALLOC_FAIL);
         return NULL;
     }
     // initialize its fields
@@ -57,15 +59,17 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
     newJS->updated_queries=updated_queries;
     if ((newJS->thread_pool = malloc(execution_threads*sizeof(pthread_t))) == NULL)
     {
-        error_val = JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL;
+        //error_val = JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL;
+        print_errorv(JOBSCHEDULER_INIT_THREAD_POOL_MALLOC_FAIL);
         free(newJS);
         return NULL;
     }
     // initialize queue
     if ((newJS->queue = q_cr_list()) == NULL)
     {
-        print_error();
-        error_val = JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL;
+        //print_error();
+        //error_val = JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL;
+        print_errorv(JOBSCHEDULER_INIT_QUEUE_CREATION_FAIL);
         free(newJS->thread_pool);
         free(newJS);
         return NULL;
@@ -87,7 +91,8 @@ pJobScheduler initialize_scheduler(int execution_threads, pGraph graph, int **re
 		if ((ret_val = pthread_create(&(newJS->thread_pool[i]), NULL, worker_thread_function, (void *)&params)))
 		{
 		    fprintf(stderr, "pthread_create: %s\n", strerror(ret_val));
-			error_val = JOBSCHEDULER_INIT_PTHREAD_CREATE_FAIL;
+			//error_val = JOBSCHEDULER_INIT_PTHREAD_CREATE_FAIL;
+			print_errorv(JOBSCHEDULER_INIT_PTHREAD_CREATE_FAIL);
 			return NULL;
 		}
 	}
@@ -108,8 +113,9 @@ void submit_job(pJobScheduler scheduler, uint32_t query_id, uint32_t from, uint3
     {
         if (q_insert_back(scheduler->queue, query_id, from, to, version))
         {
-            print_error();
-            error_val = JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
+            //print_error();
+            //error_val = JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL;
+            print_errorv(JOBSCHEDULER_SUBMIT_INSERT_TO_QUEUE_FAIL);
         }
     }
 }
@@ -176,19 +182,19 @@ void * worker_thread_function(void *params)
     pvis visited;
     if ((open_list[0] = cr_list()) == NULL)
     {
-        print_error();
+        //print_error();
         fprintf(stderr, "Error creating list inside thread\n");
         exit(-1);
     }
     if ((open_list[1] = cr_list()) == NULL)
     {
-        print_error();
+        //print_error();
         fprintf(stderr, "Error creating list inside thread\n");
         exit(-1);
     }
     if ((visited = create_visited(get_index_size(ret_inIndex(graph)))) == NULL)
     {
-        print_error();
+        //print_error();
         fprintf(stderr, "Error creating list inside thread\n");
         exit(-1);
     }
@@ -223,7 +229,7 @@ void * worker_thread_function(void *params)
         else
         {
             printf("%d\n",result);
-            print_error();
+            //print_error();
             fprintf(stderr, "An error occurred during graph search. Exiting...\n");
             exit(-1);
         }
